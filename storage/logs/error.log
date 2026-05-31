@@ -1,0 +1,973 @@
+[17-May-2026 08:54:57 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:54:57 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:54:57 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:55:03 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:55:03 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:55:03 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', 'login', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', 'login')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:55:20 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:55:20 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:55:20 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', 'robots.txt', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', 'robots.txt')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:55:25 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:55:25 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:55:25 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', 'login', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', 'login')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:55:37 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:55:37 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:55:37 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', 'login', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', 'login')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:55:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:55:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:55:41 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', 'players', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', 'players')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:57:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:57:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:57:41 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/index', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/index')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:57:54 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:57:54 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:57:54 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:59:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:59:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:59:11 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:59:24 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:59:24 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:59:24 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/index.php', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/index.php')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:59:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:59:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:59:35 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/nonexistent-ro...', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/nonexistent-ro...')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:59:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:59:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:59:46 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/login', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/login')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 08:59:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 08:59:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 08:59:49 UTC] PHP Fatal error:  Uncaught TypeError: App\Core\Router::matchRoute(): Argument #3 ($matches) must be of type array, null given, called in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 108 and defined in C:\Users\Admin\Desktop\python\app\Core\Router.php:128
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Router.php(108): App\Core\Router->matchRoute('/', '/favicon.ico', NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/favicon.ico')
+#2 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#3 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#4 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Core\Router.php on line 128
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:28 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:28 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:37 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:37 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:38 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:00:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:41 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:00:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:00:44 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/login')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:00:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:00:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:01 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/login')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:01 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:09 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:09 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:14 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:14 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:14 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/login')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:01:14 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:14 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:01:30 UTC] PHP Fatal error:  Uncaught Error: Undefined constant "getFlashes" in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php:49
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Core\Controller.php(136): require()
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(117): App\Core\Controller->renderLayout('\r\n<div class="a...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\AuthController.php(40): App\Core\Controller->render('auth.login', Array)
+#3 [internal function]: App\Controllers\AuthController->login()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('AuthController', 'login', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/login')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Views\layouts\main.php on line 49
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:01:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:02:57 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:02:57 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:03:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:03:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:03:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:03:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:03:50 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:03:50 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:04:25 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:04:25 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:04:25 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:04:25 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:04:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:04:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:04:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:04:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:06:13 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:06:13 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:07:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:07:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:07:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:07:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:07:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:07:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:08:19 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:08:19 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:08:20 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:08:20 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:09:08 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:09:08 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:09:09 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:09:09 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:14:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:14:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:03 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:03 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:03 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:03 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:35 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\SmsProvider\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 09:15:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:42 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\Users\Admin\Desktop\python\app\Controllers\AttendanceController.php on line 102
+[17-May-2026 09:15:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:15:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:15:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:16:00 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:16:00 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:16:08 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:16:08 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:16:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:16:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:36:40 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:36:40 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:36:40 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:36:40 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:08 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:08 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:08 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:08 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:39 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:39 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:37:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:37:48 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\SmsProvider\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 09:50:13 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:13 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:27 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:27 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:27 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:27 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:36 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:39 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:39 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:44 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\Users\Admin\Desktop\python\app\Controllers\AttendanceController.php on line 102
+[17-May-2026 09:50:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:51 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:50:51 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:50:51 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\SmsProvider\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 09:51:32 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:32 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:32 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:32 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:36 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:36 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:36 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:36 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:51:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:51:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:52:13 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:52:13 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 09:52:13 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 09:52:13 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:02:56 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:02:56 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:05 UTC] PHP Fatal error:  Uncaught TypeError: App\Helpers\SecurityHelper::escape(): Argument #1 ($data) must be of type string, null given, called in C:\Users\Admin\Desktop\python\app\Views\financial\index.php on line 41 and defined in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php:20
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Views\financial\index.php(41): App\Helpers\SecurityHelper::escape(NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(113): require('C:\\Users\\Admin\\...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\FinancialController.php(56): App\Core\Controller->render('financial.index', Array)
+#3 [internal function]: App\Controllers\FinancialController->index()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('FinancialContro...', 'index', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/payments')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php on line 20
+[17-May-2026 10:03:10 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:10 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:15 UTC] PHP Fatal error:  Uncaught TypeError: App\Helpers\SecurityHelper::escape(): Argument #1 ($data) must be of type string, null given, called in C:\Users\Admin\Desktop\python\app\Views\financial\index.php on line 41 and defined in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php:20
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Views\financial\index.php(41): App\Helpers\SecurityHelper::escape(NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(113): require('C:\\Users\\Admin\\...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\FinancialController.php(56): App\Core\Controller->render('financial.index', Array)
+#3 [internal function]: App\Controllers\FinancialController->index()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('FinancialContro...', 'index', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/payments')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php on line 20
+[17-May-2026 10:03:19 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:19 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:28 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:28 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:32 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:32 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:42 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\SmsProvider\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:03:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:52 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:03:52 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:03:52 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\SmsProvider\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:04:29 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:29 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:04:29 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:04:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:04:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:04:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:04:44 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:04:55 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:55 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:04:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:04:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:05:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:05:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:05:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:05:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:54 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:05:54 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:05:54 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:06:01 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:06:01 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:06:06 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:06:06 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:06:06 UTC] PHP Fatal error:  Uncaught TypeError: App\Helpers\SecurityHelper::escape(): Argument #1 ($data) must be of type string, null given, called in C:\Users\Admin\Desktop\python\app\Views\financial\index.php on line 41 and defined in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php:20
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Views\financial\index.php(41): App\Helpers\SecurityHelper::escape(NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(113): require('C:\\Users\\Admin\\...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\FinancialController.php(56): App\Core\Controller->render('financial.index', Array)
+#3 [internal function]: App\Controllers\FinancialController->index()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('FinancialContro...', 'index', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/payments')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php on line 20
+[17-May-2026 10:06:10 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:06:10 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:06:10 UTC] PHP Fatal error:  Cannot use isset() on the result of an expression (you can use "null !== expression" instead) in C:\Users\Admin\Desktop\python\app\Controllers\AttendanceController.php on line 102
+[17-May-2026 10:06:19 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:06:19 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:06:19 UTC] PHP Fatal error:  Uncaught TypeError: App\Helpers\SecurityHelper::escape(): Argument #1 ($data) must be of type string, null given, called in C:\Users\Admin\Desktop\python\app\Views\financial\index.php on line 41 and defined in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php:20
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Views\financial\index.php(41): App\Helpers\SecurityHelper::escape(NULL)
+#1 C:\Users\Admin\Desktop\python\app\Core\Controller.php(113): require('C:\\Users\\Admin\\...')
+#2 C:\Users\Admin\Desktop\python\app\Controllers\FinancialController.php(56): App\Core\Controller->render('financial.index', Array)
+#3 [internal function]: App\Controllers\FinancialController->index()
+#4 C:\Users\Admin\Desktop\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#5 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('FinancialContro...', 'index', Array)
+#6 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/payments')
+#7 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#8 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#9 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Helpers\SecurityHelper.php on line 20
+[17-May-2026 10:06:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:06:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:07:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:07:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:07:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:07:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:07:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:07:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:07:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:07:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:32 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:32 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:08:53 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:08:53 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:07 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:07 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:12 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:12 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:23 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:23 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:27 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:27 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:43 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:09:52 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:09:52 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:09:52 UTC] PHP Fatal error:  Uncaught Error: Class "App\Helpers\TwilioSmsProvider" not found in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php:50
+Stack trace:
+#0 C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php(37): App\Controllers\SmsController->initializeSmsProvider()
+#1 C:\Users\Admin\Desktop\python\app\Core\Router.php(173): App\Controllers\SmsController->__construct()
+#2 C:\Users\Admin\Desktop\python\app\Core\Router.php(113): App\Core\Router->executeController('SmsController', 'index', Array)
+#3 C:\Users\Admin\Desktop\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/sms/send')
+#4 C:\Users\Admin\Desktop\python\public\index.php(49): App\Core\App->run()
+#5 C:\Users\Admin\Desktop\python\router.php(12): require_once('C:\\Users\\Admin\\...')
+#6 {main}
+  thrown in C:\Users\Admin\Desktop\python\app\Controllers\SmsController.php on line 50
+[17-May-2026 10:10:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:10:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:17 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:17 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:22 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:22 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:25 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:25 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:29 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:29 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:39 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:39 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:14:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:14:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:40:54 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:40:54 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:05 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:05 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:12 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:12 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:14 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:14 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:17 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:17 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:21 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:21 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[17-May-2026 10:41:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\App.php on line 207
+[17-May-2026 10:41:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\Users\Admin\Desktop\python\app\Core\Database.php on line 239
+[30-May-2026 07:34:29 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 07:34:29 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 07:34:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 07:34:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 07:34:44 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 07:34:44 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 07:50:20 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 07:50:20 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 07:50:23 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 07:50:23 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:00:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:00:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:02:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:02:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:06:02 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:06:02 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:06:12 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:06:12 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:06:17 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:06:17 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:08:04 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:08:04 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:06 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:06 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:09:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:09:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:10:09 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:10:09 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:13:00 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:13:00 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[30-May-2026 11:13:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[30-May-2026 11:13:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:56:01 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:56:01 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:56:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:56:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:56:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:56:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:56:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:56:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:56:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:56:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:57:19 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:57:19 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:57:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:57:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 07:59:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 07:59:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:00:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:00:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:01:07 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:01:07 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:01:12 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:01:12 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:33:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:33:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:33:52 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:33:52 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:36:58 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:36:58 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:36:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 08:37:00 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:10:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:10:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:23:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:23:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:23:45 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:23:45 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:25:39 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:25:39 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:26:15 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:26:15 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:27:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:27:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:28:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:28:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:28:35 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:28:35 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:28:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:28:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:23 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:23 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:23 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:23 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:24 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:24 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:24 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:24 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:32:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:32:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:34:07 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:34:07 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:34:10 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:34:10 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 11:52:41 UTC] PHP Warning:  session_set_cookie_params(): Session cookie parameters cannot be changed after headers have already been sent in C:\xampp\htdocs\python\public\index.php on line 28
+[31-May-2026 11:52:41 UTC] PHP Warning:  session_start(): Session cannot be started after headers have already been sent in C:\xampp\htdocs\python\public\index.php on line 36
+[31-May-2026 11:52:41 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\python\router.php:4) in C:\xampp\htdocs\python\public\index.php on line 40
+[31-May-2026 11:52:41 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\python\router.php:4) in C:\xampp\htdocs\python\public\index.php on line 41
+[31-May-2026 11:52:41 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\python\router.php:4) in C:\xampp\htdocs\python\public\index.php on line 42
+[31-May-2026 11:52:41 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\python\router.php:4) in C:\xampp\htdocs\python\public\index.php on line 43
+[31-May-2026 11:52:41 UTC] PHP Warning:  Cannot modify header information - headers already sent by (output started at C:\xampp\htdocs\python\router.php:4) in C:\xampp\htdocs\python\public\index.php on line 44
+[31-May-2026 11:52:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 11:52:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:03:09 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:03:09 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:03:18 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:03:18 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:03:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:03:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:03:34 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:03:34 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:02 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:02 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:14 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:14 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:14 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:14 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:38 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:38 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:41 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:41 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:04:50 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:04:50 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:06 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:06 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:11 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:11 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:43 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:43 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:52 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:52 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:56 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:56 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:05:59 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:05:59 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:27 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:27 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:29 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:29 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:33 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:33 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:36 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:36 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:40 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:40 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:46 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:46 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:47 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:47 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:49 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:49 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:53 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:53 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:54 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:54 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:06:57 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:06:57 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:13 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:13 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:19 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:19 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:30 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:30 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:31 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:31 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:42 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:42 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:48 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:07:48 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:07:48 UTC] PHP Fatal error:  Uncaught TypeError: number_format(): Argument #1 ($num) must be of type float, string given in C:\xampp\htdocs\python\app\Controllers\FinancialController.php:146
+Stack trace:
+#0 C:\xampp\htdocs\python\app\Controllers\FinancialController.php(146): number_format('500.00', 2)
+#1 C:\xampp\htdocs\python\app\Controllers\FinancialController.php(135): App\Controllers\FinancialController->generateReceiptHtml(Array)
+#2 [internal function]: App\Controllers\FinancialController->generateReceipt('1')
+#3 C:\xampp\htdocs\python\app\Core\Router.php(181): call_user_func_array(Array, Array)
+#4 C:\xampp\htdocs\python\app\Core\Router.php(113): App\Core\Router->executeController('FinancialContro...', 'generateReceipt', Array)
+#5 C:\xampp\htdocs\python\app\Core\App.php(125): App\Core\Router->dispatch('GET', '/payment/receip...')
+#6 C:\xampp\htdocs\python\public\index.php(49): App\Core\App->run()
+#7 {main}
+  thrown in C:\xampp\htdocs\python\app\Controllers\FinancialController.php on line 146
+[31-May-2026 12:08:04 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:08:04 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:08:23 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:08:23 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:08:27 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:08:27 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:08:28 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:08:28 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 12:08:40 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 12:08:40 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:17 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:17 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:17 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:17 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:22 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:22 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:22 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:22 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:25 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:25 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
+[31-May-2026 13:44:26 UTC] PHP Warning:  The magic method App\Core\App::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\App.php on line 207
+[31-May-2026 13:44:26 UTC] PHP Warning:  The magic method App\Core\Database::__wakeup() must have public visibility in C:\xampp\htdocs\python\app\Core\Database.php on line 239
