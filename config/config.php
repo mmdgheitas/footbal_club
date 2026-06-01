@@ -37,10 +37,16 @@ define('BASE_URL', (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'ht
 define('APP_URL', BASE_URL . ($scriptDir !== '/' ? $scriptDir : ''));
 
 // Session Configuration
-define('SESSION_LIFETIME', 3600); // 1 hour in seconds
-define('SESSION_SECURE', true); // HTTPS only
-define('SESSION_HTTPONLY', true); // JavaScript cannot access session
-define('SESSION_SAMESITE', 'Strict'); // CSRF protection
+define('SESSION_LIFETIME', (int)($_ENV['SESSION_LIFETIME'] ?? 3600));
+$sessionSecure = $_ENV['SESSION_SECURE'] ?? null;
+define(
+    'SESSION_SECURE',
+    $sessionSecure !== null
+        ? filter_var($sessionSecure, FILTER_VALIDATE_BOOLEAN)
+        : (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+);
+define('SESSION_HTTPONLY', filter_var($_ENV['SESSION_HTTPONLY'] ?? 'true', FILTER_VALIDATE_BOOLEAN));
+define('SESSION_SAMESITE', $_ENV['SESSION_SAMESITE'] ?? 'Strict');
 
 // File Upload Configuration
 define('MAX_FILE_SIZE', 10 * 1024 * 1024); // 10MB
@@ -107,6 +113,13 @@ define('ATTENDANCE_STATUS', [
     'absent' => 2,
     'excused' => 3,
     'late' => 4,
+]);
+
+define('ATTENDANCE_STATUS_LABELS', [
+    1 => 'حاضر ⚽',
+    2 => 'غایب',
+    3 => 'موجه',
+    4 => 'تأخیر',
 ]);
 
 // Age Categories

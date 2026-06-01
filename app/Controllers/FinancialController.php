@@ -53,7 +53,7 @@ class FinancialController extends Controller
             'SELECT id, name FROM fc_players WHERE status = 1 AND deleted_at IS NULL ORDER BY name ASC'
         );
 
-        $this->data['title'] = 'Payments';
+        $this->data['title'] = 'مالی';
         $this->data['payments'] = $payments;
         $this->data['players_list'] = $playersList;
         $this->data['csrf_token'] = $this->generateCsrf();
@@ -150,8 +150,8 @@ class FinancialController extends Controller
     {
         $amount = number_format((float)$payment['amount'], 2);
         $date = date(DISPLAY_DATETIME_FORMAT, strtotime($payment['created_at']));
-        $playerName = SecurityHelper::escape($payment['player_name']);
-        $description = SecurityHelper::escape($payment['description']);
+        $playerName = SecurityHelper::escape($payment['player_name'] ?? '-');
+        $description = SecurityHelper::escape($payment['description'] ?? '-');
         $reference = SecurityHelper::escape($payment['reference_number']);
 
         return <<<HTML

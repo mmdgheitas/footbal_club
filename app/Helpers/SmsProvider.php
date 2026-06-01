@@ -271,7 +271,13 @@ class MockSmsProvider extends SmsProvider
     public function __construct(string $apiKey, string $apiSecret, string $fromNumber, string $logFile = '')
     {
         parent::__construct($apiKey, $apiSecret, $fromNumber);
-        $this->logFile = $logFile ?: '/tmp/sms_mock_log.txt';
+        if ($logFile !== '') {
+            $this->logFile = $logFile;
+        } elseif (defined('BASE_PATH')) {
+            $this->logFile = BASE_PATH . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'logs' . DIRECTORY_SEPARATOR . 'sms_mock.log';
+        } else {
+            $this->logFile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'sms_mock.log';
+        }
     }
 
     /**

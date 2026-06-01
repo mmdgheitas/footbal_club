@@ -52,4 +52,4 @@ VALUES
 ('app_name', 'Football Club Manager'),
 ('attendance_warning_threshold', '75'),
 ('max_upload_size', '10485760'),
-('sms_provider', 'twilio');
+('sms_provider', 'mock');

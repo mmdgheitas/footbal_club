@@ -15,6 +15,9 @@ abstract class Controller
     protected string $viewPath = '';
     protected string $layout = 'layouts.main';
 
+    /** @var array|null Cached JSON request body */
+    private ?array $parsedJsonBody = null;
+
     /**
      * Constructor - Initialize controller dependencies
      */
@@ -150,6 +153,7 @@ abstract class Controller
         $this->data['user'] = $this->getUser();
         $this->data['userRole'] = $this->getUserRole();
         $this->data['flashes'] = $this->getFlashes();
+        $this->data['csrf_token'] = $this->generateCsrf();
         $this->data['content'] = $content;
 
         extract($this->data);
@@ -186,17 +190,55 @@ abstract class Controller
     }
 
     /**
-     * Get POST data
+     * Parse JSON request body (for AJAX endpoints).
+     *
+     * @return array<string, mixed>
+     */
+    protected function getJsonBody(): array
+    {
+        if ($this->parsedJsonBody !== null) {
+            return $this->parsedJsonBody;
+        }
+
+        $this->parsedJsonBody = [];
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        if (!in_array($method, ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
+            return $this->parsedJsonBody;
+        }
+
+        $contentType = strtolower($_SERVER['CONTENT_TYPE'] ?? $_SERVER['HTTP_CONTENT_TYPE'] ?? '');
+        if (!str_contains($contentType, 'application/json')) {
+            return $this->parsedJsonBody;
+        }
+
+        $raw = file_get_contents('php://input');
+        if ($raw === false || $raw === '') {
+            return $this->parsedJsonBody;
+        }
+
+        $decoded = json_decode($raw, true);
+        if (is_array($decoded)) {
+            $this->parsedJsonBody = $decoded;
+        }
+
+        return $this->parsedJsonBody;
+    }
+
+    /**
+     * Get POST data (includes JSON body for API-style requests)
      *
      * @param string|null $key Optional key to get specific value
      * @return array|string|null
      */
     protected function post(?string $key = null): array|string|null
     {
+        $data = array_merge($this->getJsonBody(), $_POST);
+
         if ($key === null) {
-            return $_POST;
+            return $data;
         }
-        return $_POST[$key] ?? null;
+
+        return $data[$key] ?? null;
     }
 
     /**
@@ -221,7 +263,7 @@ abstract class Controller
      */
     protected function request(?string $key = null): array|string|null
     {
-        $merged = array_merge($_GET, $_POST);
+        $merged = array_merge($_GET, $_POST, $this->getJsonBody());
         if ($key === null) {
             return $merged;
         }
@@ -304,7 +346,10 @@ abstract class Controller
      */
     protected function validateCsrf(): bool
     {
-        $token = $_POST['_csrf_token'] ?? $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+        $token = $_POST['_csrf_token']
+            ?? $_SERVER['HTTP_X_CSRF_TOKEN']
+            ?? $this->getJsonBody()['_csrf_token']
+            ?? null;
         $sessionToken = $_SESSION['_csrf_token'] ?? null;
 
         if ($token === null || $sessionToken === null || !hash_equals($token, $sessionToken)) {

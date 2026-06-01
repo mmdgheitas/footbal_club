@@ -15,6 +15,7 @@ use App\Helpers\SecurityHelper;
  */
 class AuthController extends Controller
 {
+    protected string $layout = 'layouts.auth';
     private User $userModel;
 
     /**

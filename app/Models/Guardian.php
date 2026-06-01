@@ -32,7 +32,8 @@ class Guardian extends Model
      */
     public function getByPlayerId(int $playerId): array
     {
-        return $this->findAllBy('player_id', (string)$playerId);
+        $query = "SELECT * FROM {$this->table} WHERE player_id = ? AND deleted_at IS NULL";
+        return $this->db->findAll($query, [$playerId]);
     }
 
     /**

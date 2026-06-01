@@ -9,7 +9,7 @@ $csrfToken = $csrf_token ?? '';
 $playerId = (int)($player['id'] ?? 0);
 $canEdit = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
 ?>
-<div class="medical-section">
+<div class="medical-section panel">
     <div class="section-toolbar">
         <a href="<?= APP_URL ?>/medical" class="btn btn-secondary">بازگشت به لیست</a>
         <a href="<?= APP_URL ?>/player/view/<?= $playerId ?>" class="btn btn-secondary">پروفایل بازیکن</a>
@@ -82,26 +82,28 @@ $canEdit = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
     <?php if (empty($injuries)): ?>
         <p>مصدومیت ثبت نشده است.</p>
     <?php else: ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>نوع</th>
-                    <th>شدت</th>
-                    <th>تاریخ</th>
-                    <th>بهبود</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($injuries as $injury): ?>
-                <tr>
-                    <td><?= \App\Helpers\SecurityHelper::escape($injury['injury_type']) ?></td>
-                    <td><?= \App\Helpers\SecurityHelper::escape(ucfirst($injury['severity'])) ?></td>
-                    <td><?= \App\Helpers\SecurityHelper::escape($injury['date_of_injury']) ?></td>
-                    <td><?= $injury['recovery_date'] ? \App\Helpers\SecurityHelper::escape($injury['recovery_date']) : 'در جریان' ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>نوع</th>
+                        <th>شدت</th>
+                        <th>تاریخ</th>
+                        <th>بهبود</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($injuries as $injury): ?>
+                    <tr>
+                        <td><?= \App\Helpers\SecurityHelper::escape($injury['injury_type'] ?? '') ?></td>
+                        <td><?= \App\Helpers\SecurityHelper::escape(ucfirst((string)($injury['severity'] ?? ''))) ?></td>
+                        <td><?= \App\Helpers\SecurityHelper::escape($injury['date_of_injury'] ?? '') ?></td>
+                        <td><?= !empty($injury['recovery_date']) ? \App\Helpers\SecurityHelper::escape($injury['recovery_date']) : 'در جریان' ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 </div>
 
@@ -110,11 +112,13 @@ document.getElementById('medicalForm')?.addEventListener('submit', async functio
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (window.defaultCsrfToken) headers['X-CSRF-Token'] = window.defaultCsrfToken;
     try {
         const response = await fetch(form.action, {
             method: 'POST',
             body: formData,
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers,
         });
         if (response.status === 403) {
             window.location.href = '<?= APP_URL ?>/403';
@@ -133,18 +137,12 @@ document.getElementById('medicalForm')?.addEventListener('submit', async functio
 </script>
 
 <style>
-.medical-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
 .section-toolbar {
     display: flex;
     gap: 10px;
     margin-bottom: 20px;
 }
-.medical-form { margin: 20px 0; padding: 20px; background: #f9f9f9; border-radius: 8px; }
+.medical-form { margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.12); border-radius: var(--radius-sm, 8px); border: 1px solid var(--border, #2a3f5f); }
 .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -170,7 +168,5 @@ document.getElementById('medicalForm')?.addEventListener('submit', async functio
 }
 .info-group { display: flex; flex-direction: column; }
 .info-group label { font-weight: 600; color: #555; margin-bottom: 5px; }
-h4 { margin: 24px 0 15px 0; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px; text-align: right; border-bottom: 1px solid #eee; }
+h4 { margin: 24px 0 15px 0; color: var(--grass-bright); }
 </style>

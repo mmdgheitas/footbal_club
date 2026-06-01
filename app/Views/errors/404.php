@@ -15,6 +15,8 @@ $appName = defined('APP_NAME') ? APP_NAME : 'Football Club Manager';
     <title>404 - <?= \App\Helpers\SecurityHelper::escape($title) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= defined('APP_URL') ? APP_URL . '/assets/css/style.css' : '/assets/css/style.css' ?>">
+    <link rel="stylesheet" href="<?= defined('APP_URL') ? APP_URL . '/assets/css/animations.css' : '/assets/css/animations.css' ?>">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {

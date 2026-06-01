@@ -11,7 +11,7 @@ $formAction = $isEdit
     : APP_URL . '/player/store';
 $pageHeading = $isEdit ? 'ویرایش بازیکن' : 'افزودن بازیکن';
 ?>
-<div class="player-form-section">
+<div class="player-form-section panel">
     <div class="form-toolbar">
         <a href="<?= APP_URL ?>/players" class="btn btn-secondary">بازگشت به لیست</a>
         <?php if ($isEdit): ?>
@@ -143,58 +143,3 @@ document.getElementById('playerForm')?.addEventListener('submit', async function
     }
 });
 </script>
-
-<style>
-.player-form-section {
-    background: white;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.form-toolbar {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 24px;
-}
-.form-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 16px;
-}
-.form-group-full { grid-column: 1 / -1; }
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: 600;
-    color: #444;
-}
-.form-group input,
-.form-group select,
-.form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-.checkbox-label {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: normal;
-}
-.upload-fieldset {
-    margin: 24px 0;
-    padding: 16px;
-    border: 1px solid #eee;
-    border-radius: 8px;
-}
-.upload-fieldset legend {
-    padding: 0 8px;
-    font-weight: 600;
-}
-.form-actions {
-    display: flex;
-    gap: 12px;
-    margin-top: 24px;
-}
-</style>

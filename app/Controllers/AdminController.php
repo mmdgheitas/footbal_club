@@ -6,6 +6,7 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\User;
+use App\Models\Setting;
 use App\Middleware\RbacMiddleware;
 use App\Helpers\SecurityHelper;
 
@@ -16,6 +17,7 @@ use App\Helpers\SecurityHelper;
 class AdminController extends Controller
 {
     private User $userModel;
+    private Setting $settingModel;
 
     /**
      * Constructor
@@ -24,6 +26,7 @@ class AdminController extends Controller
     {
         parent::__construct();
         $this->userModel = new User();
+        $this->settingModel = new Setting();
     }
 
     /**
@@ -71,7 +74,10 @@ class AdminController extends Controller
     {
         RbacMiddleware::requireRole('super_admin');
 
-        $this->data['title'] = 'Settings';
+        $stored = $this->settingModel->getAllKeyed();
+
+        $this->data['title'] = 'تنظیمات';
+        $this->data['settings'] = $stored;
         $this->data['csrf_token'] = $this->generateCsrf();
 
         $this->render('admin.settings', $this->data);
@@ -96,21 +102,47 @@ class AdminController extends Controller
             return;
         }
 
-        // Get all POST data and update settings
-        $settings = $this->post();
-        unset($settings['_csrf_token']);
+        $allowedKeys = [
+            'app_name',
+            'attendance_warning_threshold',
+            'max_upload_size',
+            'sms_provider',
+        ];
 
-        foreach ($settings as $key => $value) {
-            $settingKey = SecurityHelper::sanitizeString($key);
-            $settingValue = SecurityHelper::sanitizeString($value);
-
-            $query = "INSERT INTO fc_settings (setting_key, setting_value) 
-                      VALUES (?, ?) 
-                      ON DUPLICATE KEY UPDATE setting_value = ?";
-
-            $this->db->execute($query, [$settingKey, $settingValue, $settingValue]);
+        $toSave = [];
+        foreach ($allowedKeys as $key) {
+            $value = $this->post($key);
+            if ($value === null || is_array($value)) {
+                continue;
+            }
+            $toSave[$key] = trim(strip_tags((string)$value));
         }
 
-        $this->json(['success' => true, 'message' => 'Settings updated successfully']);
+        if (isset($toSave['sms_provider']) && $toSave['sms_provider'] === 'log') {
+            $toSave['sms_provider'] = 'mock';
+        }
+
+        if (isset($toSave['attendance_warning_threshold'])) {
+            $threshold = (int)$toSave['attendance_warning_threshold'];
+            $toSave['attendance_warning_threshold'] = (string)max(0, min(100, $threshold));
+        }
+
+        if (isset($toSave['max_upload_size'])) {
+            $toSave['max_upload_size'] = (string)max(1024, (int)$toSave['max_upload_size']);
+        }
+
+        if (empty($toSave)) {
+            $this->json(['error' => 'No settings to save'], 422);
+            return;
+        }
+
+        try {
+            $this->settingModel->setMany($toSave);
+        } catch (\Throwable) {
+            $this->json(['error' => 'Failed to save settings'], 500);
+            return;
+        }
+
+        $this->json(['success' => true, 'message' => 'تنظیمات با موفقیت ذخیره شد.']);
     }
 }

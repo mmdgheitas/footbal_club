@@ -11,7 +11,7 @@ $files = $player['files'] ?? [];
 $canManage = \App\Middleware\RbacMiddleware::hasPermission('manage_players');
 $canViewMedical = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
 ?>
-<div class="player-profile">
+<div class="player-profile panel">
     <div class="profile-header">
         <div>
             <h3><?= \App\Helpers\SecurityHelper::escape($player['name'] ?? '') ?></h3>
@@ -139,38 +139,7 @@ $canViewMedical = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
 </div>
 
 <style>
-.player-profile { background: white; padding: 24px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-.profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    flex-wrap: wrap;
-    gap: 16px;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #eee;
-}
-.profile-header h3 { margin: 0 0 4px; font-size: 22px; }
-.meta { color: #666; margin: 0; }
-.profile-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.info-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 16px;
-}
-.info-card {
-    background: #f9f9f9;
-    padding: 16px;
-    border-radius: 8px;
-}
-.info-card h4 { margin: 0 0 12px; font-size: 15px; color: #444; }
-.info-card dl { display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; margin: 0; }
-.info-card dt { font-weight: 600; color: #666; }
-.info-card dd { margin: 0; }
-.muted { color: #999; }
-.list-plain { list-style: none; padding: 0; margin: 0; }
-.list-plain li { padding: 6px 0; border-bottom: 1px solid #eee; }
+.profile-header h3 { margin: 0 0 4px; font-size: 22px; color: var(--white); }
+.meta { color: var(--text-muted); margin: 0; }
 .notes-block, .section-block { margin-top: 24px; }
-.section-block table { width: 100%; border-collapse: collapse; }
-.section-block th, .section-block td { padding: 10px; text-align: right; border-bottom: 1px solid #eee; }
 </style>

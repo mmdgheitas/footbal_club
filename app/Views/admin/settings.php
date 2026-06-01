@@ -1,127 +1,96 @@
 <?php
-/**
- * Admin Settings View
- */
+$settings = $settings ?? [];
 $csrfToken = $csrf_token ?? '';
 
-// Fetch all settings from database to display current values
-$settingsRows = $this->db->findAll("SELECT * FROM fc_settings");
-$currentSettings = [];
-foreach ($settingsRows as $row) {
-    $currentSettings[$row['setting_key']] = $row['setting_value'];
+$appName = $settings['app_name'] ?? APP_NAME;
+$attendanceThreshold = $settings['attendance_warning_threshold'] ?? (string)ATTENDANCE_WARNING_THRESHOLD;
+$maxUploadSize = $settings['max_upload_size'] ?? (string)MAX_FILE_SIZE;
+$smsProvider = $settings['sms_provider'] ?? SMS_PROVIDER;
+if ($smsProvider === 'log') {
+    $smsProvider = 'mock';
 }
-
-$appName = $currentSettings['app_name'] ?? 'Football Club Manager';
-$attendanceThreshold = $currentSettings['attendance_warning_threshold'] ?? '75';
-$maxUploadSize = $currentSettings['max_upload_size'] ?? '10485760';
-$smsProvider = $currentSettings['sms_provider'] ?? 'twilio';
 ?>
 
-<div class="settings-section">
-    <div class="admin-nav" style="margin-bottom: 25px; display: flex; gap: 15px;">
-        <a href="<?= APP_URL ?>/admin/users" class="btn btn-secondary">User Management</a>
-        <a href="<?= APP_URL ?>/admin/settings" class="btn btn-primary">Settings</a>
+<div class="settings-section panel">
+    <div class="admin-nav section-header">
+        <a href="<?= APP_URL ?>/admin/users" class="btn btn-secondary">مدیریت کاربران</a>
+        <a href="<?= APP_URL ?>/admin/settings" class="btn btn-primary">تنظیمات</a>
     </div>
 
     <form id="settingsForm" method="POST" action="<?= APP_URL ?>/admin/settings" class="settings-form">
         <input type="hidden" name="_csrf_token" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($csrfToken) ?>">
 
         <div class="form-group">
-            <label for="app_name">Application Name</label>
+            <label for="app_name">نام باشگاه / اپلیکیشن</label>
             <input type="text" id="app_name" name="app_name" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($appName) ?>" required>
         </div>
 
         <div class="form-group">
-            <label for="attendance_warning_threshold">Attendance Warning Threshold (%)</label>
-            <input type="number" id="attendance_warning_threshold" name="attendance_warning_threshold" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($attendanceThreshold) ?>" min="0" max="100" required>
+            <label for="attendance_warning_threshold">آستانه هشدار غیبت (%)</label>
+            <input type="number" id="attendance_warning_threshold" name="attendance_warning_threshold"
+                   value="<?= \App\Helpers\SecurityHelper::escapeAttribute($attendanceThreshold) ?>" min="0" max="100" required>
         </div>
 
         <div class="form-group">
-            <label for="max_upload_size">Maximum Upload Size (Bytes)</label>
-            <input type="number" id="max_upload_size" name="max_upload_size" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($maxUploadSize) ?>" required>
+            <label for="max_upload_size">حداکثر حجم آپلود (بایت)</label>
+            <input type="number" id="max_upload_size" name="max_upload_size"
+                   value="<?= \App\Helpers\SecurityHelper::escapeAttribute($maxUploadSize) ?>" min="1024" required>
+            <small style="color:var(--text-muted);">پیش‌فرض: <?= number_format(MAX_FILE_SIZE) ?> بایت (۱۰ مگابایت)</small>
         </div>
 
         <div class="form-group">
-            <label for="sms_provider">SMS Provider</label>
+            <label for="sms_provider">سرویس پیامک</label>
             <select id="sms_provider" name="sms_provider">
+                <option value="mock" <?= $smsProvider === 'mock' ? 'selected' : '' ?>>آزمایشی (Mock)</option>
                 <option value="twilio" <?= $smsProvider === 'twilio' ? 'selected' : '' ?>>Twilio</option>
                 <option value="nexmo" <?= $smsProvider === 'nexmo' ? 'selected' : '' ?>>Nexmo (Vonage)</option>
-                <option value="log" <?= $smsProvider === 'log' ? 'selected' : '' ?>>Log Only (Mock)</option>
             </select>
         </div>
 
-        <button type="submit" class="btn btn-primary">Save Settings</button>
-        <span id="saveStatus" class="save-status"></span>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">ذخیره تنظیمات</button>
+            <span id="saveStatus" class="save-status"></span>
+        </div>
     </form>
 </div>
 
 <script>
-document.getElementById('settingsForm').addEventListener('submit', function(e) {
+document.getElementById('settingsForm')?.addEventListener('submit', function(e) {
     e.preventDefault();
     const form = this;
     const status = document.getElementById('saveStatus');
+    status.textContent = 'در حال ذخیره...';
     status.className = 'save-status';
-    status.textContent = 'Saving...';
 
-    const formData = new FormData(form);
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (window.defaultCsrfToken) {
+        headers['X-CSRF-Token'] = window.defaultCsrfToken;
+    }
 
-    fetch(form.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            status.className = 'save-status success';
-            status.textContent = data.message || 'Settings saved successfully!';
-        } else {
+    fetch(form.action, { method: 'POST', body: new FormData(form), headers })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                status.className = 'save-status success';
+                status.textContent = data.message || 'ذخیره شد.';
+                if (typeof APP !== 'undefined') APP.showMessage('success', status.textContent);
+            } else {
+                status.className = 'save-status error';
+                status.textContent = data.error || 'خطا در ذخیره';
+                if (typeof APP !== 'undefined') APP.showMessage('error', status.textContent);
+            }
+        })
+        .catch(() => {
             status.className = 'save-status error';
-            status.textContent = data.error || 'Failed to save settings.';
-        }
-    })
-    .catch(err => {
-        status.className = 'save-status error';
-        status.textContent = 'A network error occurred.';
-    });
+            status.textContent = 'خطای شبکه';
+        });
 });
 </script>
 
 <style>
-.settings-section {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    max-width: 600px;
-}
-.form-group {
-    margin-bottom: 20px;
-}
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #333;
-}
-.form-group input, .form-group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: white;
-}
-.save-status {
-    margin-left: 15px;
-    font-size: 14px;
-    font-weight: 500;
-}
-.save-status.success {
-    color: #137333;
-}
-.save-status.error {
-    color: #c5221f;
-}
+.settings-form { max-width: 560px; }
+.save-status { font-size: 0.9rem; font-weight: 600; }
+.save-status.success { color: var(--grass-bright, #137333); }
+.save-status.error { color: #ff5252; }
+.admin-nav { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
 </style>

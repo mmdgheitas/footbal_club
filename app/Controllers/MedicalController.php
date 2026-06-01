@@ -43,7 +43,7 @@ class MedicalController extends Controller
 
         $players = $this->playerModel->getActive();
 
-        $this->data['title'] = 'Medical Records';
+        $this->data['title'] = 'پزشکی';
         $this->data['players'] = $players;
         $this->data['csrf_token'] = $this->generateCsrf();
 
@@ -70,7 +70,7 @@ class MedicalController extends Controller
         $medical = $this->medicalModel->getByPlayerId($playerId);
         $injuries = $this->injuryModel->getByPlayerId($playerId);
 
-        $this->data['title'] = 'Medical Record - ' . $player['name'];
+        $this->data['title'] = 'پرونده پزشکی — ' . $player['name'];
         $this->data['player'] = $player;
         $this->data['medical'] = $medical;
         $this->data['injuries'] = $injuries;
@@ -112,7 +112,7 @@ class MedicalController extends Controller
             'allergies' => SecurityHelper::sanitizeString($this->post('allergies') ?? ''),
             'medical_conditions' => SecurityHelper::sanitizeString($this->post('medical_conditions') ?? ''),
             'vaccination_status' => SecurityHelper::sanitizeString($this->post('vaccination_status') ?? ''),
-            'last_exam_date' => $this->post('last_exam_date') ?? null,
+            'last_exam_date' => ($examDate = trim((string)($this->post('last_exam_date') ?? ''))) !== '' ? $examDate : null,
             'exam_notes' => SecurityHelper::sanitizeString($this->post('exam_notes') ?? ''),
         ];
 

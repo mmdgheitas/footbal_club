@@ -1,110 +1,63 @@
 <?php
-/**
- * SMS Logs View
- */
 $logs = $logs ?? [];
 $filter = $filter ?? 'all';
+$statusLabels = [
+    'pending' => 'در انتظار',
+    'sent' => 'ارسال شده',
+    'delivered' => 'تحویل شده',
+    'failed' => 'ناموفق',
+];
 ?>
 
-<div class="sms-section">
+<div class="sms-section panel">
     <div class="section-header">
-        <h3>SMS Logs</h3>
-        <form method="GET" class="filter-form">
+        <h3 style="margin:0;color:var(--grass-bright);">گزارش پیامک‌ها</h3>
+        <form method="GET" class="filter-form" style="display:flex;gap:8px;align-items:center;">
             <select name="filter">
-                <option value="all" <?= $filter === 'all' ? 'selected' : '' ?>>All</option>
-                <option value="sent" <?= $filter === 'sent' ? 'selected' : '' ?>>Sent</option>
-                <option value="pending" <?= $filter === 'pending' ? 'selected' : '' ?>>Pending</option>
-                <option value="failed" <?= $filter === 'failed' ? 'selected' : '' ?>>Failed</option>
+                <option value="all" <?= $filter === 'all' ? 'selected' : '' ?>>همه</option>
+                <option value="sent" <?= $filter === 'sent' ? 'selected' : '' ?>>ارسال شده</option>
+                <option value="pending" <?= $filter === 'pending' ? 'selected' : '' ?>>در انتظار</option>
+                <option value="failed" <?= $filter === 'failed' ? 'selected' : '' ?>>ناموفق</option>
             </select>
-            <button type="submit" class="btn btn-secondary">Filter</button>
+            <button type="submit" class="btn btn-secondary btn-sm">فیلتر</button>
+            <a href="<?= APP_URL ?>/sms/send" class="btn btn-primary btn-sm">ارسال جدید</a>
         </form>
     </div>
 
     <?php if (empty($logs)): ?>
-        <p class="empty-message">No SMS logs found.</p>
+        <p class="empty-message">پیامکی ثبت نشده است.</p>
     <?php else: ?>
-        <table>
-            <thead>
-                <tr>
-                    <th>Recipient</th>
-                    <th>Message</th>
-                    <th>Type</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($logs as $log): ?>
-                <tr>
-                    <td><?= \App\Helpers\SecurityHelper::escape($log['recipient_phone']) ?></td>
-                    <td><?= \App\Helpers\SecurityHelper::escape(substr($log['message'], 0, 50)) ?>...</td>
-                    <td><?= \App\Helpers\SecurityHelper::escape($log['sms_type']) ?></td>
-                    <td>
-                        <span class="badge badge-<?= $log['status'] ?>">
-                            <?= ucfirst($log['status']) ?>
-                        </span>
-                    </td>
-                    <td><?= date(DISPLAY_DATETIME_FORMAT, strtotime($log['created_at'])) ?></td>
-                </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>گیرنده</th>
+                        <th>پیام</th>
+                        <th>نوع</th>
+                        <th>وضعیت</th>
+                        <th>تاریخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($logs as $log):
+                        $msg = (string)($log['message'] ?? '');
+                        $preview = mb_strlen($msg) > 50 ? mb_substr($msg, 0, 50) . '…' : $msg;
+                        $status = (string)($log['status'] ?? '');
+                    ?>
+                    <tr>
+                        <td><code><?= \App\Helpers\SecurityHelper::escape($log['recipient_phone'] ?? '') ?></code></td>
+                        <td><?= \App\Helpers\SecurityHelper::escape($preview) ?></td>
+                        <td><?= \App\Helpers\SecurityHelper::escape($log['sms_type'] ?? '-') ?></td>
+                        <td>
+                            <span class="status-pill <?= $status === 'failed' ? 'status-absent' : 'status-present' ?>">
+                                <?= \App\Helpers\SecurityHelper::escape($statusLabels[$status] ?? $status) ?>
+                            </span>
+                        </td>
+                        <td><?= !empty($log['created_at']) ? date('Y-m-d H:i', strtotime($log['created_at'])) : '—' ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 </div>
-
-<style>
-.sms-section {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.filter-form {
-    display: flex;
-    gap: 10px;
-}
-
-.filter-form select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-}
-
-.badge {
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 3px;
-    font-size: 12px;
-    font-weight: 600;
-}
-
-.badge-sent,
-.badge-delivered {
-    background: #d4edda;
-    color: #155724;
-}
-
-.badge-pending {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.badge-failed {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-.empty-message {
-    text-align: center;
-    color: #999;
-    padding: 40px;
-}
-</style>

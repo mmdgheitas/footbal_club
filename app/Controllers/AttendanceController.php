@@ -55,11 +55,11 @@ class AttendanceController extends Controller
             $attendanceMap[$record['player_id']] = $record;
         }
 
-        $this->data['title'] = 'Attendance';
+        $this->data['title'] = 'حضور و غیاب';
         $this->data['session_date'] = $sessionDate;
         $this->data['players'] = $players;
         $this->data['attendance_map'] = $attendanceMap;
-        $this->data['attendance_status'] = ATTENDANCE_STATUS;
+        $this->data['attendance_status'] = ATTENDANCE_STATUS_LABELS;
         $this->data['csrf_token'] = $this->generateCsrf();
 
         $this->render('attendance.index', $this->data);
@@ -140,7 +140,7 @@ class AttendanceController extends Controller
         $this->data['player'] = $player;
         $this->data['attendance'] = $attendance;
         $this->data['percentage'] = number_format($percentage, 2);
-        $this->data['attendance_status'] = ATTENDANCE_STATUS;
+        $this->data['attendance_status'] = ATTENDANCE_STATUS_LABELS;
 
         $this->render('attendance.report', $this->data);
     }

@@ -39,7 +39,7 @@ class DashboardController extends Controller
      */
     public function index(): void
     {
-        $this->data['title'] = 'Dashboard';
+        $this->data['title'] = 'داشبورد';
 
         // Get statistics
         $stats = $this->playerModel->getStatistics();

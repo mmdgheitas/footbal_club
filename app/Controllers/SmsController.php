@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Models\SmsLog;
 use App\Models\Player;
 use App\Models\Guardian;
+use App\Models\Setting;
 use App\Helpers\SmsProvider;
 use App\Middleware\RbacMiddleware;
 use App\Helpers\SecurityHelper;
@@ -47,6 +48,19 @@ class SmsController extends Controller
         require_once dirname(__DIR__) . '/Helpers/SmsProvider.php';
 
         $provider = SMS_PROVIDER;
+        try {
+            $settingModel = new Setting();
+            $stored = $settingModel->get('sms_provider');
+            if ($stored !== null && $stored !== '') {
+                $provider = $stored;
+            }
+        } catch (\Throwable) {
+            // Fall back to config when settings table is unavailable
+        }
+
+        if ($provider === 'log') {
+            $provider = 'mock';
+        }
 
         if ($provider === 'twilio') {
             $this->smsProvider = new \App\Helpers\TwilioSmsProvider(
@@ -81,7 +95,7 @@ class SmsController extends Controller
 
         $players = $this->playerModel->getActive();
 
-        $this->data['title'] = 'Send SMS';
+        $this->data['title'] = 'ارسال پیامک';
         $this->data['players'] = $players;
         $this->data['csrf_token'] = $this->generateCsrf();
 
@@ -108,7 +122,10 @@ class SmsController extends Controller
         }
 
         $recipients = $this->post('recipients') ?? [];
-        $message = SecurityHelper::sanitizeString($this->post('message') ?? '');
+        if (!is_array($recipients)) {
+            $recipients = $recipients !== '' && $recipients !== null ? [(string)$recipients] : [];
+        }
+        $message = trim(strip_tags((string)($this->post('message') ?? '')));
         $smsType = SecurityHelper::sanitizeString($this->post('sms_type') ?? 'general');
 
         if (empty($recipients) || !is_array($recipients)) {
@@ -128,6 +145,7 @@ class SmsController extends Controller
 
         $sentCount = 0;
         $failedCount = 0;
+        $skippedNoPhone = 0;
 
         foreach ($recipients as $recipient) {
             $playerId = (int)$recipient;
@@ -139,12 +157,14 @@ class SmsController extends Controller
             }
 
             $guardians = $this->guardianModel->getByPlayerId($playerId);
+            $hasPhone = false;
 
             foreach ($guardians as $guardian) {
                 if (empty($guardian['phone'])) {
                     continue;
                 }
 
+                $hasPhone = true;
                 $result = $this->smsProvider->send($guardian['phone'], $message);
 
                 if ($result['success']) {
@@ -171,13 +191,26 @@ class SmsController extends Controller
                     $failedCount++;
                 }
             }
+
+            if (!$hasPhone) {
+                $skippedNoPhone++;
+            }
+        }
+
+        if ($sentCount === 0 && $failedCount === 0) {
+            $this->json([
+                'error' => $skippedNoPhone > 0
+                    ? 'برای بازیکنان انتخاب‌شده شماره ولی ثبت نشده است.'
+                    : 'هیچ گیرنده‌ای انتخاب نشده است.',
+            ], 422);
+            return;
         }
 
         $this->json([
             'success' => true,
             'sent_count' => $sentCount,
             'failed_count' => $failedCount,
-            'message' => "Sent: $sentCount, Failed: $failedCount",
+            'message' => "ارسال موفق: {$sentCount} — ناموفق: {$failedCount}",
         ]);
     }
 
@@ -212,7 +245,7 @@ class SmsController extends Controller
 
         $logs = $this->db->findAll($query, $params);
 
-        $this->data['title'] = 'SMS Logs';
+        $this->data['title'] = 'گزارش پیامک‌ها';
         $this->data['logs'] = $logs;
         $this->data['filter'] = $filter;
 
