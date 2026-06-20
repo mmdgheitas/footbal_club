@@ -122,8 +122,6 @@ class FinancialController extends Controller
      */
     public function generateReceipt(string $id): void
     {
-        RbacMiddleware::requirePermission('view_payments');
-
         $paymentId = (int)$id;
         $query = "SELECT p.*, pl.name as player_name, pl.national_id FROM fc_payments p 
                   LEFT JOIN fc_players pl ON p.player_id = pl.id 
@@ -133,6 +131,17 @@ class FinancialController extends Controller
         if ($payment === null) {
             $this->json(['error' => 'Payment not found'], 404);
             return;
+        }
+
+        // Allow if user is super admin/accountant/etc OR if they are a player and it is their own payment
+        $userRole = $this->getUserRole();
+        $user = $this->getUser();
+        if ($userRole === 'player') {
+            if ((int)$payment['player_id'] !== (int)($user['player_id'] ?? 0)) {
+                $this->redirect('/403');
+            }
+        } else {
+            RbacMiddleware::requirePermission('view_payments');
         }
 
         // Return HTML receipt

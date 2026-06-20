@@ -52,6 +52,12 @@ class RbacMiddleware
             'view_attendance',
             'mark_attendance',
         ],
+        'player' => [
+            'view_own_profile',
+            'view_own_financial',
+            'view_own_attendance',
+            'view_own_alerts',
+        ],
     ];
 
     /**

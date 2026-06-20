@@ -91,7 +91,12 @@ class AuthController extends Controller
         AuthMiddleware::login($user['id'], $user['role'], $user);
 
         $this->flash('success', 'Welcome back, ' . $user['name'] . '!');
-        $this->redirect('/dashboard');
+        
+        if ($user['role'] === 'player') {
+            $this->redirect('/player-panel');
+        } else {
+            $this->redirect('/dashboard');
+        }
     }
 
     /**

@@ -18,22 +18,35 @@ $assetVer = (string)max(
     @filemtime(PUBLIC_PATH . '/assets/js/main.js') ?: 0
 );
 
-$navItems = [
-    '/dashboard' => ['label' => 'داشبورد', 'icon' => '🏠'],
-    '/players' => ['label' => 'بازیکنان', 'icon' => '⚽'],
-    '/payments' => ['label' => 'مالی', 'icon' => '💰'],
-    '/attendance' => ['label' => 'حضور', 'icon' => '📋'],
-];
+if ($userRole === 'player') {
+    $navItems = [
+        '/player-panel' => ['label' => 'داشبورد', 'icon' => '🏠'],
+        '/player-panel/financial' => ['label' => 'وضعیت مالی', 'icon' => '💰'],
+        '/player-panel/attendance' => ['label' => 'حضور و غیاب', 'icon' => '📋'],
+        '/player-panel/profile' => ['label' => 'مشخصات فردی', 'icon' => '👤'],
+        '/player-panel/alerts' => ['label' => 'اعلانات', 'icon' => '📢'],
+    ];
+    $moreNavItems = [];
+} else {
+    $navItems = [
+        '/dashboard' => ['label' => 'داشبورد', 'icon' => '🏠'],
+        '/players' => ['label' => 'بازیکنان', 'icon' => '⚽'],
+        '/payments' => ['label' => 'مالی', 'icon' => '💰'],
+        '/attendance' => ['label' => 'حضور', 'icon' => '📋'],
+    ];
 
-$moreNavItems = [
-    '/medical' => ['label' => 'پزشکی', 'icon' => '🏥'],
-    '/sms/send' => ['label' => 'پیامک', 'icon' => '📱'],
-];
+    $moreNavItems = [
+        '/medical' => ['label' => 'پزشکی', 'icon' => '🏥'],
+        '/sms/send' => ['label' => 'پیامک', 'icon' => '📱'],
+        '/admin/alerts' => ['label' => 'اعلانات', 'icon' => '📢'],
+    ];
+}
 
 $isActive = static function (string $path) use ($currentPath): bool {
-    return $path === '/dashboard'
-        ? ($currentPath === '/' || $currentPath === '/dashboard')
-        : str_starts_with($currentPath, $path);
+    if ($path === '/dashboard' || $path === '/player-panel') {
+        return ($currentPath === '/' || $currentPath === '/dashboard' || $currentPath === '/player-panel');
+    }
+    return str_starts_with($currentPath, $path);
 };
 ?>
 <!DOCTYPE html>

@@ -1,0 +1,107 @@
+<?php
+/**
+ * Player Panel - Attendance View
+ */
+$attendance = $attendance ?? [];
+$stats = $stats ?? [];
+$rate = $stats['percentage'] ?? 0;
+?>
+
+<div style="margin-bottom: 24px;">
+    <p style="color: #666; font-size: 15px;">در این بخش می‌توانید درصد حضور و غیاب کلی، جزئیات حضور و تاخیرهای خود در جلسات تمرینی را مشاهده کنید.</p>
+</div>
+
+<!-- Attendance Statistics Grid -->
+<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 30px;">
+    <!-- Percentage Card -->
+    <div style="flex: 2; min-width: 280px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 20px; border-right: 4px solid <?= $rate >= 75 ? '#2ed573' : '#ff4757' ?>; display: flex; flex-direction: column; justify-content: center;">
+        <span style="font-size: 13px; color: #888; display: block; margin-bottom: 8px; font-weight: 600;">درصد کل حضور در جلسات</span>
+        <div style="display: flex; align-items: center; gap: 16px;">
+            <h3 style="font-size: 32px; font-weight: 800; margin: 0; color: <?= $rate >= 75 ? '#2ed573' : '#ff4757' ?>;">
+                <?= number_format($rate, 1) ?>٪
+            </h3>
+            <span style="font-size: 13px; color: #7f8c8d;">
+                (<?= $rate >= 75 ? 'وضعیت مطلوب' : 'هشدار: کمتر از حد مجاز ۷۵٪' ?>)
+            </span>
+        </div>
+        <div style="background: #f1f2f6; border-radius: 6px; height: 8px; width: 100%; overflow: hidden; margin-top: 12px;">
+            <div style="background: <?= $rate >= 75 ? '#2ed573' : '#ff4757' ?>; height: 100%; width: <?= $rate ?>%;"></div>
+        </div>
+    </div>
+
+    <!-- Tally Card -->
+    <div style="flex: 3; min-width: 320px; background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; text-align: center; align-items: center;">
+        <div style="background: #f1f9f5; padding: 12px; border-radius: 6px;">
+            <span style="font-size: 11px; color: #2ed573; display: block; font-weight: 600; margin-bottom: 4px;">حاضر ⚽</span>
+            <span style="font-size: 20px; font-weight: 700; color: #2ed573;"><?= $stats['present'] ?? 0 ?></span>
+        </div>
+        <div style="background: #fff5f5; padding: 12px; border-radius: 6px;">
+            <span style="font-size: 11px; color: #ff4757; display: block; font-weight: 600; margin-bottom: 4px;">غایب</span>
+            <span style="font-size: 20px; font-weight: 700; color: #ff4757;"><?= $stats['absent'] ?? 0 ?></span>
+        </div>
+        <div style="background: #f6f8fe; padding: 12px; border-radius: 6px;">
+            <span style="font-size: 11px; color: #3742fa; display: block; font-weight: 600; margin-bottom: 4px;">موجه</span>
+            <span style="font-size: 20px; font-weight: 700; color: #3742fa;"><?= $stats['excused'] ?? 0 ?></span>
+        </div>
+        <div style="background: #fffbf0; padding: 12px; border-radius: 6px;">
+            <span style="font-size: 11px; color: #ffa502; display: block; font-weight: 600; margin-bottom: 4px;">تأخیر</span>
+            <span style="font-size: 20px; font-weight: 700; color: #ffa502;"><?= $stats['late'] ?? 0 ?></span>
+        </div>
+    </div>
+</div>
+
+<!-- Attendance Log Card -->
+<div class="card" style="background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 24px;">
+    <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 12px;">📋 تاریخچه جلسات تمرینی</h3>
+
+    <?php if (empty($attendance)): ?>
+        <p style="color: #888; text-align: center; padding: 30px 0;">سوابق حضوری برای حساب شما ثبت نشده است.</p>
+    <?php else: ?>
+        <div style="overflow-x: auto;">
+            <table class="table" style="width: 100%; border-collapse: collapse; text-align: right;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #eee;">
+                        <th style="padding: 12px 8px; font-weight: 600; color: #888; width: 40%;">تاریخ جلسه</th>
+                        <th style="padding: 12px 8px; font-weight: 600; color: #888; width: 30%;">وضعیت حضور</th>
+                        <th style="padding: 12px 8px; font-weight: 600; color: #888; width: 30%;">توضیحات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($attendance as $record): ?>
+                        <tr style="border-bottom: 1px solid #f1f2f6;">
+                            <td style="padding: 14px 8px; font-size: 14px; font-weight: 600; color: #2c3e50;">
+                                <?= date(DISPLAY_DATE_FORMAT, strtotime($record['session_date'])) ?>
+                            </td>
+                            <td style="padding: 14px 8px;">
+                                <?php
+                                $status = (int)$record['status'];
+                                $badgeColor = '#ffa502';
+                                $labelText = 'نامشخص';
+                                if ($status === 1) {
+                                    $badgeColor = '#2ed573';
+                                    $labelText = 'حاضر ⚽';
+                                } elseif ($status === 2) {
+                                    $badgeColor = '#ff4757';
+                                    $labelText = 'غایب';
+                                } elseif ($status === 3) {
+                                    $badgeColor = '#3742fa';
+                                    $labelText = 'موجه';
+                                } elseif ($status === 4) {
+                                    $badgeColor = '#ffa502';
+                                    $labelText = 'تأخیر';
+                                }
+                                ?>
+                                <span class="badge" style="background: <?= $badgeColor ?>; color: white; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block;">
+                                    <?= $labelText ?>
+                                </span>
+                            </td>
+                            <td style="padding: 14px 8px; font-size: 13px; color: #7f8c8d;">
+                                <?= !empty($record['notes']) ? \App\Helpers\SecurityHelper::escape($record['notes']) : '-' ?>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endif; ?>
+</div>

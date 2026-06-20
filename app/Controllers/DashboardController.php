@@ -39,6 +39,10 @@ class DashboardController extends Controller
      */
     public function index(): void
     {
+        if ($this->getUserRole() === 'player') {
+            $this->redirect('/player-panel');
+        }
+
         $this->data['title'] = 'داشبورد';
 
         // Get statistics

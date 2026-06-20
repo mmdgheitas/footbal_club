@@ -112,6 +112,18 @@ class App
         $this->router->get('/admin/settings', 'AdminController', 'settings');
         $this->router->post('/admin/settings', 'AdminController', 'updateSettings');
 
+        // Player Panel Routes
+        $this->router->get('/player-panel', 'PlayerPanelController', 'index');
+        $this->router->get('/player-panel/financial', 'PlayerPanelController', 'financial');
+        $this->router->get('/player-panel/attendance', 'PlayerPanelController', 'attendance');
+        $this->router->get('/player-panel/profile', 'PlayerPanelController', 'profile');
+        $this->router->get('/player-panel/alerts', 'PlayerPanelController', 'alerts');
+
+        // Alert Admin Routes
+        $this->router->get('/admin/alerts', 'AlertController', 'index');
+        $this->router->post('/admin/alerts/create', 'AlertController', 'create');
+        $this->router->post('/admin/alerts/delete/{id}', 'AlertController', 'delete');
+
         // Error pages
         $this->router->get('/403', 'ErrorController', 'forbidden');
         $this->router->get('/404', 'ErrorController', 'notFound');

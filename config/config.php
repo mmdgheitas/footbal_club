@@ -97,6 +97,7 @@ define('ROLES', [
     'coach' => 'مربی',
     'accountant' => 'حسابدار',
     'secretary' => 'منشی',
+    'player' => 'بازیکن',
 ]);
 
 // Payment Status
