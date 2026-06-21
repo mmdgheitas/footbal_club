@@ -33,9 +33,9 @@ $canEdit = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
                        value="<?= \App\Helpers\SecurityHelper::escapeAttribute($medical['vaccination_status'] ?? '') ?>">
             </div>
             <div class="form-group">
-                <label for="last_exam_date">آخرین معاینه</label>
-                <input type="date" id="last_exam_date" name="last_exam_date"
-                       value="<?= \App\Helpers\SecurityHelper::escapeAttribute($medical['last_exam_date'] ?? '') ?>">
+                <label for="last_exam_date">آخرین معاینه (شمسی)</label>
+                <input type="text" class="jalali-date-input" id="last_exam_date" name="last_exam_date"
+                       value="<?= \App\Helpers\SecurityHelper::escapeAttribute(!empty($medical['last_exam_date']) ? \App\Helpers\JalaliHelper::toJalaliString($medical['last_exam_date']) : '') ?>">
             </div>
             <div class="form-group form-group-full">
                 <label for="allergies">آلرژی‌ها</label>
@@ -73,7 +73,7 @@ $canEdit = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
         </div>
         <div class="info-group">
             <label>آخرین معاینه:</label>
-            <span><?= !empty($medical['last_exam_date']) ? \App\Helpers\SecurityHelper::escape($medical['last_exam_date']) : 'ثبت نشده' ?></span>
+            <span><?= !empty($medical['last_exam_date']) ? \App\Helpers\SecurityHelper::escape(\App\Helpers\JalaliHelper::toJalaliString($medical['last_exam_date']) . ' (' . \App\Helpers\JalaliHelper::toJalaliText($medical['last_exam_date']) . ')') : 'ثبت نشده' ?></span>
         </div>
     </div>
     <?php endif; ?>
@@ -97,8 +97,8 @@ $canEdit = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
                     <tr>
                         <td><?= \App\Helpers\SecurityHelper::escape($injury['injury_type'] ?? '') ?></td>
                         <td><?= \App\Helpers\SecurityHelper::escape(ucfirst((string)($injury['severity'] ?? ''))) ?></td>
-                        <td><?= \App\Helpers\SecurityHelper::escape($injury['date_of_injury'] ?? '') ?></td>
-                        <td><?= !empty($injury['recovery_date']) ? \App\Helpers\SecurityHelper::escape($injury['recovery_date']) : 'در جریان' ?></td>
+                        <td><?= !empty($injury['date_of_injury']) ? \App\Helpers\SecurityHelper::escape(\App\Helpers\JalaliHelper::toJalaliString($injury['date_of_injury'])) : '' ?></td>
+                        <td><?= !empty($injury['recovery_date']) ? \App\Helpers\SecurityHelper::escape(\App\Helpers\JalaliHelper::toJalaliString($injury['recovery_date'])) : 'در جریان' ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>

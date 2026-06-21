@@ -16,6 +16,7 @@ class Player extends Model
     protected string $primaryKey = 'id';
     protected array $fillable = [
         'uuid',
+        'classroom_id',
         'name',
         'date_of_birth',
         'national_id',
@@ -40,6 +41,14 @@ class Player extends Model
 
         if ($player === null) {
             return null;
+        }
+
+        // Get classroom info
+        if (!empty($player['classroom_id'])) {
+            $classroomModel = new Classroom();
+            $player['classroom'] = $classroomModel->find((int)$player['classroom_id']);
+        } else {
+            $player['classroom'] = null;
         }
 
         // Get guardian information
@@ -245,5 +254,68 @@ class Player extends Model
     {
         $query = "UPDATE {$this->table} SET deleted_at = NULL WHERE id = ?";
         return $this->db->execute($query, [$id]) > 0;
+    }
+
+    /**
+     * Get players belonging to a classroom
+     *
+     * @param int $classroomId
+     * @return array
+     */
+    public function getByClassroom(int $classroomId): array
+    {
+        $query = "SELECT * FROM {$this->table} WHERE classroom_id = ? AND status = 1 AND deleted_at IS NULL ORDER BY name ASC";
+        return $this->db->findAll($query, [$classroomId]);
+    }
+
+    /**
+     * Get paginated and filtered players list with classroom names
+     */
+    public function getPlayersList(int $page = 1, string $search = '', ?int $classroomId = null, int $perPage = ITEMS_PER_PAGE): array
+    {
+        $page = max(1, $page);
+        $offset = ($page - 1) * $perPage;
+        
+        $params = [];
+        $whereClauses = ["p.deleted_at IS NULL"];
+        
+        if (!empty($search)) {
+            $whereClauses[] = "(p.name LIKE ? OR p.national_id LIKE ? OR p.email LIKE ?)";
+            $pattern = '%' . $search . '%';
+            $params[] = $pattern;
+            $params[] = $pattern;
+            $params[] = $pattern;
+        }
+        
+        if ($classroomId !== null && $classroomId > 0) {
+            $whereClauses[] = "p.classroom_id = ?";
+            $params[] = $classroomId;
+        }
+        
+        $whereStr = implode(" AND ", $whereClauses);
+        
+        // Count query
+        $countQuery = "SELECT COUNT(*) as count FROM {$this->table} p WHERE {$whereStr}";
+        $countResult = $this->db->findOne($countQuery, $params);
+        $total = (int)($countResult['count'] ?? 0);
+        
+        // Select query with join
+        $selectQuery = "SELECT p.*, c.name as classroom_name 
+                        FROM {$this->table} p 
+                        LEFT JOIN fc_classrooms c ON p.classroom_id = c.id 
+                        WHERE {$whereStr} 
+                        ORDER BY p.name ASC 
+                        LIMIT {$perPage} OFFSET {$offset}";
+                        
+        $data = $this->db->findAll($selectQuery, $params);
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'last_page' => (int)ceil($total / $perPage),
+            'has_more' => $offset + count($data) < $total,
+        ];
     }
 }

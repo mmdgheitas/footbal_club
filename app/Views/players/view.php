@@ -37,10 +37,12 @@ $canViewMedical = \App\Middleware\RbacMiddleware::hasPermission('view_medical');
         <div class="info-card">
             <h4>اطلاعات شخصی</h4>
             <dl>
+                <dt>کلاس (تیم)</dt>
+                <dd><strong><?= \App\Helpers\SecurityHelper::escape($player['classroom']['name'] ?? 'بدون کلاس') ?></strong></dd>
                 <dt>کد ملی</dt>
                 <dd><?= \App\Helpers\SecurityHelper::escape($player['national_id'] ?? '-') ?></dd>
                 <dt>تاریخ تولد</dt>
-                <dd><?= \App\Helpers\SecurityHelper::escape($player['date_of_birth'] ?? '-') ?></dd>
+                <dd><?= \App\Helpers\SecurityHelper::escape($player['date_of_birth'] ? \App\Helpers\JalaliHelper::toJalaliString($player['date_of_birth']) . ' (' . \App\Helpers\JalaliHelper::toJalaliText($player['date_of_birth']) . ')' : '-') ?></dd>
                 <dt>تلفن</dt>
                 <dd><?= \App\Helpers\SecurityHelper::escape($player['phone'] ?? '-') ?></dd>
                 <dt>ایمیل</dt>

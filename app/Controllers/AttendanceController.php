@@ -38,16 +38,59 @@ class AttendanceController extends Controller
     {
         RbacMiddleware::requirePermission('mark_attendance');
 
-        $sessionDate = SecurityHelper::sanitizeString($this->get('date') ?? date(DATE_FORMAT));
+        $dateParam = SecurityHelper::sanitizeString($this->get('date') ?? '');
+        $classroomId = $this->get('classroom_id') ? (int)$this->get('classroom_id') : 0;
 
-        // Validate date
-        $dateObj = \DateTime::createFromFormat(DATE_FORMAT, $sessionDate);
-        if ($dateObj === false) {
-            $sessionDate = date(DATE_FORMAT);
+        // Fetch classrooms list
+        $classroomModel = new \App\Models\Classroom();
+        $classrooms = $classroomModel->all();
+
+        // Default to first classroom if none selected
+        if ($classroomId === 0 && !empty($classrooms)) {
+            $classroomId = (int)$classrooms[0]['id'];
         }
 
-        $players = $this->playerModel->getActive();
-        $attendance = $this->attendanceModel->getBySessionDate($sessionDate);
+        // Determine Gregorian and Jalali dates
+        $sessionDateGregorian = '';
+        $sessionDateJalali = '';
+
+        if (empty($dateParam)) {
+            $sessionDateGregorian = date(DATE_FORMAT);
+            $sessionDateJalali = \App\Helpers\JalaliHelper::toJalaliString($sessionDateGregorian);
+        } else {
+            // Check if Jalali
+            $normalized = str_replace('-', '/', trim($dateParam));
+            $normalized = \App\Helpers\JalaliHelper::persianToLatinNumbers($normalized);
+            $parts = explode('/', $normalized);
+            if (count($parts) === 3) {
+                $year = (int)$parts[0];
+                if ($year >= 1300 && $year <= 1500) {
+                    $sessionDateGregorian = \App\Helpers\JalaliHelper::toGregorianString($dateParam);
+                    $sessionDateJalali = $normalized;
+                } else {
+                    $sessionDateGregorian = $dateParam;
+                    $sessionDateJalali = \App\Helpers\JalaliHelper::toJalaliString($dateParam);
+                }
+            } else {
+                $sessionDateGregorian = date(DATE_FORMAT);
+                $sessionDateJalali = \App\Helpers\JalaliHelper::toJalaliString($sessionDateGregorian);
+            }
+        }
+
+        // Validate Gregorian date
+        $dateObj = \DateTime::createFromFormat(DATE_FORMAT, $sessionDateGregorian);
+        if ($dateObj === false) {
+            $sessionDateGregorian = date(DATE_FORMAT);
+            $sessionDateJalali = \App\Helpers\JalaliHelper::toJalaliString($sessionDateGregorian);
+        }
+
+        // Fetch players for the classroom
+        $players = [];
+        if ($classroomId > 0) {
+            $players = $this->playerModel->getByClassroom($classroomId);
+        }
+
+        $attendance = $this->attendanceModel->getBySessionDate($sessionDateGregorian);
 
         // Create attendance map
         $attendanceMap = [];
@@ -56,7 +99,10 @@ class AttendanceController extends Controller
         }
 
         $this->data['title'] = 'حضور و غیاب';
-        $this->data['session_date'] = $sessionDate;
+        $this->data['session_date'] = $sessionDateGregorian;
+        $this->data['session_date_jalali'] = $sessionDateJalali;
+        $this->data['classrooms'] = $classrooms;
+        $this->data['selected_classroom_id'] = $classroomId;
         $this->data['players'] = $players;
         $this->data['attendance_map'] = $attendanceMap;
         $this->data['attendance_status'] = ATTENDANCE_STATUS_LABELS;
@@ -97,6 +143,17 @@ class AttendanceController extends Controller
         if (empty($sessionDate)) {
             $this->json(['error' => 'Session date is required'], 422);
             return;
+        }
+
+        // Convert session date if Jalali
+        $normalized = str_replace('-', '/', trim($sessionDate));
+        $normalized = \App\Helpers\JalaliHelper::persianToLatinNumbers($normalized);
+        $parts = explode('/', $normalized);
+        if (count($parts) === 3) {
+            $year = (int)$parts[0];
+            if ($year >= 1300 && $year <= 1500) {
+                $sessionDate = \App\Helpers\JalaliHelper::toGregorianString($sessionDate);
+            }
         }
 
         if (!defined('ATTENDANCE_STATUS') || !in_array($status, ATTENDANCE_STATUS, true)) {

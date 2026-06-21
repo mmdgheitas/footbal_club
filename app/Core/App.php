@@ -85,6 +85,17 @@ class App
         $this->router->get('/player/view/{id}', 'PlayerController', 'view');
         $this->router->post('/player/delete/{id}', 'PlayerController', 'delete');
 
+        // Classroom Routes
+        $this->router->get('/classrooms', 'ClassroomController', 'index');
+        $this->router->get('/classroom/create', 'ClassroomController', 'create');
+        $this->router->post('/classroom/store', 'ClassroomController', 'store');
+        $this->router->get('/classroom/edit/{id}', 'ClassroomController', 'edit');
+        $this->router->post('/classroom/update/{id}', 'ClassroomController', 'update');
+        $this->router->get('/classroom/view/{id}', 'ClassroomController', 'view');
+        $this->router->post('/classroom/delete/{id}', 'ClassroomController', 'delete');
+        $this->router->post('/classroom/add-player/{id}', 'ClassroomController', 'addPlayer');
+        $this->router->post('/classroom/remove-player/{id}', 'ClassroomController', 'removePlayer');
+
         // Financial Routes
         $this->router->get('/payments', 'FinancialController', 'index');
         $this->router->post('/payment/record', 'FinancialController', 'record');

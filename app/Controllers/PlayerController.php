@@ -47,18 +47,19 @@ class PlayerController extends Controller
 
         $page = (int)($this->get('page') ?? 1);
         $search = SecurityHelper::sanitizeString($this->get('search') ?? '');
+        $classroomId = $this->get('classroom_id') ? (int)$this->get('classroom_id') : null;
 
-        $players = [];
-        if (!empty($search)) {
-            $players = $this->playerModel->search($search);
-        } else {
-            $paginated = $this->playerModel->paginate($page);
-            $players = $paginated['data'];
-            $this->data['pagination'] = $paginated;
-        }
+        $classroomModel = new \App\Models\Classroom();
+        $classrooms = $classroomModel->all();
 
-        $this->data['title'] = 'Players';
+        $paginated = $this->playerModel->getPlayersList($page, $search, $classroomId);
+        $players = $paginated['data'];
+        $this->data['pagination'] = $paginated;
+
+        $this->data['title'] = 'بازیکنان';
         $this->data['players'] = $players;
+        $this->data['classrooms'] = $classrooms;
+        $this->data['selected_classroom_id'] = $classroomId;
         $this->data['search'] = $search;
         $this->data['csrf_token'] = $this->generateCsrf();
 
@@ -74,7 +75,10 @@ class PlayerController extends Controller
     {
         RbacMiddleware::requirePermission('manage_players');
 
-        $this->data['title'] = 'Add Player';
+        $classroomModel = new \App\Models\Classroom();
+        $this->data['classrooms'] = $classroomModel->all();
+
+        $this->data['title'] = 'افزودن بازیکن';
         $this->data['positions'] = PLAYER_POSITIONS;
         $this->data['csrf_token'] = $this->generateCsrf();
 
@@ -95,9 +99,24 @@ class PlayerController extends Controller
             return;
         }
 
+        $rawDob = $this->post('date_of_birth') ?? '';
+        $dob = $rawDob;
+        if (!empty($rawDob)) {
+            $normalized = str_replace('-', '/', trim((string)$rawDob));
+            $normalized = \App\Helpers\JalaliHelper::persianToLatinNumbers($normalized);
+            $parts = explode('/', $normalized);
+            if (count($parts) === 3) {
+                $year = (int)$parts[0];
+                if ($year >= 1300 && $year <= 1500) {
+                    $dob = \App\Helpers\JalaliHelper::toGregorianString((string)$rawDob);
+                }
+            }
+        }
+
         $data = [
             'name' => SecurityHelper::sanitizeString($this->post('name') ?? ''),
-            'date_of_birth' => $this->post('date_of_birth') ?? '',
+            'date_of_birth' => $dob,
+            'classroom_id' => $this->post('classroom_id') ? (int)$this->post('classroom_id') : null,
             'national_id' => SecurityHelper::sanitizeString($this->post('national_id') ?? ''),
             'position' => $this->post('position') ?? '',
             'phone' => SecurityHelper::sanitizeString($this->post('phone') ?? ''),
@@ -157,7 +176,15 @@ class PlayerController extends Controller
             $this->redirect('/players');
         }
 
-        $this->data['title'] = 'Edit Player';
+        // Convert date of birth to Jalali format YYYY/MM/DD
+        if (!empty($player['date_of_birth'])) {
+            $player['date_of_birth'] = \App\Helpers\JalaliHelper::toJalaliString($player['date_of_birth']);
+        }
+
+        $classroomModel = new \App\Models\Classroom();
+        $this->data['classrooms'] = $classroomModel->all();
+
+        $this->data['title'] = 'ویرایش بازیکن';
         $this->data['player'] = $player;
         $this->data['positions'] = PLAYER_POSITIONS;
         $this->data['csrf_token'] = $this->generateCsrf();
@@ -188,9 +215,24 @@ class PlayerController extends Controller
             return;
         }
 
+        $rawDob = $this->post('date_of_birth') ?? '';
+        $dob = $rawDob;
+        if (!empty($rawDob)) {
+            $normalized = str_replace('-', '/', trim((string)$rawDob));
+            $normalized = \App\Helpers\JalaliHelper::persianToLatinNumbers($normalized);
+            $parts = explode('/', $normalized);
+            if (count($parts) === 3) {
+                $year = (int)$parts[0];
+                if ($year >= 1300 && $year <= 1500) {
+                    $dob = \App\Helpers\JalaliHelper::toGregorianString((string)$rawDob);
+                }
+            }
+        }
+
         $data = [
             'name' => SecurityHelper::sanitizeString($this->post('name') ?? ''),
-            'date_of_birth' => $this->post('date_of_birth') ?? '',
+            'date_of_birth' => $dob,
+            'classroom_id' => $this->post('classroom_id') ? (int)$this->post('classroom_id') : null,
             'national_id' => SecurityHelper::sanitizeString($this->post('national_id') ?? ''),
             'position' => $this->post('position') ?? '',
             'phone' => SecurityHelper::sanitizeString($this->post('phone') ?? ''),

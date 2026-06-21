@@ -31,8 +31,8 @@ $pageHeading = $isEdit ? 'ویرایش بازیکن' : 'افزودن بازیک�
             </div>
 
             <div class="form-group">
-                <label for="date_of_birth">تاریخ تولد *</label>
-                <input type="date" id="date_of_birth" name="date_of_birth" required
+                <label for="date_of_birth">تاریخ تولد (شمسی) *</label>
+                <input type="text" class="jalali-date-input" id="date_of_birth" name="date_of_birth" required
                        value="<?= \App\Helpers\SecurityHelper::escapeAttribute($player['date_of_birth'] ?? '') ?>">
             </div>
 
@@ -50,6 +50,19 @@ $pageHeading = $isEdit ? 'ویرایش بازیکن' : 'افزودن بازیک�
                         <option value="<?= \App\Helpers\SecurityHelper::escapeAttribute($key) ?>"
                             <?= ($player['position'] ?? '') === $key ? 'selected' : '' ?>>
                             <?= \App\Helpers\SecurityHelper::escape($label) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="classroom_id">کلاس</label>
+                <select id="classroom_id" name="classroom_id">
+                    <option value="">بدون کلاس...</option>
+                    <?php foreach ($classrooms ?? [] as $cls): ?>
+                        <option value="<?= (int)$cls['id'] ?>"
+                            <?= (int)($player['classroom_id'] ?? 0) === (int)$cls['id'] ? 'selected' : '' ?>>
+                            <?= \App\Helpers\SecurityHelper::escape($cls['name']) ?>
                         </option>
                     <?php endforeach; ?>
                 </select>

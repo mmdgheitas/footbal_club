@@ -20,6 +20,7 @@ const APP = {
         this.initDashboardCounters();
         this.initMobileTables();
         this.initFloatingDecor();
+        this.initJalaliInputs();
     },
 
     setupNav() {
@@ -342,6 +343,56 @@ const APP = {
         }
 
         return await response.json();
+    },
+
+    initJalaliInputs() {
+        document.querySelectorAll('.jalali-date-input').forEach((input) => {
+            input.setAttribute('placeholder', 'مثال: ۱۴۰۵/۰۳/۳۱');
+            input.setAttribute('maxlength', '10');
+            
+            // Format input as user types
+            input.addEventListener('input', function() {
+                let val = this.value;
+                
+                // Convert Persian numbers to English
+                const persianDigits = [/۰/g, /۱/g, /۲/g, /۳/g, /۴/g, /۵/g, /۶/g, /۷/g, /۸/g, /۹/g];
+                for (let i = 0; i < 10; i++) {
+                    val = val.replace(persianDigits[i], i.toString());
+                }
+                // Strip non-digits
+                val = val.replace(/[^0-9]/g, '');
+                
+                let formatted = '';
+                if (val.length > 0) {
+                    formatted = val.substring(0, 4);
+                }
+                if (val.length > 4) {
+                    formatted += '/' + val.substring(4, 6);
+                }
+                if (val.length > 6) {
+                    formatted += '/' + val.substring(6, 8);
+                }
+                this.value = formatted;
+            });
+            
+            // Validate on blur
+            input.addEventListener('blur', function() {
+                if (this.value === '') return;
+                const parts = this.value.split('/');
+                let valid = false;
+                if (parts.length === 3) {
+                    const y = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10);
+                    const d = parseInt(parts[2], 10);
+                    if (y >= 1300 && y <= 1500 && m >= 1 && m <= 12 && d >= 1 && d <= 31) {
+                        valid = true;
+                    }
+                }
+                if (!valid) {
+                    APP.showMessage('warning', 'تاریخ وارد شده معتبر نیست. لطفاً فرمت YYYY/MM/DD (مثل ۱۳۸۸/۰۵/۲۴) را رعایت کنید.');
+                }
+            });
+        });
     },
 };
 

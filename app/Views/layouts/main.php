@@ -30,6 +30,7 @@ if ($userRole === 'player') {
 } else {
     $navItems = [
         '/dashboard' => ['label' => 'داشبورد', 'icon' => '🏠'],
+        '/classrooms' => ['label' => 'کلاس‌ها', 'icon' => '🏫'],
         '/players' => ['label' => 'بازیکنان', 'icon' => '⚽'],
         '/payments' => ['label' => 'مالی', 'icon' => '💰'],
         '/attendance' => ['label' => 'حضور', 'icon' => '📋'],

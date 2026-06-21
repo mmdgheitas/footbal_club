@@ -106,13 +106,28 @@ class MedicalController extends Controller
             return;
         }
 
+        $examDate = trim((string)($this->post('last_exam_date') ?? ''));
+        if ($examDate !== '') {
+            $normalized = str_replace('-', '/', $examDate);
+            $normalized = \App\Helpers\JalaliHelper::persianToLatinNumbers($normalized);
+            $parts = explode('/', $normalized);
+            if (count($parts) === 3) {
+                $year = (int)$parts[0];
+                if ($year >= 1300 && $year <= 1500) {
+                    $examDate = \App\Helpers\JalaliHelper::toGregorianString($examDate);
+                }
+            }
+        } else {
+            $examDate = null;
+        }
+
         $data = [
             'player_id' => $playerId,
             'blood_type' => SecurityHelper::sanitizeString($this->post('blood_type') ?? ''),
             'allergies' => SecurityHelper::sanitizeString($this->post('allergies') ?? ''),
             'medical_conditions' => SecurityHelper::sanitizeString($this->post('medical_conditions') ?? ''),
             'vaccination_status' => SecurityHelper::sanitizeString($this->post('vaccination_status') ?? ''),
-            'last_exam_date' => ($examDate = trim((string)($this->post('last_exam_date') ?? ''))) !== '' ? $examDate : null,
+            'last_exam_date' => $examDate,
             'exam_notes' => SecurityHelper::sanitizeString($this->post('exam_notes') ?? ''),
         ];
 
