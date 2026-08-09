@@ -171,11 +171,6 @@ class App
         $this->router->post('/admin/alerts/delete/{id}', 'AlertController', 'delete');
         $this->router->get('/my-alerts', 'AlertController', 'myAlerts');
 
-        // Alert Admin Routes
-        $this->router->get('/admin/alerts', 'AlertController', 'index');
-        $this->router->post('/admin/alerts/create', 'AlertController', 'create');
-        $this->router->post('/admin/alerts/delete/{id}', 'AlertController', 'delete');
-
         // Error pages
         $this->router->get('/403', 'ErrorController', 'forbidden');
         $this->router->get('/404', 'ErrorController', 'notFound');

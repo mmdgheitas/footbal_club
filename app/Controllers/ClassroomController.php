@@ -36,31 +36,11 @@ class ClassroomController extends Controller
     {
         parent::checkAuth();
         
-        // Check permissions based on action
-        $action = $this->getCurrentAction();
-        
-        if ($action === 'index' || $action === 'view') {
-            // View access for super_admin, coach, secretary
-            if (!RbacMiddleware::hasAnyPermission(['manage_classrooms', 'view_classrooms', 'view_players'])) {
-                $this->redirect('/403');
-            }
-        } else {
-            // Manage access for super_admin only
-            if (!RbacMiddleware::hasPermission('manage_classrooms')) {
-                $this->redirect('/403');
-            }
+        // Only super_admin and coach are allowed to access classrooms
+        $role = $this->getUserRole();
+        if ($role !== 'super_admin' && $role !== 'coach' && $role !== 'secretary') {
+            $this->redirect('/403');
         }
-    }
-
-    /**
-     * Get current action name
-     *
-     * @return string
-     */
-    private function getCurrentAction(): string
-    {
-        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        return $backtrace[1]['function'] ?? 'index';
     }
 
     /**
