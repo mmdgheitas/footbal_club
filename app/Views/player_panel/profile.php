@@ -14,7 +14,7 @@ $injuries = $player['injuries'] ?? [];
 
 <!-- Tab Navigation -->
 <div style="display: flex; border-bottom: 2px solid #eee; margin-bottom: 24px; gap: 10px;">
-    <button type="button" class="tab-btn active" onclick="switchTab('player-info', this)" style="padding: 12px 20px; font-size: 15px; font-weight: 600; background: none; border: none; border-bottom: 3px solid #3498db; color: #3498db; cursor: pointer; transition: all 0.2s;">👤 مشخصات بازیکن</button>
+    <button type="button" class="tab-btn active" onclick="switchTab('player-info', this)" style="padding: 12px 20px; font-size: 15px; font-weight: 600; background: none; border: none; border-bottom: 3px solid #3498db; color: #3498db; cursor: pointer; transition: all 0.2s;"> مشخصات بازیکن</button>
     <button type="button" class="tab-btn" onclick="switchTab('guardian-info', this)" style="padding: 12px 20px; font-size: 15px; font-weight: 600; background: none; border: none; border-bottom: 3px solid transparent; color: #666; cursor: pointer; transition: all 0.2s;">👥 اطلاعات ولی / سرپرست</button>
     <button type="button" class="tab-btn" onclick="switchTab('medical-info', this)" style="padding: 12px 20px; font-size: 15px; font-weight: 600; background: none; border: none; border-bottom: 3px solid transparent; color: #666; cursor: pointer; transition: all 0.2s;">🏥 پرونده پزشکی و مصدومیت‌ها</button>
 </div>
@@ -24,7 +24,7 @@ $injuries = $player['injuries'] ?? [];
     <!-- Tab 1: Player Info -->
     <div id="player-info" class="tab-content" style="display: block;">
         <div class="card" style="background: white; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); padding: 24px;">
-            <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 12px;">👤 شناسنامه ورزشی بازیکن</h3>
+            <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 20px 0; color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 12px;"> شناسنامه ورزشی بازیکن</h3>
             
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
                 <div style="padding: 10px; background: #faf9f6; border-radius: 6px;">

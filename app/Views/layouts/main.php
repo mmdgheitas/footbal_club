@@ -23,7 +23,7 @@ if ($userRole === 'player') {
         '/player-panel' => ['label' => 'داشبورد', 'icon' => '🏠'],
         '/player-panel/financial' => ['label' => 'وضعیت مالی', 'icon' => '💰'],
         '/player-panel/attendance' => ['label' => 'حضور و غیاب', 'icon' => '📋'],
-        '/player-panel/profile' => ['label' => 'مشخصات فردی', 'icon' => '👤'],
+        '/player-panel/profile' => ['label' => 'مشخصات فردی', 'icon' => ''],
         '/player-panel/alerts' => ['label' => 'اعلانات', 'icon' => '📢'],
     ];
     $moreNavItems = [];
@@ -111,7 +111,7 @@ $isActive = static function (string $path) use ($currentPath): bool {
             </nav>
 
             <div class="user-menu">
-                <span class="user-badge">👤 <?= \App\Helpers\SecurityHelper::escape($currentUser['name'] ?? 'کاربر') ?></span>
+                <span class="user-badge"> <?= \App\Helpers\SecurityHelper::escape($currentUser['name'] ?? 'کاربر') ?></span>
                 <a href="<?= APP_URL ?>/logout" class="btn-logout">خروج</a>
             </div>
         </header>

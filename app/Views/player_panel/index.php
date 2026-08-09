@@ -57,7 +57,7 @@ $player = $player ?? [];
     <div class="card" style="border-right: 4px solid #3498db; background: white; padding: 24px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
             <span style="font-size: 14px; color: #888; font-weight: 600;">پروفایل بازیکن</span>
-            <span style="font-size: 24px;">👤</span>
+            <span style="font-size: 24px;"></span>
         </div>
         <h3 style="font-size: 18px; font-weight: 700; margin: 0 0 6px 0; color: #2c3e50;">
             پست: <?= \App\Helpers\SecurityHelper::escape(PLAYER_POSITIONS[$player['position']] ?? $player['position']) ?>

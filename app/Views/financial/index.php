@@ -70,7 +70,7 @@ $playersList = $players_list ?? [];
 
             <div class="form-group">
                 <label for="amount">مبلغ ($)</label>
-                <input type="number" id="amount" name="amount" step="0.01" min="0.01" required>
+                <input type="text" id="amount" name="amount" step="0.01" min="0.01" required>
             </div>
 
             <div class="form-group">
@@ -118,5 +118,45 @@ document.getElementById('recordForm')?.addEventListener('submit', function(e) {
         })
         .catch(() => APP.showMessage('error', 'خطای شبکه'))
         .finally(() => btn.classList.remove('loading'));
+});
+
+const amountInput = document.getElementById('amount');
+
+amountInput.addEventListener('input', function (e) {
+    let value = e.target.value;
+
+    // حذف کاماهای قبلی
+    value = value.replace(/,/g, '');
+
+    // فقط عدد و یک نقطه اعشار مجاز است
+    value = value.replace(/[^\d.]/g, '');
+
+    // جلوگیری از وارد کردن چند نقطه
+    const parts = value.split('.');
+    if (parts.length > 2) {
+        value = parts[0] + '.' + parts.slice(1).join('');
+    }
+
+    let integerPart = parts[0] || '';
+    let decimalPart = parts.length > 1 ? parts[1] : null;
+
+    // محدود کردن اعشار به دو رقم
+    if (decimalPart !== null) {
+        decimalPart = decimalPart.slice(0, 2);
+    }
+
+    // حذف صفرهای اضافی ابتدای عدد، به جز خود صفر
+    integerPart = integerPart.replace(/^0+(?=\d)/, '');
+
+    // جدا کردن سه‌رقم سه‌رقم
+    if (integerPart) {
+        integerPart = Number(integerPart).toLocaleString('en-US');
+    }
+
+    // ساخت مقدار نهایی
+    e.target.value =
+        decimalPart !== null
+            ? `${integerPart}.${decimalPart}`
+            : integerPart;
 });
 </script>

@@ -12,7 +12,7 @@ $csrfToken = $csrf_token ?? '';
             <input type="hidden" name="_csrf_token" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($csrfToken) ?>">
 
             <div class="form-group">
-                <label for="name">👤 نام کامل</label>
+                <label for="name"> نام کامل</label>
                 <input type="text" id="name" name="name" required>
             </div>
 
