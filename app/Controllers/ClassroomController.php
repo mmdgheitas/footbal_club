@@ -36,11 +36,42 @@ class ClassroomController extends Controller
     {
         parent::checkAuth();
         
-        // Only super_admin and coach are allowed to access classrooms
-        $role = $this->getUserRole();
-        if ($role !== 'super_admin' && $role !== 'coach') {
-            $this->redirect('/403');
+        // Check permissions based on action
+        $action = $this->getCurrentAction();
+        
+        if ($action === 'index' || $action === 'view') {
+            // View access for super_admin, coach, secretary
+            if (!RbacMiddleware::hasAnyPermission(['manage_classrooms', 'view_classrooms', 'view_players'])) {
+                $this->redirect('/403');
+            }
+        } else {
+            // Manage access for super_admin only
+            if (!RbacMiddleware::hasPermission('manage_classrooms')) {
+                $this->redirect('/403');
+            }
         }
+    }
+
+    /**
+     * Get current action name
+     *
+     * @return string
+     */
+    private function getCurrentAction(): string
+    {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        return $backtrace[1]['function'] ?? 'index';
+    }
+
+    /**
+     * Check if user can manage classrooms (admin only)
+     *
+     * @return bool
+     */
+    private function canManageClassrooms(): bool
+    {
+        $role = $this->getUserRole();
+        return $role === 'super_admin';
     }
 
     /**
@@ -64,10 +95,14 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Create classroom view
+     * Create classroom view (admin only)
      */
     public function create(): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->redirect('/403');
+        }
+        
         $this->data['title'] = 'کلاس جدید';
         $this->data['classroom'] = null;
         $this->data['csrf_token'] = $this->generateCsrf();
@@ -76,10 +111,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Store new classroom
+     * Store new classroom (admin only)
      */
     public function store(): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->json(['error' => 'Unauthorized'], 403);
+            return;
+        }
+        
         if (!$this->validateCsrf()) {
             $this->json(['error' => 'Invalid CSRF token'], 403);
             return;
@@ -87,6 +127,7 @@ class ClassroomController extends Controller
 
         $name = SecurityHelper::sanitizeString($this->post('name') ?? '');
         $description = SecurityHelper::sanitizeString($this->post('description') ?? '');
+        $coachId = $this->post('coach_id') ? (int)$this->post('coach_id') : null;
 
         if (empty($name)) {
             $this->json(['error' => 'نام کلاس الزامی است'], 422);
@@ -102,6 +143,7 @@ class ClassroomController extends Controller
         $classroomId = $this->classroomModel->createClassroom([
             'name' => $name,
             'description' => $description,
+            'coach_id' => $coachId,
         ]);
 
         if (!$classroomId) {
@@ -117,10 +159,14 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Edit classroom view
+     * Edit classroom view (admin only)
      */
     public function edit(string $id): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->redirect('/403');
+        }
+        
         $classroomId = (int)$id;
         $classroom = $this->classroomModel->find($classroomId);
 
@@ -136,10 +182,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Update classroom
+     * Update classroom (admin only)
      */
     public function update(string $id): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->json(['error' => 'Unauthorized'], 403);
+            return;
+        }
+        
         if (!$this->validateCsrf()) {
             $this->json(['error' => 'Invalid CSRF token'], 403);
             return;
@@ -155,6 +206,7 @@ class ClassroomController extends Controller
 
         $name = SecurityHelper::sanitizeString($this->post('name') ?? '');
         $description = SecurityHelper::sanitizeString($this->post('description') ?? '');
+        $coachId = $this->post('coach_id') ? (int)$this->post('coach_id') : null;
 
         if (empty($name)) {
             $this->json(['error' => 'نام کلاس الزامی است'], 422);
@@ -168,7 +220,7 @@ class ClassroomController extends Controller
             return;
         }
 
-        if (!$this->classroomModel->update($classroomId, ['name' => $name, 'description' => $description])) {
+        if (!$this->classroomModel->update($classroomId, ['name' => $name, 'description' => $description, 'coach_id' => $coachId])) {
             $this->json(['error' => 'خطا در بروزرسانی اطلاعات'], 500);
             return;
         }
@@ -208,10 +260,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Add player to classroom
+     * Add player to classroom (admin only)
      */
     public function addPlayer(string $id): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->json(['error' => 'Unauthorized'], 403);
+            return;
+        }
+        
         if (!$this->validateCsrf()) {
             $this->json(['error' => 'Invalid CSRF token'], 403);
             return;
@@ -246,10 +303,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Remove player from classroom
+     * Remove player from classroom (admin only)
      */
     public function removePlayer(string $id): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->json(['error' => 'Unauthorized'], 403);
+            return;
+        }
+        
         if (!$this->validateCsrf()) {
             $this->json(['error' => 'Invalid CSRF token'], 403);
             return;
@@ -285,10 +347,15 @@ class ClassroomController extends Controller
     }
 
     /**
-     * Delete classroom
+     * Delete classroom (admin only)
      */
     public function delete(string $id): void
     {
+        if (!$this->canManageClassrooms()) {
+            $this->json(['error' => 'Unauthorized'], 403);
+            return;
+        }
+        
         if (!$this->validateCsrf()) {
             $this->json(['error' => 'Invalid CSRF token'], 403);
             return;

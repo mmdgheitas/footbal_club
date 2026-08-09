@@ -6,17 +6,19 @@ namespace App\Controllers;
 
 use App\Core\Controller;
 use App\Models\User;
+use App\Models\Player;
 use App\Middleware\AuthMiddleware;
 use App\Helpers\SecurityHelper;
 
 /**
  * Authentication Controller
- * PSR-12 compliant - Handles user login, registration, and logout
+ * Handles user login, registration, and logout
  */
 class AuthController extends Controller
 {
     protected string $layout = 'layouts.auth';
     private User $userModel;
+    private Player $playerModel;
 
     /**
      * Constructor
@@ -24,6 +26,7 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->userModel = new User();
+        $this->playerModel = new Player();
     }
 
     /**
@@ -87,6 +90,12 @@ class AuthController extends Controller
             $this->redirect('/login');
         }
 
+        // Check if player's documents are approved
+        if ($user['role'] === 'player' && $user['document_status'] !== 'approved') {
+            $this->flash('error', 'اسناد شما هنوز تأیید نشده است. لطفاً منتظر بمانید یا اسناد را آپلود کنید.');
+            $this->redirect('/login');
+        }
+
         // Login user
         AuthMiddleware::login($user['id'], $user['role'], $user);
 
@@ -115,7 +124,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Store new user
+     * Store new user (student registration)
      *
      * @return void
      */
@@ -137,6 +146,12 @@ class AuthController extends Controller
         $email = SecurityHelper::sanitizeString($this->post('email') ?? '');
         $password = $this->post('password') ?? '';
         $confirmPassword = $this->post('password_confirmation') ?? '';
+        
+        // Player-specific fields
+        $dateOfBirth = $this->post('date_of_birth') ?? '';
+        $nationalId = SecurityHelper::sanitizeString($this->post('national_id') ?? '');
+        $phone = SecurityHelper::sanitizeString($this->post('phone') ?? '');
+        $position = $this->post('position') ?? '';
 
         // Validate inputs
         $errors = [];
@@ -165,6 +180,23 @@ class AuthController extends Controller
         if ($password !== $confirmPassword) {
             $errors[] = 'Passwords do not match.';
         }
+        
+        // Validate player-specific fields
+        if (empty($dateOfBirth)) {
+            $errors[] = 'Date of birth is required.';
+        }
+        
+        if (empty($nationalId)) {
+            $errors[] = 'National ID is required.';
+        } elseif ($this->playerModel->findByNationalId($nationalId) !== null) {
+            $errors[] = 'National ID already registered.';
+        }
+        
+        if (empty($position)) {
+            $errors[] = 'Position is required.';
+        } elseif (!array_key_exists($position, PLAYER_POSITIONS)) {
+            $errors[] = 'Invalid position.';
+        }
 
         if (!empty($errors)) {
             foreach ($errors as $error) {
@@ -173,21 +205,44 @@ class AuthController extends Controller
             $this->redirect('/register');
         }
 
-        // Create user
+        // Create player first
+        $playerData = [
+            'name' => $name,
+            'date_of_birth' => $dateOfBirth,
+            'national_id' => $nationalId,
+            'position' => $position,
+            'phone' => $phone,
+            'email' => $email,
+            'medical_clearance' => 0, // Not cleared until documents are approved
+        ];
+        
+        $playerId = $this->playerModel->createPlayer($playerData);
+        
+        if (!$playerId) {
+            $this->flash('error', 'Failed to create player profile. Please try again.');
+            $this->redirect('/register');
+        }
+
+        // Create user linked to player
         $userId = $this->userModel->createUser([
             'name' => $name,
             'email' => $email,
             'password' => $password,
-            'role' => 'coach',
-            'status' => 1,
+            'phone' => $phone,
+            'role' => 'player',
+            'player_id' => $playerId,
+            'status' => 0, // Inactive until documents are approved
+            'document_status' => 'pending',
         ]);
 
         if (!$userId) {
+            // Clean up player if user creation failed
+            $this->playerModel->softDelete($playerId);
             $this->flash('error', 'Failed to create account. Please try again.');
             $this->redirect('/register');
         }
 
-        $this->flash('success', 'Account created successfully! Please log in.');
+        $this->flash('success', 'Account created successfully! Please upload your documents for approval.');
         $this->redirect('/login');
     }
 

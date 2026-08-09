@@ -1,0 +1,171 @@
+<?php
+/**
+ * Case Notes Index View
+ * List case notes for admin
+ */
+use App\Helpers\SecurityHelper;
+
+$noteTypeLabels = [
+    'general' => 'عمومی',
+    'medical' => 'پزشکی',
+    'disciplinary' => 'انظباطی',
+    'achievement' => 'دستاورد',
+    'concern' => 'نگرانی',
+];
+
+$severityLabels = [
+    'low' => 'کم',
+    'medium' => 'متوسط',
+    'high' => 'بالا',
+];
+
+?>
+
+<?php include __DIR__ . '/../layouts/main.php'; ?>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h2 class="mb-0">مدیریت پرونده‌ها</h2>
+                    <a href="<?= APP_URL . '/case-notes/create' ?>" class="btn btn-light">
+                        <i class="bi bi-plus"></i> افزودن یادداشت
+                    </a>
+                </div>
+                <div class="card-body">
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <form method="get" action="<?= APP_URL . '/case-notes' ?>">
+                                <div class="input-group">
+                                    <select name="player_id" class="form-select">
+                                        <option value="">همه بازیکنان</option>
+                                        <?php foreach ($players as $p): ?>
+                                            <option value="<?= $p['id'] ?>" 
+                                                <?= ($selected_player && $selected_player['id'] == $p['id']) ? 'selected' : '' ?>>
+                                                <?= SecurityHelper::escape($p['name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary">فیلتر</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <?php if (!empty($case_notes)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>بازیکن</th>
+                                        <th>عنوان</th>
+                                        <th>نوع</th>
+                                        <th>اولویت</th>
+                                        <th>تاریخ</th>
+                                        <th>ایجاد توسط</th>
+                                        <th>مشاهده توسط بازیکن</th>
+                                        <th>عملیات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($case_notes as $note): 
+                                        $severityClass = [
+                                            'low' => 'success',
+                                            'medium' => 'warning',
+                                            'high' => 'danger',
+                                        ][$note['severity']] ?? 'secondary';
+                                    ?>
+                                    <tr>
+                                        <td><?= SecurityHelper::escape($note['player_name'] ?? '') ?></td>
+                                        <td><?= SecurityHelper::escape($note['title'] ?? '') ?></td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                <?= $noteTypeLabels[$note['note_type']] ?? $note['note_type'] ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-<?= $severityClass ?>">
+                                                <?= $severityLabels[$note['severity']] ?? $note['severity'] ?>
+                                            </span>
+                                        </td>
+                                        <td><?= SecurityHelper::escape(date('Y/m/d H:i', strtotime($note['created_at'] ?? ''))) ?></td>
+                                        <td><?= SecurityHelper::escape($note['created_by_name'] ?? '') ?></td>
+                                        <td>
+                                            <span class="badge bg-<?= ($note['is_visible_to_player'] ? 'success' : 'secondary') ?>">
+                                                <?= ($note['is_visible_to_player'] ? 'بله' : 'خیر') ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a href="<?= APP_URL . '/case-notes/edit/' . $note['id'] ?>" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-sm btn-outline-<?= ($note['is_visible_to_player'] ? 'warning' : 'success') ?>"
+                                                    onclick="toggleVisibility(<?= $note['id'] ?>, <?= ($note['is_visible_to_player'] ? 'false' : 'true') ?>)">
+                                                <i class="bi bi-<?= ($note['is_visible_to_player'] ? 'eye-slash' : 'eye') ?>"></i>
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="deleteCaseNote(<?= $note['id'] ?>)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php else: ?>
+                        <div class="alert alert-info">
+                            هیچ یادداشت پرونده‌ای یافت نشد.
+                        </div>
+                    <?php endif; ?>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleVisibility(id, visible) {
+    if (confirm('آیا مطمئن هستید که می‌خواهید وضعیت مشاهده را تغییر دهید؟')) {
+        fetch('/case-notes/toggle-visibility/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-Token': '<?= $csrf_token ?>'
+            },
+            body: '_csrf_token=<?= $csrf_token ?>&visible=' + (visible ? '1' : '0')
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || 'خطا در تغییر وضعیت');
+            }
+        });
+    }
+}
+
+function deleteCaseNote(id) {
+    if (confirm('آیا مطمئن هستید که می‌خواهید این یادداشت پرونده را حذف کنید؟')) {
+        fetch('/case-notes/delete/' + id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-CSRF-Token': '<?= $csrf_token ?>'
+            },
+            body: '_csrf_token=<?= $csrf_token ?>'
+        }).then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || 'خطا در حذف یادداشت');
+            }
+        });
+    }
+}
+</script>

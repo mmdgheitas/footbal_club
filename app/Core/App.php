@@ -129,6 +129,47 @@ class App
         $this->router->get('/player-panel/attendance', 'PlayerPanelController', 'attendance');
         $this->router->get('/player-panel/profile', 'PlayerPanelController', 'profile');
         $this->router->get('/player-panel/alerts', 'PlayerPanelController', 'alerts');
+        $this->router->get('/player-panel/achievements', 'PlayerPanelController', 'achievements');
+        $this->router->get('/player-panel/case-notes', 'PlayerPanelController', 'caseNotes');
+        $this->router->get('/player-panel/homework', 'PlayerPanelController', 'homework');
+
+        // Document Routes
+        $this->router->get('/documents/upload', 'DocumentController', 'upload');
+        $this->router->post('/documents/store', 'DocumentController', 'store');
+        $this->router->get('/admin/documents/pending', 'DocumentController', 'pending');
+        $this->router->post('/admin/documents/approve/{id}', 'DocumentController', 'approve');
+        $this->router->post('/admin/documents/reject/{id}', 'DocumentController', 'reject');
+
+        // Homework Routes
+        $this->router->get('/homework/upload', 'HomeworkController', 'upload');
+        $this->router->post('/homework/store', 'HomeworkController', 'store');
+        $this->router->get('/homework/review-list', 'HomeworkController', 'reviewList');
+        $this->router->get('/homework/review/{id}', 'HomeworkController', 'review');
+        $this->router->post('/homework/submit-review/{id}', 'HomeworkController', 'submitReview');
+
+        // Achievement Routes
+        $this->router->get('/achievements', 'AchievementController', 'index');
+        $this->router->get('/achievements/create', 'AchievementController', 'create');
+        $this->router->post('/achievements/store', 'AchievementController', 'store');
+        $this->router->get('/achievements/edit/{id}', 'AchievementController', 'edit');
+        $this->router->post('/achievements/update/{id}', 'AchievementController', 'update');
+        $this->router->post('/achievements/delete/{id}', 'AchievementController', 'delete');
+        $this->router->post('/achievements/toggle-publish/{id}', 'AchievementController', 'togglePublish');
+
+        // Case Note Routes
+        $this->router->get('/case-notes', 'CaseNoteController', 'index');
+        $this->router->get('/case-notes/create', 'CaseNoteController', 'create');
+        $this->router->post('/case-notes/store', 'CaseNoteController', 'store');
+        $this->router->get('/case-notes/edit/{id}', 'CaseNoteController', 'edit');
+        $this->router->post('/case-notes/update/{id}', 'CaseNoteController', 'update');
+        $this->router->post('/case-notes/delete/{id}', 'CaseNoteController', 'delete');
+        $this->router->post('/case-notes/toggle-visibility/{id}', 'CaseNoteController', 'toggleVisibility');
+
+        // Alert Routes
+        $this->router->get('/admin/alerts', 'AlertController', 'index');
+        $this->router->post('/admin/alerts/create', 'AlertController', 'create');
+        $this->router->post('/admin/alerts/delete/{id}', 'AlertController', 'delete');
+        $this->router->get('/my-alerts', 'AlertController', 'myAlerts');
 
         // Alert Admin Routes
         $this->router->get('/admin/alerts', 'AlertController', 'index');

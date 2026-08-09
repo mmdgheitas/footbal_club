@@ -21,12 +21,16 @@ $assetVer = (string)max(
 if ($userRole === 'player') {
     $navItems = [
         '/player-panel' => ['label' => 'داشبورد', 'icon' => '🏠'],
+        '/player-panel/homework' => ['label' => 'تمرینات', 'icon' => '📹'],
+        '/player-panel/achievements' => ['label' => 'دستاوردها', 'icon' => '🏆'],
+    ];
+    $moreNavItems = [
         '/player-panel/financial' => ['label' => 'وضعیت مالی', 'icon' => '💰'],
         '/player-panel/attendance' => ['label' => 'حضور و غیاب', 'icon' => '📋'],
-        '/player-panel/profile' => ['label' => 'مشخصات فردی', 'icon' => ''],
+        '/player-panel/profile' => ['label' => 'مشخصات فردی', 'icon' => '👤'],
+        '/player-panel/case-notes' => ['label' => 'یادداشت‌ها', 'icon' => '📝'],
         '/player-panel/alerts' => ['label' => 'اعلانات', 'icon' => '📢'],
     ];
-    $moreNavItems = [];
 } else {
     $navItems = [
         '/dashboard' => ['label' => 'داشبورد', 'icon' => '🏠'],
@@ -40,6 +44,10 @@ if ($userRole === 'player') {
         '/medical' => ['label' => 'پزشکی', 'icon' => '🏥'],
         '/sms/send' => ['label' => 'پیامک', 'icon' => '📱'],
         '/admin/alerts' => ['label' => 'اعلانات', 'icon' => '📢'],
+        '/achievements' => ['label' => 'دستاوردها', 'icon' => '🏆'],
+        '/case-notes' => ['label' => 'یادداشت‌ها', 'icon' => '📝'],
+        '/homework/review-list' => ['label' => 'بررسی تمرینات', 'icon' => '📹'],
+        '/admin/documents/pending' => ['label' => 'اسناد در انتظار', 'icon' => '📄'],
     ];
 }
 

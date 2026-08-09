@@ -9,6 +9,9 @@ use App\Models\Player;
 use App\Models\Payment;
 use App\Models\Attendance;
 use App\Models\Alert;
+use App\Models\Achievement;
+use App\Models\CaseNote;
+use App\Models\HomeworkVideo;
 use App\Middleware\RbacMiddleware;
 use App\Helpers\SecurityHelper;
 
@@ -58,6 +61,13 @@ class PlayerPanelController extends Controller
             $this->render('player_panel.no_link', $this->data);
             exit;
         }
+        
+        // Check if user documents are approved
+        if (($user['document_status'] ?? '') !== 'approved') {
+            $this->redirect('/documents/upload');
+            exit;
+        }
+        
         $this->playerData = $player;
     }
 
@@ -164,8 +174,56 @@ class PlayerPanelController extends Controller
         $this->data['title'] = 'اعلانات باشگاه';
         
         $ageCategory = $this->playerData['age_category'] ?? 'senior';
-        $this->data['alerts'] = $this->alertModel->getAlertsForPlayer($ageCategory);
+        $classroomId = $this->playerData['classroom_id'] ?? null;
+        $this->data['alerts'] = $this->alertModel->getAlertsForPlayer($ageCategory, $this->playerId, $classroomId);
 
         $this->render('player_panel.alerts', $this->data);
+    }
+
+    /**
+     * View player achievements
+     *
+     * @return void
+     */
+    public function achievements(): void
+    {
+        $achievementModel = new Achievement();
+        $this->data['title'] = 'دستاوردهای من';
+        $this->data['achievements'] = $achievementModel->getByPlayerId($this->playerId, true);
+        $this->data['stats'] = $achievementModel->getPlayerStats($this->playerId);
+        $this->data['player'] = $this->playerData;
+
+        $this->render('player_panel.achievements', $this->data);
+    }
+
+    /**
+     * View player case notes (visible to player)
+     *
+     * @return void
+     */
+    public function caseNotes(): void
+    {
+        $caseNoteModel = new CaseNote();
+        $this->data['title'] = 'یادداشت‌های پرونده';
+        $this->data['case_notes'] = $caseNoteModel->getByPlayerId($this->playerId, true);
+        $this->data['player'] = $this->playerData;
+
+        $this->render('player_panel.case_notes', $this->data);
+    }
+
+    /**
+     * View and upload homework
+     *
+     * @return void
+     */
+    public function homework(): void
+    {
+        $homeworkModel = new HomeworkVideo();
+        $this->data['title'] = 'تمرینات من';
+        $this->data['videos'] = $homeworkModel->getByPlayerId($this->playerId);
+        $this->data['player'] = $this->playerData;
+        $this->data['csrf_token'] = $this->generateCsrf();
+
+        $this->render('player_panel.homework', $this->data);
     }
 }

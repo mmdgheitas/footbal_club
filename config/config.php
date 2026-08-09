@@ -100,6 +100,38 @@ define('ROLES', [
     'player' => 'بازیکن',
 ]);
 
+// Permissions
+define('PERMISSIONS', [
+    'manage_classrooms' => 'مدیریت کلاس‌ها',
+    'view_classrooms' => 'مشاهده کلاس‌ها',
+    'manage_players' => 'مدیریت بازیکنان',
+    'view_players' => 'مشاهده بازیکنان',
+    'view_player_names_ages' => 'مشاهده نام و سن بازیکنان',
+    'manage_documents' => 'مدیریت اسناد',
+    'upload_documents' => 'آپلود اسناد',
+    'view_own_documents' => 'مشاهده اسناد خود',
+    'manage_alerts' => 'مدیریت اعلانات',
+    'view_own_alerts' => 'مشاهده اعلانات خود',
+    'manage_homework' => 'مدیریت تمرینات',
+    'view_homework' => 'مشاهده تمرینات',
+    'review_homework' => 'بررسی تمرینات',
+    'upload_homework' => 'آپلود تمرینات',
+    'view_own_homework' => 'مشاهده تمرینات خود',
+    'manage_achievements' => 'مدیریت دستاوردها',
+    'view_own_achievements' => 'مشاهده دستاوردهای خود',
+    'manage_case_notes' => 'مدیریت یادداشت‌ها',
+    'view_own_case_notes' => 'مشاهده یادداشت‌های خود',
+    'manage_settings' => 'مدیریت تنظیمات',
+    'send_sms' => 'ارسال پیامک',
+    'view_reports' => 'مشاهده گزارش‌ها',
+    'manage_payments' => 'مدیریت پرداخت‌ها',
+    'view_payments' => 'مشاهده پرداخت‌ها',
+    'mark_attendance' => 'ثبت حضور و غیاب',
+    'view_attendance' => 'مشاهده حضور و غیاب',
+    'view_medical' => 'مشاهده اطلاعات پزشکی',
+    'view_all_medical' => 'مشاهده تمام اطلاعات پزشکی',
+]);
+
 // Payment Status
 define('PAYMENT_STATUSES', [
     'pending' => 'در انتظار پرداخت',

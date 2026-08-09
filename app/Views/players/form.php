@@ -87,10 +87,14 @@ $pageHeading = $isEdit ? 'ویرایش بازیکن' : 'افزودن بازیک�
 
             <div class="form-group">
                 <label class="checkbox-label">
-                    <input type="checkbox" name="medical_clearance" value="1"
-                        <?= !empty($player['medical_clearance']) ? 'checked' : '' ?>>
+                    <input type="checkbox" name="medical_clearance" value="1" id="medical_clearance"
+                        <?= !empty($player['medical_clearance']) ? 'checked' : '' ?>
+                        <?= ($player && !$player['medical_clearance'] && empty($player['files']['medical_clearance'])) ? '' : '' ?>>
                     تأیید پزشکی
                 </label>
+                <small class="form-text text-muted">
+                    برای تأیید مجوز پزشکی، باید سند مجوز پزشکی آپلود شود
+                </small>
             </div>
         </div>
 
@@ -124,6 +128,25 @@ document.getElementById('playerForm')?.addEventListener('submit', async function
     e.preventDefault();
     const form = e.target;
     const formData = new FormData(form);
+    
+    // Check if medical_clearance is checked but no medical file is uploaded
+    const medicalClearanceChecked = form.querySelector('input[name="medical_clearance"]:checked');
+    if (medicalClearanceChecked) {
+        let hasMedicalFile = false;
+        const fileInputs = form.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => {
+            if (input.name.includes('medical') || input.name.includes('clearance')) {
+                if (input.files.length > 0) {
+                    hasMedicalFile = true;
+                }
+            }
+        });
+        
+        if (!hasMedicalFile) {
+            alert('برای تأیید مجوز پزشکی، باید سند مجوز پزشکی آپلود کنید');
+            return;
+        }
+    }
 
     try {
         const response = await fetch(form.action, {

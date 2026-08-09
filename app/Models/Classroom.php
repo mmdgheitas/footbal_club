@@ -18,6 +18,7 @@ class Classroom extends Model
         'uuid',
         'name',
         'description',
+        'coach_id',
     ];
 
     /**

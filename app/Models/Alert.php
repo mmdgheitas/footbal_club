@@ -19,23 +19,59 @@ class Alert extends Model
         'title',
         'message',
         'target_audience',
+        'target_type',
+        'target_id',
+        'target_age_min',
+        'target_age_max',
         'created_by',
+        'priority',
+        'expires_at',
         'deleted_at',
     ];
 
     /**
-     * Get alerts for a player based on their age category
+     * Get alerts for a player based on their age category and other targeting
      *
      * @param string $ageCategory Player's age category (e.g. 'u10')
+     * @param int|null $playerId Player ID
+     * @param int|null $classroomId Classroom ID
      * @return array
      */
-    public function getAlertsForPlayer(string $ageCategory): array
+    public function getAlertsForPlayer(string $ageCategory, ?int $playerId = null, ?int $classroomId = null): array
     {
+        // Get age range for the age category
+        $ageRange = AGE_CATEGORIES[$ageCategory] ?? ['min' => 0, 'max' => 100];
+        $minAge = $ageRange['min'];
+        $maxAge = $ageRange['max'];
+        
         $query = "SELECT a.*, u.name as author_name FROM {$this->table} a
                   LEFT JOIN fc_users u ON a.created_by = u.id
-                  WHERE a.deleted_at IS NULL AND (a.target_audience = 'all' OR a.target_audience = ?)
-                  ORDER BY a.created_at DESC";
-        return $this->db->findAll($query, [$ageCategory]);
+                  WHERE a.deleted_at IS NULL AND (
+                      a.target_type = 'all'
+                      OR (a.target_type = 'age_range' AND a.target_age_min <= ? AND a.target_age_max >= ?)
+                      OR (a.target_type = 'class' AND a.target_id = ?)
+                      OR (a.target_type = 'player' AND a.target_id = ?)
+                      OR (a.target_type IS NULL AND a.target_audience = 'all')
+                      OR (a.target_audience = ?)
+                  )";
+        
+        $params = [$minAge, $maxAge, $classroomId, $playerId, $ageCategory];
+        
+        // Add expiration check
+        $query .= " AND (a.expires_at IS NULL OR a.expires_at > ?)";
+        $params[] = date(DATETIME_FORMAT);
+        
+        $query .= " ORDER BY 
+                    CASE a.priority
+                        WHEN 'urgent' THEN 1
+                        WHEN 'high' THEN 2
+                        WHEN 'medium' THEN 3
+                        WHEN 'low' THEN 4
+                        ELSE 5
+                    END, 
+                    a.created_at DESC";
+        
+        return $this->db->findAll($query, $params);
     }
 
     /**

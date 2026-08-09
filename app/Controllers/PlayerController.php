@@ -113,6 +113,29 @@ class PlayerController extends Controller
             }
         }
 
+        $medicalClearance = (bool)$this->post('medical_clearance');
+        
+        // Check if medical_clearance is checked but no medical records are uploaded
+        if ($medicalClearance && empty($_FILES)) {
+            $this->json(['error' => 'برای تأیید مجوز پزشکی، باید حداقل یک سند پزشکی آپلود کنید'], 422);
+            return;
+        }
+        
+        // Check if medical_clearance is checked but no medical_clearance file is uploaded
+        if ($medicalClearance) {
+            $hasMedicalFile = false;
+            foreach ($_FILES as $fieldName => $file) {
+                if (strpos($fieldName, 'medical_clearance') !== false || $fieldName === 'medical_clearance') {
+                    $hasMedicalFile = true;
+                    break;
+                }
+            }
+            if (!$hasMedicalFile) {
+                $this->json(['error' => 'برای تأیید مجوز پزشکی، باید سند مجوز پزشکی آپلود کنید'], 422);
+                return;
+            }
+        }
+
         $data = [
             'name' => SecurityHelper::sanitizeString($this->post('name') ?? ''),
             'date_of_birth' => $dob,
@@ -122,7 +145,7 @@ class PlayerController extends Controller
             'phone' => SecurityHelper::sanitizeString($this->post('phone') ?? ''),
             'email' => SecurityHelper::sanitizeString($this->post('email') ?? ''),
             'notes' => SecurityHelper::sanitizeString($this->post('notes') ?? ''),
-            'medical_clearance' => (bool)$this->post('medical_clearance'),
+            'medical_clearance' => $medicalClearance,
         ];
 
         // Validate inputs
@@ -229,6 +252,31 @@ class PlayerController extends Controller
             }
         }
 
+        $medicalClearance = (bool)$this->post('medical_clearance');
+        
+        // Check if medical_clearance is being set to true but no medical records exist
+        if ($medicalClearance && !$player['medical_clearance']) {
+            // Check if there are any medical_clearance files already uploaded
+            $fileUploadModel = new \App\Models\FileUpload();
+            $medicalFiles = $fileUploadModel->findAllBy('player_id', (string)$playerId, 'file_type', 'medical_clearance');
+            
+            // Also check document submissions
+            $documentModel = new \App\Models\DocumentSubmission();
+            $medicalDocs = $documentModel->getByPlayerId($playerId);
+            $hasMedicalDoc = false;
+            foreach ($medicalDocs as $doc) {
+                if ($doc['document_type'] === 'medical_clearance' && $doc['status'] === 'approved') {
+                    $hasMedicalDoc = true;
+                    break;
+                }
+            }
+            
+            if (empty($medicalFiles) && !$hasMedicalDoc) {
+                $this->json(['error' => 'برای تأیید مجوز پزشکی، باید سند مجوز پزشکی آپلود و تأیید شده باشد'], 422);
+                return;
+            }
+        }
+
         $data = [
             'name' => SecurityHelper::sanitizeString($this->post('name') ?? ''),
             'date_of_birth' => $dob,
@@ -238,7 +286,7 @@ class PlayerController extends Controller
             'phone' => SecurityHelper::sanitizeString($this->post('phone') ?? ''),
             'email' => SecurityHelper::sanitizeString($this->post('email') ?? ''),
             'notes' => SecurityHelper::sanitizeString($this->post('notes') ?? ''),
-            'medical_clearance' => (bool)$this->post('medical_clearance'),
+            'medical_clearance' => $medicalClearance,
         ];
 
         // Validate inputs
@@ -261,6 +309,11 @@ class PlayerController extends Controller
         if (!$this->playerModel->update($playerId, $data)) {
             $this->json(['error' => 'Failed to update player'], 500);
             return;
+        }
+
+        // Handle new file uploads
+        if (!empty($_FILES)) {
+            $this->handleFileUploads($playerId);
         }
 
         $this->json([

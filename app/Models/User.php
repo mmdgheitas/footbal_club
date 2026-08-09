@@ -21,10 +21,15 @@ class User extends Model
         'phone',
         'password_hash',
         'role',
+        'player_id',
         'status',
+        'document_status',
+        'rejection_reason',
+        'approved_by',
+        'approved_at',
         'last_login',
     ];
-    protected array $hidden = ['password_hash'];
+    protected array $hidden = ['password_hash', 'rejection_reason'];
 
     /**
      * Find user by email
@@ -129,7 +134,111 @@ class User extends Model
         $data['password_hash'] = $this->hashPassword($data['password'] ?? 'password123');
         unset($data['password']);
 
+        // Set default document status for player role
+        if (($data['role'] ?? '') === 'player') {
+            $data['document_status'] = $data['document_status'] ?? 'pending';
+        }
+
         return $this->insert($data);
+    }
+
+    /**
+     * Approve user documents
+     *
+     * @param int $userId
+     * @param int $adminId
+     * @return bool
+     */
+    public function approveDocuments(int $userId, int $adminId): bool
+    {
+        $data = [
+            'document_status' => 'approved',
+            'approved_by' => $adminId,
+            'approved_at' => date(DATETIME_FORMAT),
+            'status' => 1, // Activate user account
+        ];
+        return $this->update($userId, $data);
+    }
+
+    /**
+     * Reject user documents
+     *
+     * @param int $userId
+     * @param int $adminId
+     * @param string $reason
+     * @return bool
+     */
+    public function rejectDocuments(int $userId, int $adminId, string $reason): bool
+    {
+        $data = [
+            'document_status' => 'rejected',
+            'rejection_reason' => $reason,
+            'approved_by' => $adminId,
+            'approved_at' => date(DATETIME_FORMAT),
+        ];
+        return $this->update($userId, $data);
+    }
+
+    /**
+     * Get users with pending documents
+     *
+     * @return array
+     */
+    public function getUsersWithPendingDocuments(): array
+    {
+        $query = "SELECT * FROM {$this->table} 
+                  WHERE document_status = 'pending' AND deleted_at IS NULL
+                  ORDER BY created_at ASC";
+        return $this->db->findAll($query);
+    }
+
+    /**
+     * Get users by document status
+     *
+     * @param string $status
+     * @return array
+     */
+    public function getUsersByDocumentStatus(string $status): array
+    {
+        $query = "SELECT * FROM {$this->table} 
+                  WHERE document_status = ? AND deleted_at IS NULL
+                  ORDER BY created_at DESC";
+        return $this->db->findAll($query, [$status]);
+    }
+
+    /**
+     * Link user to player
+     *
+     * @param int $userId
+     * @param int $playerId
+     * @return bool
+     */
+    public function linkToPlayer(int $userId, int $playerId): bool
+    {
+        return $this->update($userId, ['player_id' => $playerId]);
+    }
+
+    /**
+     * Get user with player info
+     *
+     * @param int $userId
+     * @return array|null
+     */
+    public function getWithPlayer(int $userId): ?array
+    {
+        $user = $this->find($userId);
+        if ($user === null) {
+            return null;
+        }
+
+        if (!empty($user['player_id'])) {
+            $playerModel = new Player();
+            $user['player'] = $playerModel->find((int)$user['player_id']);
+        } else {
+            $user['player'] = null;
+        }
+
+        return $user;
     }
 
     /**

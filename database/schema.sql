@@ -9,22 +9,48 @@ CREATE TABLE IF NOT EXISTS fc_users (
     email VARCHAR(255) NOT NULL UNIQUE,
     phone VARCHAR(15),
     password_hash VARCHAR(255) NOT NULL,
-    role ENUM('super_admin', 'coach', 'accountant', 'secretary') NOT NULL DEFAULT 'coach',
+    role ENUM('super_admin', 'coach', 'accountant', 'secretary', 'player') NOT NULL DEFAULT 'coach',
+    player_id INT NULL,
     status TINYINT(1) NOT NULL DEFAULT 1,
+    document_status ENUM('pending', 'approved', 'rejected') NULL DEFAULT NULL,
+    rejection_reason TEXT NULL,
+    approved_by INT NULL,
+    approved_at TIMESTAMP NULL,
     last_login TIMESTAMP NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     INDEX idx_email (email),
     INDEX idx_role (role),
+    INDEX idx_player_id (player_id),
     INDEX idx_status (status),
-    INDEX idx_created_at (created_at)
+    INDEX idx_document_status (document_status),
+    INDEX idx_created_at (created_at),
+    FOREIGN KEY (player_id) REFERENCES fc_players(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (approved_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Classrooms Table
+CREATE TABLE IF NOT EXISTS fc_classrooms (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    description LONGTEXT,
+    coach_id INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    INDEX idx_name (name),
+    INDEX idx_coach_id (coach_id),
+    INDEX idx_created_at (created_at),
+    FOREIGN KEY (coach_id) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Players Table
 CREATE TABLE IF NOT EXISTS fc_players (
     id INT PRIMARY KEY AUTO_INCREMENT,
     uuid CHAR(36) NOT NULL UNIQUE,
+    classroom_id INT NULL,
     name VARCHAR(255) NOT NULL,
     date_of_birth DATE NOT NULL,
     national_id VARCHAR(50) UNIQUE NOT NULL,
@@ -38,11 +64,13 @@ CREATE TABLE IF NOT EXISTS fc_players (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
+    INDEX idx_classroom_id (classroom_id),
     INDEX idx_national_id (national_id),
     INDEX idx_position (position),
     INDEX idx_age_category (age_category),
     INDEX idx_status (status),
-    INDEX idx_created_at (created_at)
+    INDEX idx_created_at (created_at),
+    FOREIGN KEY (classroom_id) REFERENCES fc_classrooms(id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Guardians Table
@@ -227,6 +255,36 @@ CREATE TABLE IF NOT EXISTS fc_settings (
     INDEX idx_setting_key (setting_key)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Alerts Table
+CREATE TABLE IF NOT EXISTS fc_alerts (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    target_audience VARCHAR(100),
+    target_type ENUM('all', 'class', 'age_range', 'player', 'position') NULL DEFAULT 'all',
+    target_id INT NULL,
+    target_age_min INT NULL,
+    target_age_max INT NULL,
+    created_by INT NOT NULL,
+    priority ENUM('low', 'medium', 'high', 'urgent') DEFAULT 'medium',
+    expires_at TIMESTAMP NULL,
+    deleted_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (target_id) REFERENCES fc_classrooms(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_target_audience (target_audience),
+    INDEX idx_target_type (target_type),
+    INDEX idx_target_id (target_id),
+    INDEX idx_target_age_min (target_age_min),
+    INDEX idx_target_age_max (target_age_max),
+    INDEX idx_priority (priority),
+    INDEX idx_expires_at (expires_at),
+    INDEX idx_created_by (created_by),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Activity Audit Log Table
 CREATE TABLE IF NOT EXISTS fc_audit_logs (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -259,4 +317,119 @@ CREATE TABLE IF NOT EXISTS fc_sessions (
     FOREIGN KEY (user_id) REFERENCES fc_users(id) ON DELETE CASCADE ON UPDATE CASCADE,
     INDEX idx_user_id (user_id),
     INDEX idx_expires_at (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Document Submissions Table
+CREATE TABLE IF NOT EXISTS fc_document_submissions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    user_id INT NOT NULL,
+    player_id INT NULL,
+    document_type ENUM('national_id', 'medical_clearance', 'insurance', 'birth_certificate', 'other') NOT NULL,
+    file_path VARCHAR(500) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    stored_filename VARCHAR(255) NOT NULL,
+    mime_type VARCHAR(100),
+    file_size INT,
+    status ENUM('pending', 'approved', 'rejected') DEFAULT 'pending',
+    rejection_reason TEXT NULL,
+    reviewed_by INT NULL,
+    reviewed_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (user_id) REFERENCES fc_users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (player_id) REFERENCES fc_players(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_user_id (user_id),
+    INDEX idx_player_id (player_id),
+    INDEX idx_status (status),
+    INDEX idx_document_type (document_type),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Homework Videos Table
+CREATE TABLE IF NOT EXISTS fc_homework_videos (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    player_id INT NOT NULL,
+    user_id INT NOT NULL,
+    classroom_id INT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    video_path VARCHAR(500) NOT NULL,
+    original_filename VARCHAR(255) NOT NULL,
+    stored_filename VARCHAR(255) NOT NULL,
+    mime_type VARCHAR(100),
+    file_size INT,
+    duration_seconds INT NULL COMMENT 'Video duration in seconds',
+    status ENUM('submitted', 'reviewed', 'approved') DEFAULT 'submitted',
+    coach_feedback TEXT NULL,
+    coach_rating TINYINT NULL COMMENT 'Rating 1-5',
+    reviewed_by INT NULL,
+    reviewed_at TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (player_id) REFERENCES fc_players(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES fc_users(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (classroom_id) REFERENCES fc_classrooms(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (reviewed_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_player_id (player_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_classroom_id (classroom_id),
+    INDEX idx_status (status),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Achievements Table
+CREATE TABLE IF NOT EXISTS fc_achievements (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    player_id INT NOT NULL,
+    user_id INT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NULL,
+    achievement_type ENUM('skill', 'attendance', 'sportsmanship', 'improvement', 'teamwork', 'leadership', 'other') NOT NULL DEFAULT 'skill',
+    points INT NULL DEFAULT 0,
+    date_achieved DATE NOT NULL DEFAULT CURRENT_DATE,
+    created_by INT NOT NULL,
+    is_published TINYINT(1) DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (player_id) REFERENCES fc_players(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_player_id (player_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_created_by (created_by),
+    INDEX idx_achievement_type (achievement_type),
+    INDEX idx_date_achieved (date_achieved),
+    INDEX idx_created_at (created_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Case Notes Table
+CREATE TABLE IF NOT EXISTS fc_case_notes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    player_id INT NOT NULL,
+    user_id INT NULL,
+    note_type ENUM('general', 'medical', 'disciplinary', 'achievement', 'concern') NOT NULL DEFAULT 'general',
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    severity ENUM('low', 'medium', 'high') DEFAULT 'low',
+    created_by INT NOT NULL,
+    is_visible_to_player TINYINT(1) DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    FOREIGN KEY (player_id) REFERENCES fc_players(id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES fc_users(id) ON DELETE SET NULL ON UPDATE CASCADE,
+    INDEX idx_player_id (player_id),
+    INDEX idx_user_id (user_id),
+    INDEX idx_created_by (created_by),
+    INDEX idx_note_type (note_type),
+    INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
