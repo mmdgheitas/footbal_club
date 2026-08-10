@@ -208,6 +208,15 @@ class App
         $path = parse_url($uri, PHP_URL_PATH) ?? '/';
         $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? ''));
 
+        // Handle PHP built-in server with /index.php/ in the URL
+        if (str_starts_with($path, '/index.php/')) {
+            $path = substr($path, 11); // Remove '/index.php/'
+            if ($path === '') {
+                $path = '/';
+            }
+            return $path;
+        }
+
         if ($scriptDir !== '/' && $scriptDir !== '' && str_starts_with($path, $scriptDir)) {
             $path = substr($path, strlen($scriptDir)) ?: '/';
         }
