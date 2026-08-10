@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Player;
 use App\Middleware\AuthMiddleware;
 use App\Helpers\SecurityHelper;
+use App\Helpers\JalaliHelper;
 
 /**
  * Authentication Controller
@@ -63,7 +64,7 @@ class AuthController extends Controller
             $this->redirect('/login');
         }
 
-        $email = SecurityHelper::sanitizeString($this->post('email') ?? '');
+        $email = trim($this->post('email') ?? '');
         $password = $this->post('password') ?? '';
 
         // Validate inputs
@@ -85,7 +86,7 @@ class AuthController extends Controller
             $this->redirect('/login');
         }
 
-        if ($user['status'] !== 1) {
+        if ((int)$user['status'] !== 1) {
             $this->flash('error', 'Your account has been disabled.');
             $this->redirect('/login');
         }
@@ -95,6 +96,9 @@ class AuthController extends Controller
             $this->flash('error', 'اسناد شما هنوز تأیید نشده است. لطفاً منتظر بمانید یا اسناد را آپلود کنید.');
             $this->redirect('/login');
         }
+
+        // Regenerate session ID to prevent session fixation
+        session_regenerate_id(true);
 
         // Login user
         AuthMiddleware::login($user['id'], $user['role'], $user);
@@ -142,16 +146,19 @@ class AuthController extends Controller
             $this->redirect('/register');
         }
 
-        $name = SecurityHelper::sanitizeString($this->post('name') ?? '');
-        $email = SecurityHelper::sanitizeString($this->post('email') ?? '');
+        $name = trim($this->post('name') ?? '');
+        $email = trim($this->post('email') ?? '');
         $password = $this->post('password') ?? '';
         $confirmPassword = $this->post('password_confirmation') ?? '';
         
         // Player-specific fields
-        $dateOfBirth = $this->post('date_of_birth') ?? '';
-        $nationalId = SecurityHelper::sanitizeString($this->post('national_id') ?? '');
-        $phone = SecurityHelper::sanitizeString($this->post('phone') ?? '');
+        $dateOfBirthJalali = trim($this->post('date_of_birth') ?? '');
+        $nationalId = trim($this->post('national_id') ?? '');
+        $phone = trim($this->post('phone') ?? '');
         $position = $this->post('position') ?? '';
+
+        // Convert Jalali date to Gregorian
+        $dateOfBirth = JalaliHelper::toGregorianString($dateOfBirthJalali);
 
         // Validate inputs
         $errors = [];
@@ -164,7 +171,7 @@ class AuthController extends Controller
             $errors[] = 'Email is required.';
         } elseif (!SecurityHelper::validateEmail($email)) {
             $errors[] = 'Invalid email address.';
-        } elseif ($this->userModel->findByEmail($email) !== null) {
+        } elseif ($this->userModel->findActiveByEmail($email) !== null) {
             $errors[] = 'Email already registered.';
         }
 
@@ -182,13 +189,15 @@ class AuthController extends Controller
         }
         
         // Validate player-specific fields
-        if (empty($dateOfBirth)) {
+        if (empty($dateOfBirthJalali)) {
             $errors[] = 'Date of birth is required.';
+        } elseif (empty($dateOfBirth)) {
+            $errors[] = 'Invalid date of birth format. Please use YYYY/MM/DD.';
         }
         
         if (empty($nationalId)) {
             $errors[] = 'National ID is required.';
-        } elseif ($this->playerModel->findByNationalId($nationalId) !== null) {
+        } elseif ($this->playerModel->findActiveByNationalId($nationalId) !== null) {
             $errors[] = 'National ID already registered.';
         }
         
@@ -205,40 +214,49 @@ class AuthController extends Controller
             $this->redirect('/register');
         }
 
-        // Create player first
-        $playerData = [
-            'name' => $name,
-            'date_of_birth' => $dateOfBirth,
-            'national_id' => $nationalId,
-            'position' => $position,
-            'phone' => $phone,
-            'email' => $email,
-            'medical_clearance' => 0, // Not cleared until documents are approved
-        ];
-        
-        $playerId = $this->playerModel->createPlayer($playerData);
-        
-        if (!$playerId) {
-            $this->flash('error', 'Failed to create player profile. Please try again.');
-            $this->redirect('/register');
-        }
+        // Create player and user inside a transaction
+        $this->db->beginTransaction();
+        try {
+            $playerData = [
+                'name' => $name,
+                'date_of_birth' => $dateOfBirth,
+                'national_id' => $nationalId,
+                'position' => $position,
+                'phone' => $phone,
+                'email' => $email,
+                'medical_clearance' => 0, // Not cleared until documents are approved
+            ];
 
-        // Create user linked to player
-        $userId = $this->userModel->createUser([
-            'name' => $name,
-            'email' => $email,
-            'password' => $password,
-            'phone' => $phone,
-            'role' => 'player',
-            'player_id' => $playerId,
-            'status' => 0, // Inactive until documents are approved
-            'document_status' => 'pending',
-        ]);
+            $playerId = $this->playerModel->createPlayer($playerData);
 
-        if (!$userId) {
-            // Clean up player if user creation failed
-            $this->playerModel->softDelete($playerId);
-            $this->flash('error', 'Failed to create account. Please try again.');
+            if (!$playerId) {
+                $this->db->rollback();
+                $this->flash('error', 'Failed to create player profile. Please try again.');
+                $this->redirect('/register');
+            }
+
+            // Create user linked to player
+            $userId = $this->userModel->createUser([
+                'name' => $name,
+                'email' => $email,
+                'password' => $password,
+                'phone' => $phone,
+                'role' => 'player',
+                'player_id' => $playerId,
+                'status' => 0, // Inactive until documents are approved
+                'document_status' => 'pending',
+            ]);
+
+            if (!$userId) {
+                $this->db->rollback();
+                $this->flash('error', 'Failed to create account. Please try again.');
+                $this->redirect('/register');
+            }
+
+            $this->db->commit();
+        } catch (\Exception $e) {
+            $this->db->rollback();
+            $this->flash('error', 'An error occurred during registration. Please try again.');
             $this->redirect('/register');
         }
 

@@ -43,6 +43,18 @@ class User extends Model
     }
 
     /**
+     * Find active (non-deleted) user by email
+     *
+     * @param string $email User email
+     * @return array|null
+     */
+    public function findActiveByEmail(string $email): ?array
+    {
+        $query = "SELECT * FROM {$this->table} WHERE email = ? AND deleted_at IS NULL";
+        return $this->db->findOne($query, [$email]);
+    }
+
+    /**
      * Verify password
      *
      * @param string $password Plain text password
@@ -107,7 +119,7 @@ class User extends Model
      */
     public function authenticate(string $email, string $password): ?array
     {
-        $user = $this->findByEmail($email);
+        $user = $this->findActiveByEmail($email);
 
         if ($user === null || !$this->verifyPassword($password, $user['password_hash'])) {
             return null;

@@ -83,8 +83,11 @@ VALUES
 INSERT INTO fc_alerts (uuid, title, message, target_audience, target_type, target_id, created_by, priority)
 VALUES 
 (UUID(), 'جلسه تمرینی فردا', 'جلسه تمرینی فردا ساعت 16 برگزار می‌شود. حضور همه بازیکنان الزامی است.', 'all', 'all', NULL, 1, 'high'),
-(UUID(), 'تغییر زمان تمرین', 'توجه: زمان تمرین تیم A به ساعت 17 تغییر یافته است.', 'all', 'class', 1, 1, 'medium'),
-(UUID(), 'تست پزشکی', 'بازیکنان زیر 10 سال باید برای تست پزشکی فردا حاضر شوند.', 'all', 'age_range', NULL, 1, 'high', NULL, NULL, 5, 10);
+(UUID(), 'تغییر زمان تمرین', 'توجه: زمان تمرین تیم A به ساعت 17 تغییر یافته است.', 'all', 'class', 1, 1, 'medium');
+
+INSERT INTO fc_alerts (uuid, title, message, target_audience, target_type, target_id, target_age_min, target_age_max, created_by, priority)
+VALUES 
+(UUID(), 'تست پزشکی', 'بازیکنان زیر 10 سال باید برای تست پزشکی فردا حاضر شوند.', 'all', 'age_range', NULL, 5, 10, 1, 'high');
 
 -- Sample Achievements
 INSERT INTO fc_achievements (uuid, player_id, user_id, title, description, achievement_type, points, date_achieved, created_by, is_published)

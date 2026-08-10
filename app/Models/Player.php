@@ -117,6 +117,18 @@ class Player extends Model
     }
 
     /**
+     * Find active (non-deleted) player by national ID
+     *
+     * @param string $nationalId National ID
+     * @return array|null
+     */
+    public function findActiveByNationalId(string $nationalId): ?array
+    {
+        $query = "SELECT * FROM {$this->table} WHERE national_id = ? AND deleted_at IS NULL";
+        return $this->db->findOne($query, [$nationalId]);
+    }
+
+    /**
      * Calculate age from date of birth
      *
      * @param string $dateOfBirth Date of birth (Y-m-d format)
