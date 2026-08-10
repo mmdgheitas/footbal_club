@@ -31,6 +31,22 @@ if (is_file($envFile)) {
 // Load configuration
 require_once CONFIG_PATH . DIRECTORY_SEPARATOR . 'config.php';
 
+// DEBUG: Check APP_DEBUG value immediately
+if (isset($_ENV['APP_DEBUG'])) {
+    error_log("APP_DEBUG from env: " . $_ENV['APP_DEBUG']);
+}
+if (defined('APP_DEBUG')) {
+    error_log("APP_DEBUG defined as: " . (APP_DEBUG ? 'true' : 'false'));
+}
+
+// DEBUG: Immediate output for debugging
+if (filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+    $debugScript = $_SERVER['SCRIPT_NAME'] ?? '';
+    $debugUri = $_SERVER['REQUEST_URI'] ?? '/';
+    $debugMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    error_log("SCRIPT_NAME: $debugScript, REQUEST_URI: $debugUri, METHOD: $debugMethod");
+}
+
 // Load the autoloader
 require_once APP_PATH . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'Autoloader.php';
 

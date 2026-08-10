@@ -6,6 +6,15 @@ $title = $title ?? 'صفحه پیدا نشد';
 $message = $message ?? 'صفحه‌ای که دنبال آن هستید وجود ندارد یا جابه‌جا شده است.';
 $homeUrl = $homeUrl ?? (defined('APP_URL') ? APP_URL . '/dashboard' : '/');
 $appName = defined('APP_NAME') ? APP_NAME : 'Football Club Manager';
+
+// DEBUG INFO - Always visible for debugging
+$debugInfo = '<div style="background:#ff6b6b;padding:15px;margin:15px 0;border-radius:8px;text-align:left;font-family:monospace;font-size:12px;color:#000;">';
+$debugInfo .= '<strong>DEBUG INFO:</strong><br>';
+$debugInfo .= '<strong>Method:</strong> ' . ($_SERVER['REQUEST_METHOD'] ?? 'N/A') . '<br>';
+$debugInfo .= '<strong>URI:</strong> ' . ($_SERVER['REQUEST_URI'] ?? 'N/A') . '<br>';
+$debugInfo .= '<strong>Script:</strong> ' . ($_SERVER['SCRIPT_NAME'] ?? 'N/A') . '<br>';
+$debugInfo .= '<strong>APP_DEBUG:</strong> ' . (defined('APP_DEBUG') ? (APP_DEBUG ? 'true' : 'false') : 'not defined') . '<br>';
+$debugInfo .= '</div>';
 ?>
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -65,6 +74,7 @@ $appName = defined('APP_NAME') ? APP_NAME : 'Football Club Manager';
     </style>
 </head>
 <body>
+    <?= $debugInfo ?>
     <div class="error-card">
         <div class="error-code">404</div>
         <h1><?= \App\Helpers\SecurityHelper::escape($title) ?></h1>
