@@ -8,7 +8,6 @@ use App\Helpers\SecurityHelper;
 $case_note = $case_note ?? null;
 ?>
 
-<?php include __DIR__ . '/../layouts/main.php'; ?>
 
 <div class="container-fluid">
     <div class="row">

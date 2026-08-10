@@ -28,9 +28,6 @@ class AlertController extends Controller
     {
         parent::__construct();
         
-        // Require admin access for full alert management
-        RbacMiddleware::requirePermission('manage_settings');
-        
         $this->alertModel = new Alert();
         $this->classroomModel = new Classroom();
         $this->playerModel = new Player();
@@ -43,6 +40,8 @@ class AlertController extends Controller
      */
     public function index(): void
     {
+        RbacMiddleware::requirePermission('manage_alerts');
+        
         $classrooms = $this->classroomModel->all();
         $players = $this->playerModel->getActive();
         
@@ -70,6 +69,8 @@ class AlertController extends Controller
      */
     public function create(): void
     {
+        RbacMiddleware::requirePermission('manage_alerts');
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/admin/alerts');
         }
@@ -156,6 +157,8 @@ class AlertController extends Controller
      */
     public function delete(string $id): void
     {
+        RbacMiddleware::requirePermission('manage_alerts');
+        
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->json(['error' => 'Method not allowed'], 405);
             return;

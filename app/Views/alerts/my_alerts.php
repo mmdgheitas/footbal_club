@@ -14,7 +14,6 @@ $priorityLabels = [
 
 ?>
 
-<?php include __DIR__ . '/../layouts/main.php'; ?>
 
 <div class="container-fluid">
     <div class="row">
