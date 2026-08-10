@@ -8,6 +8,7 @@ use App\Core\Controller;
 use App\Models\Alert;
 use App\Models\Classroom;
 use App\Models\Player;
+use App\Middleware\AuthMiddleware;
 use App\Middleware\RbacMiddleware;
 use App\Helpers\SecurityHelper;
 

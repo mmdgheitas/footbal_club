@@ -207,4 +207,14 @@ class Router
     {
         return $this->routeParams;
     }
+
+    /**
+     * Get all registered routes (for debugging)
+     *
+     * @return array
+     */
+    public function getRegisteredRoutes(): array
+    {
+        return array_values($this->routes);
+    }
 }

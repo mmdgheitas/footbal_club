@@ -9,7 +9,7 @@ declare(strict_types=1);
 // Application Information
 define('APP_NAME', 'Football Club Manager');
 define('APP_VERSION', '1.0.0');
-define('APP_DEBUG', false); // Set to true only in development
+define('APP_DEBUG', filter_var($_ENV['APP_DEBUG'] ?? false, FILTER_VALIDATE_BOOLEAN)); // Set to true only in development
 define('APP_ENV', $_ENV['APP_ENV'] ?? 'production');
 
 // Paths

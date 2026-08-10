@@ -186,8 +186,30 @@ class App
         $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
         $uri = $this->normalizeRequestUri($_GET['_url'] ?? $_SERVER['REQUEST_URI'] ?? '/');
 
+        // Debug output
+        if (APP_DEBUG) {
+            $routes = $this->router->getRegisteredRoutes();
+            error_log("DEBUG - Method: {$method}, URI: {$uri}");
+            error_log("DEBUG - Registered routes count: " . count($routes));
+        }
+
         try {
             if (!$this->router->dispatch($method, $uri)) {
+                if (APP_DEBUG) {
+                    echo '<div style="background:#ff6b6b;color:#fff;padding:20px;margin:10px;border-radius:8px;">';
+                    echo '<h2>Route Not Found</h2>';
+                    echo '<p><strong>Method:</strong> ' . htmlspecialchars($method) . '</p>';
+                    echo '<p><strong>URI:</strong> ' . htmlspecialchars($uri) . '</p>';
+                    echo '<p><strong>Script Name:</strong> ' . htmlspecialchars($_SERVER['SCRIPT_NAME'] ?? 'N/A') . '</p>';
+                    echo '<p><strong>Registered Routes:</strong></p>';
+                    echo '<ul>';
+                    foreach ($this->router->getRegisteredRoutes() as $route) {
+                        echo '<li>' . htmlspecialchars($route['method']) . ' ' . htmlspecialchars($route['pattern']) . ' -> ' . htmlspecialchars($route['controller']) . '@' . htmlspecialchars($route['action']) . '</li>';
+                    }
+                    echo '</ul>';
+                    echo '</div>';
+                    exit;
+                }
                 ErrorResponse::notFound();
             }
         } catch (\Exception $e) {

@@ -42,7 +42,15 @@ class ErrorResponse
             exit;
         }
 
-        self::render(404, 'صفحه پیدا نشد', $message);
+        // Debug info when APP_DEBUG is true
+        $debugInfo = '';
+        if (defined('APP_DEBUG') && APP_DEBUG) {
+            $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+            $uri = $_SERVER['REQUEST_URI'] ?? '/';
+            $debugInfo = "<p><strong>Method:</strong> {$method}<br><strong>URI:</strong> {$uri}</p>";
+        }
+
+        self::render(404, 'صفحه پیدا نشد', $message . $debugInfo);
     }
 
     /**
