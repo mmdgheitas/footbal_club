@@ -9,27 +9,27 @@ $csrfToken = $csrf_token ?? '';
 
 <div class="financial-section">
     <div class="section-header">
-        <h3>Financial Report - <?= $year ?></h3>
+        <h3>گزارش مالی - <?= $year ?></h3>
         <form method="GET" class="year-filter">
             <input type="number" name="year" value="<?= $year ?>" min="2000" max="<?= date('Y') + 1 ?>">
-            <button type="submit" class="btn btn-secondary">Filter</button>
+            <button type="submit" class="btn btn-secondary">فیلتر</button>
         </form>
     </div>
 
     <?php if (empty($yearlyRevenue)): ?>
-        <p class="empty-message">No revenue data available for this year.</p>
+        <p class="empty-message">داده‌ای برای این سال وجود ندارد.</p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Month</th>
-                    <th>Revenue</th>
+                    <th>ماه</th>
+                    <th>درآمد</th>
                 </tr>
             </thead>
             <tbody>
                 <?php 
-                $months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                          'July', 'August', 'September', 'October', 'November', 'December'];
+                $months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 
+                          'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
                 $revenueMap = [];
                 foreach ($yearlyRevenue as $item) {
                     $revenueMap[$item['month']] = $item['total'];
@@ -40,14 +40,14 @@ $csrfToken = $csrf_token ?? '';
                 ?>
                 <tr>
                     <td><?= $months[$i - 1] ?></td>
-                    <td>$<?= number_format($revenue, 2) ?></td>
+                    <td><?= number_format($revenue, 0) ?> تومان</td>
                 </tr>
                 <?php endfor; ?>
             </tbody>
         </table>
 
         <div class="totals">
-            <h3>Total Annual Revenue: $<?= number_format(array_sum(array_values($revenueMap)), 2) ?></h3>
+            <h3>مجموع درآمد سالانه: <?= number_format(array_sum(array_values($revenueMap)), 0) ?> تومان</h3>
         </div>
     <?php endif; ?>
 </div>

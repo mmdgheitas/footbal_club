@@ -10,31 +10,31 @@ $attendanceStatus = $attendance_status ?? [];
 
 <div class="attendance-section">
     <div class="section-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
-        <h3>Attendance Report for <?= \App\Helpers\SecurityHelper::escape($player['name']) ?></h3>
-        <a href="<?= APP_URL ?>/attendance" class="btn btn-secondary">Back to Attendance Grid</a>
+        <h3>گزارش حضور و غیاب <?= \App\Helpers\SecurityHelper::escape($player['name']) ?></h3>
+        <a href="<?= APP_URL ?>/attendance" class="btn btn-secondary">بازگشت به صفحه حضور و غیاب</a>
     </div>
 
     <div class="stats-overview" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
         <div class="stat-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
-            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px; text-transform: uppercase;">Attendance Rate</h4>
+            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px;">درصد حضور</h4>
             <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: #333;"><?= $percentage ?>%</p>
         </div>
         <div class="stat-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
-            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px; text-transform: uppercase;">Total Sessions</h4>
+            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px;">تعداد جلسات</h4>
             <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: #333;"><?= count($attendance) ?></p>
         </div>
     </div>
 
-    <h4>Session History</h4>
+    <h4>تاریخچه جلسات</h4>
     <?php if (empty($attendance)): ?>
-        <p class="empty-message">No attendance history recorded for this player.</p>
+        <p class="empty-message">هیچ سابقه حضوری برای این بازیکن ثبت نشده است.</p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Status</th>
-                    <th>Recorded By</th>
+                    <th>تاریخ</th>
+                    <th>وضعیت</th>
+                    <th>ثبت‌کننده</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,10 +43,10 @@ $attendanceStatus = $attendance_status ?? [];
                     <td><?= date('Y-m-d', strtotime($record['session_date'])) ?></td>
                     <td>
                         <span class="status-badge status-<?= $record['status'] ?>">
-                            <?= \App\Helpers\SecurityHelper::escape($attendanceStatus[$record['status']] ?? 'Unknown') ?>
+                            <?= \App\Helpers\SecurityHelper::escape($attendanceStatus[$record['status']] ?? 'نامشخص') ?>
                         </span>
                     </td>
-                    <td><?= \App\Helpers\SecurityHelper::escape($record['recorder_name'] ?? 'System') ?></td>
+                    <td><?= \App\Helpers\SecurityHelper::escape($record['recorder_name'] ?? 'سیستم') ?></td>
                 </tr>
                 <?php endforeach; ?>
             </tbody>

@@ -9,27 +9,27 @@ $totalOutstanding = $total_outstanding ?? 0;
 <div class="financial-section">
     <div class="section-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
         <div style="display: flex; gap: 15px;">
-            <a href="<?= APP_URL ?>/payments" class="btn btn-secondary">Payments History</a>
-            <a href="<?= APP_URL ?>/reports/financial" class="btn btn-secondary">Financial Report</a>
-            <a href="<?= APP_URL ?>/reports/debts" class="btn btn-primary">Outstanding Debts</a>
+            <a href="<?= APP_URL ?>/payments" class="btn btn-secondary">تاریخچه پرداخت‌ها</a>
+            <a href="<?= APP_URL ?>/reports/financial" class="btn btn-secondary">گزارش مالی</a>
+            <a href="<?= APP_URL ?>/reports/debts" class="btn btn-primary">بدهی‌های معوق</a>
         </div>
         <div style="background: #fce8e6; padding: 8px 15px; border-radius: 4px; color: #c5221f; font-weight: bold;">
-            Total Outstanding: $<?= number_format($totalOutstanding, 2) ?>
+            مجموع بدهی: <?= number_format($totalOutstanding, 0) ?> تومان
         </div>
     </div>
 
-    <h4>Outstanding Debts List</h4>
+    <h4>لیست بدهی‌های معوق</h4>
     <?php if (empty($debts)): ?>
-        <p class="empty-message">No outstanding debts found. All players are fully paid!</p>
+        <p class="empty-message">هیچ بدهی معوقی یافت نشد. همه بازیکنان تسویه حساب کرده‌اند!</p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Player Name</th>
-                    <th>Email Address</th>
-                    <th>Pending Payments Count</th>
-                    <th>Total Outstanding Amount</th>
-                    <th>Action</th>
+                    <th>نام بازیکن</th>
+                    <th>ایمیل</th>
+                    <th>تعداد پرداخت‌های معوق</th>
+                    <th>مبلغ کل بدهی</th>
+                    <th>عملیات</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,9 +38,9 @@ $totalOutstanding = $total_outstanding ?? 0;
                     <td><?= \App\Helpers\SecurityHelper::escape($debt['name']) ?></td>
                     <td><?= \App\Helpers\SecurityHelper::escape($debt['email'] ?? '-') ?></td>
                     <td><?= \App\Helpers\SecurityHelper::escape((string)$debt['pending_count']) ?></td>
-                    <td style="color: #c5221f; font-weight: bold;">$<?= number_format($debt['total_outstanding'], 2) ?></td>
+                    <td style="color: #c5221f; font-weight: bold;"><?= number_format($debt['total_outstanding'], 0) ?> تومان</td>
                     <td>
-                        <a href="<?= APP_URL ?>/sms/send?player_id=<?= $debt['id'] ?>" class="btn btn-secondary btn-sm">Send Reminder</a>
+                        <a href="<?= APP_URL ?>/sms/send?player_id=<?= $debt['id'] ?>" class="btn btn-secondary btn-sm">ارسال یادآوری</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>

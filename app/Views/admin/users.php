@@ -9,15 +9,15 @@ $selectedRole = $selected_role ?? '';
 
 <div class="admin-section">
     <div class="admin-nav" style="margin-bottom: 20px; display: flex; gap: 15px;">
-        <a href="<?= APP_URL ?>/admin/users" class="btn btn-primary">User Management</a>
-        <a href="<?= APP_URL ?>/admin/settings" class="btn btn-secondary">Settings</a>
+        <a href="<?= APP_URL ?>/admin/users" class="btn btn-primary">مدیریت کاربران</a>
+        <a href="<?= APP_URL ?>/admin/settings" class="btn btn-secondary">تنظیمات</a>
     </div>
 
     <div class="section-header">
-        <h3>User Management</h3>
+        <h3>مدیریت کاربران</h3>
         <form method="GET" class="role-filter">
             <select name="role" onchange="this.form.submit()">
-                <option value="">All Roles</option>
+                <option value="">همه نقش‌ها</option>
                 <?php foreach ($roles as $key => $label): ?>
                     <option value="<?= $key ?>" <?= $selectedRole === $key ? 'selected' : '' ?>><?= $label ?></option>
                 <?php endforeach; ?>
@@ -26,17 +26,17 @@ $selectedRole = $selected_role ?? '';
     </div>
 
     <?php if (empty($users)): ?>
-        <p class="empty-message">No users found.</p>
+        <p class="empty-message">کاربری یافت نشد.</p>
     <?php else: ?>
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Created At</th>
+                    <th>نام</th>
+                    <th>ایمیل</th>
+                    <th>تلفن</th>
+                    <th>نقش</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ ایجاد</th>
                 </tr>
             </thead>
             <tbody>
@@ -48,7 +48,7 @@ $selectedRole = $selected_role ?? '';
                     <td><?= \App\Helpers\SecurityHelper::escape(ROLES[$user['role']] ?? $user['role']) ?></td>
                     <td>
                         <span class="status-badge <?= $user['status'] ? 'status-active' : 'status-inactive' ?>">
-                            <?= $user['status'] ? 'Active' : 'Disabled' ?>
+                            <?= $user['status'] ? 'فعال' : 'غیرفعال' ?>
                         </span>
                     </td>
                     <td><?= date('Y-m-d H:i', strtotime($user['created_at'])) ?></td>

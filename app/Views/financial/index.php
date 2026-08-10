@@ -36,7 +36,7 @@ $playersList = $players_list ?? [];
                     <tr>
                         <td><code><?= \App\Helpers\SecurityHelper::escape($payment['reference_number']) ?></code></td>
                         <td><?= \App\Helpers\SecurityHelper::escape($payment['player_name'] ?? '-') ?></td>
-                        <td><strong>$<?= number_format((float)$payment['amount'], 2) ?></strong></td>
+                        <td><strong><?= number_format((float)$payment['amount'], 0) ?> تومان</strong></td>
                         <td><?= \App\Helpers\SecurityHelper::escape($payment['description'] ?? '-') ?></td>
                         <td><?= \App\Helpers\SecurityHelper::escape(ucwords(str_replace('_', ' ', (string)($payment['payment_method'] ?? '-')))) ?></td>
                         <td><?= date('Y-m-d H:i', strtotime($payment['created_at'])) ?></td>
@@ -69,7 +69,7 @@ $playersList = $players_list ?? [];
             </div>
 
             <div class="form-group">
-                <label for="amount">مبلغ ($)</label>
+                <label for="amount">مبلغ (تومان)</label>
                 <input type="text" id="amount" name="amount" step="0.01" min="0.01" required>
             </div>
 
