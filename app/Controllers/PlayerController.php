@@ -43,7 +43,8 @@ class PlayerController extends Controller
      */
     public function index(?string $id = null): void
     {
-        RbacMiddleware::requirePermission('view_players');
+        // RbacMiddleware::requirePermission('view_players');
+        RbacMiddleware::requirePermission('manage_players');
 
         $page = (int)($this->get('page') ?? 1);
         $search = SecurityHelper::sanitizeString($this->get('search') ?? '');
