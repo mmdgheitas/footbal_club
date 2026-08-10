@@ -8,7 +8,7 @@ $csrfToken = $csrf_token ?? '';
         <h2>ثبت‌نام دانش‌آموز</h2>
         <p class="auth-tagline">برای پیوستن به باشگاه، اطلاعات خود را وارد کنید</p>
 
-        <form method="POST" action="<?= APP_URL ?>/register">
+        <form method="POST">
             <input type="hidden" name="_csrf_token" value="<?= \App\Helpers\SecurityHelper::escapeAttribute($csrfToken) ?>">
 
             <div class="form-group">
