@@ -5,6 +5,14 @@ locals.player = locals.player ?? [];
 locals.attendance = locals.attendance ?? [];
 locals.percentage = locals.percentage ?? '0.00';
 locals.attendanceStatus = locals.attendance_status ?? []; %>
+<% // PHP date('Y-m-d', strtotime($x)) — local time, never toISOString().
+const dt = (v) => {
+    if (__empty(v)) return '';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}; %>
 
 <div class="attendance-section">
     <div class="section-header" style="margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center;">
@@ -38,7 +46,7 @@ locals.attendanceStatus = locals.attendance_status ?? []; %>
             <tbody>
                 <% for (const record of __iter(locals.attendance)) { %>
                 <tr>
-                    <td><%- date('Y-m-d', strtotime(locals.record['session_date'])) %></td>
+                    <td><%- dt(locals.record['session_date']) %></td>
                     <td>
                         <span class="status-badge status-<%- locals.record['status'] %>">
                             <%- esc(locals.attendanceStatus[locals.record['status']] ?? 'نامشخص') %>

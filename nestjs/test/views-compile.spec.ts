@@ -22,8 +22,7 @@ function walk(dir: string, base = ''): string[] {
   return out;
 }
 
-/** How many legacy views are still unported. Lower as views land; hit 0 at the end. */
-const VIEW_PARITY_REMAINING = 32;
+// Every legacy view has been ported; the parity gate below is strict.
 
 describe('every converted EJS view compiles', () => {
   const views = walk(VIEWS).sort();
@@ -55,8 +54,8 @@ describe('every converted EJS view compiles', () => {
         (missing.length ? `\n  missing: ${missing.join(', ')}` : ''),
     );
     expect(legacy.length).toBe(44);
-    // Flips to `expect(missing).toEqual([])` once every view has landed.
-    expect(missing.length).toBeLessThanOrEqual(VIEW_PARITY_REMAINING);
+    // Strict: every view in app/Views must have an EJS counterpart.
+    expect(missing).toEqual([]);
   });
 
   it.each(views)('%s compiles', (view) => {

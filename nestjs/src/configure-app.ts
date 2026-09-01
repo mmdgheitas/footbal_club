@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import * as path from 'path';
 import session from 'express-session';
 import { viewHelpers } from './common/views/view.helpers';
+import { APP_DEBUG } from './config/constants';
 import { getSessionUserRole } from './common/session/session.types';
 import { RbacService } from './common/rbac/rbac.service';
 
@@ -64,7 +65,7 @@ export function configureApp(app: NestExpressApplication): void {
 
   // Locals available to every view (APP_URL, esc(), Jalali helpers, constants).
   app.use((req, res, next) => {
-    Object.assign(res.locals, viewHelpers(appUrl), { assetVer });
+    Object.assign(res.locals, viewHelpers(appUrl), { assetVer, APP_DEBUG });
     // Views that call RbacMiddleware::hasPermission() inline (e.g.
     // players/view.php) need the same check against the session role.
     res.locals.hasPerm = (permission: string): boolean =>

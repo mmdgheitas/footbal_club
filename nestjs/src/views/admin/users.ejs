@@ -4,6 +4,14 @@
 locals.users = locals.users ?? [];
 locals.roles = locals.roles ?? [];
 locals.selectedRole = locals.selected_role ?? ''; %>
+<% // PHP date('Y-m-d H:i', strtotime($x)) — local time, never toISOString().
+const dt = (v) => {
+    if (__empty(v)) return '';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}; %>
 
 <div class="admin-section">
     <div class="admin-nav" style="margin-bottom: 20px; display: flex; gap: 15px;">
@@ -49,7 +57,7 @@ locals.selectedRole = locals.selected_role ?? ''; %>
                             <%- locals.user['status'] ? 'فعال' : 'غیرفعال' %>
                         </span>
                     </td>
-                    <td><%- date('Y-m-d H:i', strtotime(locals.user['created_at'])) %></td>
+                    <td><%- dt(locals.user['created_at']) %></td>
                 </tr>
                 <% } %>
             </tbody>

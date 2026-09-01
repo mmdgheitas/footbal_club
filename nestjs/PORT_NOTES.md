@@ -225,3 +225,71 @@ ported SQL has been executed**. It is verified only against `schema.sql` for
 shape (245 columns, exact parity both directions). Runtime behaviour against
 a real database, and the upload flows end to end, still need a machine with
 MySQL.
+
+## 11. Views phase complete: 44/44, and the render test that caught real bugs
+
+All 44 legacy PHP views now have EJS counterparts. The parity gate in
+`test/views-compile.spec.ts` is strict (`expect(missing).toEqual([])`), so a
+newly added PHP view without a template fails the build.
+
+### Compilation is not rendering
+
+`views-compile.spec.ts` only proves templates parse. A template can compile and
+still throw at render time. So `test/views-render.spec.ts` renders every view
+with representative data through the same two-stage composition
+`BaseController.render()` uses (content, then the layout wrapper), and asserts
+the composed page contains exactly one `<!DOCTYPE html>`.
+
+That test failed 43 of 44 views on first run and surfaced four classes of
+defect in views that had already been committed and were passing the compile
+check:
+
+1. **Unconverted PHP calls left in four templates.** `admin/users.ejs`,
+   `attendance/report.ejs`, `player_panel/alerts.ejs` and
+   `player_panel/index.ejs` still called bare `date(...)` / `strtotime(...)`.
+   Those are PHP functions; in JS they are a `ReferenceError`, so those four
+   pages would 500 in production. Replaced with a per-view local `dt()` that
+   reproduces each call site's exact format (`Y-m-d H:i`, `Y-m-d`, `d M Y, H:i`,
+   `d M Y`) in local time. `grep -rnE "(^|[^a-zA-Z_.])(date|strtotime)\(" src/views`
+   now returns nothing.
+
+2. **`APP_DEBUG` was never exposed to templates.** `errors/404.ejs` reads it
+   bare. It is defined in `src/config/constants.ts` but was not in the
+   `res.locals` assignment in `configure-app.ts`, so **the 404 page itself
+   threw**. Added to the `Object.assign`. (An earlier note claimed this had
+   been added; it had not.)
+
+3. **Unguarded `AGE_CATEGORIES[key]['label']`.** In PHP,
+   `AGE_CATEGORIES['bogus']['label'] ?? $fallback` emits a warning and falls
+   back. In JS the bracket access throws. Two templates —
+   `player_panel/index.ejs` and `player_panel/alerts.ejs` — had the unguarded
+   form, so an unknown age category or `target_audience` 500'd the page where
+   the PHP merely showed the raw value. Both now use
+   `(constants.AGE_CATEGORIES[k] || {})['label'] ?? k`, matching the other
+   templates and the PHP semantics.
+
+4. **My own test fixture was wrong three times** and the test caught it: flash
+   messages are `Record<string, string[]>` keyed by type (not a list of
+   `{type, message}`), `players_by_category` is an array of
+   `{age_category, count}` rows from `Player::getStatistics()` (not a map), and
+   the layouts are composed into pages rather than rendered as pages.
+
+### Verification as of this commit
+
+| Check | Result |
+| --- | --- |
+| `npx tsc --noEmit` | exit 0 |
+| `npx jest` | 7 suites, 72 tests passed |
+| route parity | 78/78 |
+| view parity | 44/44 |
+| render check | 42/42 (44 less the 2 layouts) |
+| `check-schema-parity` | 245 vs 245, exact both directions |
+| `check-entities` | 20 entities / 245 columns / 32 relations |
+
+### Still unverified
+
+No MySQL exists in this sandbox, so **no SQL has ever been executed**. The
+render test drives templates with hand-written fixtures, not rows from a real
+database, and no controller has been exercised end to end. Upload flows and the
+SMS providers are likewise unexercised. Column and route parity are static
+comparisons against `schema.sql` and `App.php`.
