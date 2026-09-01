@@ -1,0 +1,170 @@
+<% /**
+ * Homework Review View
+ * Coach reviews a student homework video
+ *
+ * In the PHP source formatBytes()/formatDuration() are declared at the bottom
+ * of the file, after they are used. PHP hoists top-level function declarations
+ * so that works; JS does not, so they are defined here at the top.
+ */
+const video = locals.video ?? {};
+const csrfToken = locals.csrf_token ?? '';
+const nl2brEsc = (v) => esc(v).replace(/\n/g, '<br />\n');
+const dt = (v) => {
+    if (__empty(v)) return '';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+const formatBytes = (bytesIn) => {
+    let bytes = parseInt(bytesIn, 10) || 0;
+    if (bytes === 0) return '0 B';
+    const units = ['B', 'KB', 'MB', 'GB'];
+    let i = 0;
+    while (bytes >= 1024 && i < units.length - 1) {
+        bytes /= 1024;
+        i++;
+    }
+    // PHP round($x, 2) prints without trailing zeros; Number() drops them too.
+    return Number(bytes.toFixed(2)) + ' ' + units[i];
+};
+const formatDuration = (secondsIn) => {
+    const seconds = parseInt(secondsIn, 10) || 0;
+    if (seconds < 60) return seconds + ' ثانیه';
+    const minutes = Math.trunc(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    if (minutes < 60) {
+        return minutes + ' دقیقه ' + (remainingSeconds > 0 ? remainingSeconds + ' ثانیه' : '');
+    }
+    const hours = Math.trunc(minutes / 60);
+    const remainingMinutes = minutes % 60;
+    return hours + ' ساعت ' + (remainingMinutes > 0 ? remainingMinutes + ' دقیقه' : '');
+};
+%>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">بررسی تمرین: <%- esc(video['title'] ?? 'بدون عنوان') %></h2>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>اطلاعات تمرین</h4>
+                            <ul class="list-group mb-4">
+                                <li class="list-group-item"><strong>بازیکن:</strong> <%- esc(video['player_name'] ?? '') %></li>
+                                <li class="list-group-item"><strong>کلاس:</strong> <%- esc(video['classroom_name'] ?? '-') %></li>
+                                <li class="list-group-item"><strong>تاریخ آپلود:</strong> <%- esc(dt(video['created_at'] ?? '')) %></li>
+                                <li class="list-group-item"><strong>اندازه فایل:</strong> <%- formatBytes(video['file_size'] ?? 0) %></li>
+                                <% if (!__empty(video['duration_seconds'])) { %>
+                                    <li class="list-group-item"><strong>مدت:</strong> <%- formatDuration(video['duration_seconds']) %></li>
+                                <% } %>
+                            </ul>
+
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">توضیحات دانش‌آموز</h5>
+                                </div>
+                                <div class="card-body">
+                                    <p><%- nl2brEsc(video['description'] ?? 'توضیحی ارائه نشده است') %></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <h4>ویدئو</h4>
+                            <div class="card mb-4">
+                                <div class="card-body">
+                                    <video controls class="w-100" style="max-height: 300px;">
+                                        <source src="<%- APP_URL + '/uploads/homework/' + esc(video['stored_filename'] ?? '') %>"
+                                                type="<%- esc(video['mime_type'] ?? 'video/mp4') %>">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-header bg-light">
+                                    <h5 class="mb-0">بررسی و امتیازدهی</h5>
+                                </div>
+                                <div class="card-body">
+                                    <form id="reviewForm">
+                                        <input type="hidden" name="_csrf_token" value="<%- csrfToken %>">
+
+                                        <div class="mb-3">
+                                            <label for="feedback" class="form-label">بازخورد <span class="text-danger">*</span></label>
+                                            <textarea class="form-control" id="feedback" name="feedback" rows="4" required></textarea>
+                                        </div>
+
+                                        <div class="mb-3">
+                                            <label for="rating" class="form-label">امتیاز (1-5)</label>
+                                            <select class="form-select" id="rating" name="rating">
+                                                <option value="">انتخاب امتیاز</option>
+                                                <option value="1">1 - ضعیف</option>
+                                                <option value="2">2 - قابل قبول</option>
+                                                <option value="3">3 - خوب</option>
+                                                <option value="4">4 - عالی</option>
+                                                <option value="5">5 - ممتاز</option>
+                                            </select>
+                                            <div class="form-text">اختیاری - اگر امتیاز دهید، وضعیت به "تایید شده" تغییر می‌کند</div>
+                                        </div>
+
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="bi bi-check"></i> ثبت بررسی
+                                            </button>
+                                            <a href="<%- APP_URL + '/homework/review-list' %>" class="btn btn-secondary">
+                                                <i class="bi bi-arrow-left"></i> برگشت
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('reviewForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var form = e.target;
+    var formData = new FormData(form);
+
+    var submitBtn = form.querySelector('button[type="submit"]');
+    var originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> در حال ثبت...';
+    submitBtn.disabled = true;
+
+    fetch('/homework/submit-review/<%- video['id'] %>', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                window.location.reload();
+            }
+        } else {
+            alert(data.error || 'خطا در ثبت بررسی');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }).catch(error => {
+        alert('خطا در ارتباط با سرور');
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+    });
+});
+</script>
