@@ -1,0 +1,101 @@
+<% /**
+ * Player Panel - Achievements View
+ */
+const achievementTypeLabels = {
+    skill: 'مهارت',
+    attendance: 'حضور',
+    sportsmanship: 'روحیه ورزشی',
+    improvement: 'پیشرفت',
+    teamwork: 'کاری تیمی',
+    leadership: 'رهبری',
+    other: 'دیگر',
+};
+const stats = locals.stats ?? {};
+// PHP date('Y/m/d', strtotime($v))
+const d1 = (v) => {
+    if (__empty(v)) return '';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())}`;
+};
+%>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">دستاوردهای من</h2>
+                </div>
+                <div class="card-body">
+
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h3 class="text-primary"><%- stats['total'] ?? 0 %></h3>
+                                    <p class="mb-0">تعداد دستاوردها</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h3 class="text-success"><%- stats['total_points'] ?? 0 %></h3>
+                                    <p class="mb-0">امتیاز کلی</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card text-center h-100">
+                                <div class="card-body">
+                                    <h3 class="text-info"><%- __count(stats['by_type'] ?? []) %></h3>
+                                    <p class="mb-0">دسته‌بندی‌ها</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <% if (!__empty(locals.achievements)) { %>
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="thead-light">
+                                    <tr>
+                                        <th>عنوان</th>
+                                        <th>نوع</th>
+                                        <th>تاریخ</th>
+                                        <th>امتیاز</th>
+                                        <th>توضیحات</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% for (const achievement of __iter(locals.achievements)) { %>
+                                    <tr>
+                                        <td><strong><%- esc(achievement['title'] ?? '') %></strong></td>
+                                        <td>
+                                            <span class="badge bg-info">
+                                                <%- achievementTypeLabels[achievement['achievement_type']] ?? achievement['achievement_type'] %>
+                                            </span>
+                                        </td>
+                                        <td><%- esc(d1(achievement['date_achieved'] ?? achievement['created_at'] ?? '')) %></td>
+                                        <td><span class="badge bg-success"><%- esc(achievement['points'] ?? '0') %></span></td>
+                                        <td><%- esc(achievement['description'] ?? '-') %></td>
+                                    </tr>
+                                    <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle"></i>
+                            <p class="mb-0">شما هنوز دستاوردی دریافت نکرده‌اید. به زودی دستاوردهای شما توسط مربیان ثبت خواهد شد.</p>
+                        </div>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
