@@ -330,3 +330,58 @@ went missing and `npm install` restored it.
 `npx tsc --noEmit` exit 0; `npx jest` 8 suites / 77 tests passed; route parity
 78/78; view parity 44/44; render check 42/42; view wiring 44/44 referenced and
 42/42 pages routed. Still no database: no SQL has ever been executed.
+
+## 13. Two runtime crashes found by actually running the app
+
+Both were reported from a real run against a real MySQL, and neither was
+reachable from the static checks.
+
+### `currentYear is not defined` — dashboard 500
+
+`dashboard/index.ejs` inlined PHP's `date('Y')` as `currentYear`, but
+`BaseController.render()` renders the **page first and the layout second**, and
+`currentYear` was only added to `layoutLocals`. So it was undefined inside the
+page and EJS threw a `ReferenceError`.
+
+This matches how the PHP actually works: `Controller::render()` extracts
+`$this->data` for the view, and only `renderLayout()` adds `user`, `userRole`,
+`flashes`, `csrf_token` and `content` afterwards. PHP tolerates an undefined
+variable with a warning; EJS does not.
+
+Fixed by putting `currentYear` on `res.locals` in `configure-app.ts`, alongside
+`assetVer` and `APP_DEBUG`, so both render stages see it. `csrf_token` is *not*
+global - the 29 controller actions whose views need it pass it explicitly, in
+both the PHP and the port.
+
+`test/views-render.spec.ts` had this value in its fixture, which is exactly why
+it did not catch the bug. The fixture is now split into `APP_LOCALS` (what
+`configure-app.ts` provides) and `LAYOUT_ONLY` (what `render()` adds for the
+layout), so a page that references a layout-only local fails here. Verified by
+deleting `currentYear` and confirming the test reproduces the same
+`dashboard/index.ejs:93` error.
+
+### `Cannot read properties of undefined (reading 'flash')` — logout 500
+
+`AuthController::logout()` calls `req.session.destroy(cb)` and flashes from
+inside the callback. express-session nulls `req.session` once destroy
+completes, so `session.flash` threw. Worse than a 500: the throw happens inside
+the callback, so `redirect()` never runs and **the request hangs** with no
+response. Confirmed by removing the guard and watching supertest stall.
+
+PHP cannot hit this - `$_SESSION` stays a plain array after `session_destroy()`
+- so the write succeeds and is simply lost. `flash()`, `getFlashes()` and
+`generateCsrf()` now no-op or return safe defaults when there is no session,
+which reproduces the legacy observable behaviour (message not shown).
+`validateCsrf()` already used `session?._csrf_token`.
+
+Covered by `test/sessionless.spec.ts` (unit, both undefined and null) and a
+`GET /logout` case in `test/http-stack.spec.ts` that needs the real session
+middleware. That HTTP case carries an explicit 10s timeout because the failure
+mode is a hang, not an error.
+
+### Verification as of this commit
+
+`npx tsc --noEmit` exit 0; `npm run build` clean with 44 views copied to
+`dist/views`; `npx jest` 9 suites / 85 tests passed. Still no MySQL in this
+sandbox, so the dashboard query itself remains unexercised here - these two
+fixes were found from the user's runtime output, not reproduced locally.

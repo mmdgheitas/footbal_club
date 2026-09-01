@@ -65,7 +65,15 @@ export function configureApp(app: NestExpressApplication): void {
 
   // Locals available to every view (APP_URL, esc(), Jalali helpers, constants).
   app.use((req, res, next) => {
-    Object.assign(res.locals, viewHelpers(appUrl), { assetVer, APP_DEBUG });
+    // currentYear backs the views that inlined PHP's date('Y') - e.g.
+    // dashboard/index. It has to be here, not only in the layout locals:
+    // BaseController renders the view first and the layout second, so a
+    // layout-only local is undefined inside the page and EJS throws.
+    Object.assign(res.locals, viewHelpers(appUrl), {
+      assetVer,
+      APP_DEBUG,
+      currentYear: new Date().getFullYear(),
+    });
     // Views that call RbacMiddleware::hasPermission() inline (e.g.
     // players/view.php) need the same check against the session role.
     res.locals.hasPerm = (permission: string): boolean =>

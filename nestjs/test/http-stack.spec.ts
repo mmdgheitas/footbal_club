@@ -81,6 +81,22 @@ describe('HTTP stack (no database)', () => {
   // covered once the first protected module (players) is ported; no protected
   // route exists yet.
 
+  /**
+   * Regression: AuthController::logout() flashes from inside the
+   * req.session.destroy() callback, where express-session has already nulled
+   * req.session. Unguarded, that threw "Cannot read properties of undefined
+   * (reading 'flash')" and 500'd the request. Needs the real session
+   * middleware, so it belongs here rather than in sessionless.spec.ts.
+   */
+  it('GET /logout redirects instead of throwing when the session is gone', async () => {
+    const res = await request(app.getHttpServer()).get('/logout');
+    expect([301, 302]).toContain(res.status);
+    expect(res.headers.location).toBe('/login');
+    // Explicit cap: when this regressed the throw happened inside the destroy
+    // callback, so the response was never sent and the request hung rather
+    // than failing. Without a timeout the whole suite stalls with it.
+  }, 10000);
+
   it('serves the copied static assets', async () => {
     const css = await request(app.getHttpServer()).get('/assets/css/style.css').expect(200);
     expect(css.headers['content-type']).toContain('text/css');

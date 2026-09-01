@@ -138,6 +138,14 @@ export abstract class BaseController {
 
   protected flash(req: Request, type: string, message: string): void {
     const session = req.session as any;
+    // express-session nulls req.session once destroy() completes, and
+    // AuthController::logout() flashes from inside that callback. PHP has no
+    // equivalent crash - $_SESSION stays a plain array after session_destroy()
+    // - and the message never survives to the next request there either, so
+    // dropping it here reproduces the legacy observable behaviour.
+    if (!session) {
+      return;
+    }
     if (!session.flash) {
       session.flash = {};
     }
@@ -150,6 +158,9 @@ export abstract class BaseController {
   /** Controller::getFlashes() — reads and clears. */
   protected getFlashes(req: Request): Record<string, string[]> {
     const session = req.session as any;
+    if (!session) {
+      return {};
+    }
     const flashes = session.flash ?? {};
     delete session.flash;
     return flashes;
@@ -177,6 +188,11 @@ export abstract class BaseController {
   /** Controller::generateCsrf() */
   protected generateCsrf(req: Request): string {
     const session = req.session as any;
+    // No session means nothing can be persisted; hand back a throwaway token
+    // rather than throwing. Any POST using it fails validateCsrf() as before.
+    if (!session) {
+      return SecurityHelper.generateCsrfToken(32);
+    }
     if (!session._csrf_token) {
       session._csrf_token = SecurityHelper.generateCsrfToken(32);
     }

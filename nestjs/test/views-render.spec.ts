@@ -66,13 +66,7 @@ const player = {
 
 /** Representative locals: enough for every template to take its non-empty branch. */
 const DATA: Record<string, unknown> = {
-  appName: 'باشگاه فوتبال',
-  homeUrl: '/dashboard',
-  assetVer: 'test',
-  currentPath: '/dashboard',
-  currentYear: 2026,
   csrf_token: 'deadbeef',
-  flashes: { success: ['ذخیره شد'], error: ['خطای نمونه'] },
   user: { id: 1, name: 'مدیر', email: 'admin@example.com', role: 'super_admin' },
   currentUser: { id: 1, name: 'مدیر', email: 'admin@example.com', role: 'super_admin' },
   userRole: 'super_admin',
@@ -162,15 +156,33 @@ const DATA: Record<string, unknown> = {
 };
 
 describe('every EJS view renders', () => {
-  const helpers = viewHelpers('/');
-  const base = {
-    ...DATA,
-    ...helpers,
-    hasPerm: (perm: string) => RbacService.hasPermission(perm, 'super_admin'),
-    // configure-app.ts injects both of these into res.locals.
+  /**
+   * Locals are split the way the app splits them, on purpose.
+   *
+   * APP_LOCALS mirrors the res.locals assignment in configure-app.ts and is all
+   * a page gets on its first render. LAYOUT_ONLY mirrors the extra keys
+   * BaseController.render() adds for the second, layout render. Folding them
+   * together would let a page reference a layout-only local and still pass
+   * here while throwing in production - which is exactly how the missing
+   * currentYear shipped.
+   */
+  const APP_LOCALS = {
+    ...viewHelpers('/'),
+    assetVer: 'test',
     APP_DEBUG: false,
+    currentYear: new Date().getFullYear(),
+    hasPerm: (perm: string) => RbacService.hasPermission(perm, 'super_admin'),
     req: { method: 'GET', originalUrl: '/nope', scriptName: '/index.php' },
   };
+
+  const LAYOUT_ONLY = {
+    user: DATA.currentUser,
+    userRole: 'super_admin',
+    flashes: { success: ['ذخیره شد'], error: ['خطای نمونه'] },
+    currentPath: '/dashboard',
+  };
+
+  const base = { ...APP_LOCALS, ...DATA };
 
   const views = walk(VIEWS).filter((v) => !LAYOUTS.has(v)).sort();
 
@@ -196,7 +208,7 @@ describe('every EJS view renders', () => {
         } else {
           // Compose through the layout exactly as BaseController.render() does.
           const layoutFile = path.join(VIEWS, 'layouts', 'main.ejs');
-          const html = ejs.render(fs.readFileSync(layoutFile, 'utf8'), { ...base, content }, {
+          const html = ejs.render(fs.readFileSync(layoutFile, 'utf8'), { ...base, ...LAYOUT_ONLY, content }, {
             filename: layoutFile,
             views: [VIEWS],
           });
