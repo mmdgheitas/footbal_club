@@ -1,0 +1,136 @@
+<% const p = (n) => String(n).padStart(2, '0');
+const _d = new Date();
+const sessionDate = locals.session_date ?? `${_d.getFullYear()}-${p(_d.getMonth() + 1)}-${p(_d.getDate())}`;
+const sessionDateJalali = locals.session_date_jalali ?? '';
+locals.classrooms = locals.classrooms ?? [];
+const selectedClassroomId = locals.selected_classroom_id ?? 0;
+locals.players = locals.players ?? [];
+const attendanceMap = locals.attendance_map ?? {};
+const attendanceStatus = locals.attendance_status ?? constants.ATTENDANCE_STATUS_LABELS;
+const csrfToken = locals.csrf_token ?? '';
+const statusClass = { 1: 'status-present', 2: 'status-absent', 3: 'status-excused', 4: 'status-late' };
+%>
+
+<div class="attendance-section panel">
+    <div class="section-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+        <div>
+            <h3 style="margin:0;color:var(--grass-bright);"><span aria-hidden="true">📋</span> حضور و غیاب</h3>
+            <p style="margin:4px 0 0;color:var(--text-muted);font-size:0.9rem;">کلاس و تاریخ جلسه را انتخاب کنید و وضعیت حضور بازیکنان را ثبت کنید</p>
+        </div>
+
+        <div style="display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;">
+            <div class="form-group" style="margin:0;min-width:180px;">
+                <label for="classroomId">🏫 کلاس (تیم)</label>
+                <select id="classroomId" style="padding:8px 12px;width:100%;background-color:var(--navy-light);color:var(--white);border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:inherit;">
+                    <% if (__empty(locals.classrooms)) { %>
+                        <option value="">بدون کلاس...</option>
+                    <% } else { %>
+                        <% for (const cls of __iter(locals.classrooms)) { %>
+                            <option value="<%- parseInt(cls['id'], 10) %>" <%- selectedClassroomId === parseInt(cls['id'], 10) ? 'selected' : '' %>>
+                                <%- esc(cls['name']) %>
+                            </option>
+                        <% } %>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin:0;min-width:150px;">
+                <label for="sessionDate">📅 تاریخ جلسه (شمسی)</label>
+                <input type="text" class="jalali-date-input" id="sessionDate" value="<%- escAttr(sessionDateJalali) %>" style="padding:8px 12px;background-color:var(--navy-light);color:var(--white);border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:inherit;">
+            </div>
+
+            <button type="button" class="btn btn-secondary" id="btnChangeDate" style="height:38px;padding:0 16px;">نمایش</button>
+        </div>
+    </div>
+
+    <% if (__empty(locals.players)) { %>
+        <p class="empty-message" style="margin-top:24px;">بازیکنی در کلاس انتخابی عضو نیست یا کلاسی تعریف نشده است.</p>
+    <% } else { %>
+        <div class="table-wrap" style="margin-top:16px;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>بازیکن</th>
+                        <th>پست</th>
+                        <th>رده</th>
+                        <th>وضعیت</th>
+                        <th>ثبت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const player of __iter(locals.players)) {
+                        const attendance = attendanceMap[player['id']] ?? null;
+                        const status = attendance ? parseInt(attendance['status'], 10) : 1;
+                    %>
+                    <tr data-player-row="<%- player['id'] %>">
+                        <td><strong><%- esc(player['name']) %></strong></td>
+                        <td><%- esc(constants.PLAYER_POSITIONS[player['position']] ?? '') %></td>
+                        <td><%- esc((constants.AGE_CATEGORIES[player['age_category']] || {})['label'] ?? '') %></td>
+                        <td>
+                            <select class="attendance-select" data-player-id="<%- player['id'] %>">
+                                <% for (const [code, label] of __entries(attendanceStatus)) { %>
+                                <option value="<%- parseInt(code, 10) %>" <%- status === parseInt(code, 10) ? 'selected' : '' %>>
+                                    <%- esc(label) %>
+                                </option>
+                                <% } %>
+                            </select>
+                            <span class="status-pill <%- statusClass[status] ?? '' %>" style="margin-top:6px;display:inline-block;">
+                                <%- esc(attendanceStatus[status] ?? '') %>
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary btn-sm mark-attendance" data-player-id="<%- player['id'] %>">
+                                ✓ ثبت
+                            </button>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
+
+<script>
+const reloadGrid = () => {
+    const classId = document.getElementById('classroomId').value;
+    const dateVal = document.getElementById('sessionDate').value;
+    window.location.href = '<%- APP_URL %>/attendance?classroom_id=' + classId + '&date=' + encodeURIComponent(dateVal);
+};
+
+document.getElementById('btnChangeDate')?.addEventListener('click', reloadGrid);
+document.getElementById('classroomId')?.addEventListener('change', reloadGrid);
+
+document.querySelectorAll('.mark-attendance').forEach(btn => {
+    btn.addEventListener('click', async function() {
+        const playerId = this.getAttribute('data-player-id');
+        const select = document.querySelector(`select[data-player-id="${playerId}"]`);
+        const status = select.value;
+        const row = document.querySelector(`tr[data-player-row="${playerId}"]`);
+
+        this.classList.add('loading');
+        try {
+            await APP.request('<%- APP_URL %>/attendance/mark', {
+                method: 'POST',
+                body: JSON.stringify({
+                    player_id: playerId,
+                    session_date: document.getElementById('sessionDate').value,
+                    status: parseInt(status, 10),
+                    _csrf_token: '<%- escJs(csrfToken) %>'
+                }),
+            });
+            this.classList.remove('loading');
+            this.classList.add('success-pulse', 'celebrate');
+            if (row) {
+                row.classList.add('row-pop');
+                row.classList.add('is-visible');
+            }
+            APP.showMessage('success', 'حضور ثبت شد! ⚽');
+            setTimeout(() => this.classList.remove('success-pulse'), 600);
+        } catch (error) {
+            this.classList.remove('loading');
+            APP.showMessage('error', 'خطا: ' + error.message);
+        }
+    });
+});
+</script>
