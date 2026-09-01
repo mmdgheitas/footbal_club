@@ -11,6 +11,8 @@ import { MedicalModule } from './modules/medical/medical.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { FinancialModule } from './modules/financial/financial.module';
+import { SmsModule } from './modules/sms/sms.module';
+import { ClassroomsModule } from './modules/classrooms/classroom.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -41,6 +43,8 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     AttendanceModule,
     AdminModule,
     FinancialModule,
+    SmsModule,
+    ClassroomsModule,
   ],
   providers: [
     {

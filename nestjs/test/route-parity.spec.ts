@@ -107,6 +107,8 @@ describe('route parity with the legacy PHP application', () => {
     'ErrorController',
     'AdminController',
     'FinancialController',
+    'SmsController',
+    'ClassroomController',
   ]);
 
   it('registers every route of every ported controller', () => {
@@ -128,6 +130,6 @@ describe('route parity with the legacy PHP application', () => {
     const done = legacy.filter((r) => PORTED_CONTROLLERS.has(r.controller)).length;
     // eslint-disable-next-line no-console
     console.log(`route parity: ${done}/${legacy.length} ported`);
-    expect(done).toBeGreaterThanOrEqual(30);
+    expect(done).toBeGreaterThanOrEqual(42);
   });
 });

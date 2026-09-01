@@ -164,3 +164,11 @@ export const PLAYER_POSITIONS: Record<string, string> = {
 // Attendance warning threshold  (config.php: ATTENDANCE_WARNING_THRESHOLD)
 // ---------------------------------------------------------------------------
 export const ATTENDANCE_WARNING_THRESHOLD = 75; // 75% attendance required
+
+// ---------------------------------------------------------------------------
+// SMS  (config.php: SMS_PROVIDER / SMS_API_KEY / SMS_API_SECRET / SMS_FROM_NUMBER)
+// ---------------------------------------------------------------------------
+export const SMS_PROVIDER = process.env.SMS_PROVIDER ?? 'mock'; // twilio, nexmo, mock
+export const SMS_API_KEY = process.env.SMS_API_KEY ?? '';
+export const SMS_API_SECRET = process.env.SMS_API_SECRET ?? '';
+export const SMS_FROM_NUMBER = process.env.SMS_FROM_NUMBER ?? '';
