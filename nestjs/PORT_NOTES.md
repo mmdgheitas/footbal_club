@@ -293,3 +293,40 @@ render test drives templates with hand-written fixtures, not rows from a real
 database, and no controller has been exercised end to end. Upload flows and the
 SMS providers are likewise unexercised. Column and route parity are static
 comparisons against `schema.sql` and `App.php`.
+
+## 12. View wiring: every template is reachable from a route
+
+`test/view-wiring.spec.ts` closes the last gap. Parity proves a file exists,
+render proves it renders; neither proves anything calls it. This spec checks
+four things:
+
+- **no orphans** — all 44 templates are named by a `render` /
+  `renderStandalone` / `layout =` site in `src/`;
+- **no dangling names** — every such reference resolves to a file on disk;
+- **routed** — every one of the 42 non-layout pages is rendered from inside a
+  route-decorated handler, following one level of private-helper calls;
+- **PHP agreement** — the 40 views passed to `$this->render()` in
+  `app/Controllers` are exactly the 40 the port renders, in both directions.
+
+The helper-transitivity matters: `PlayerPanelController::resolvePlayer()`
+renders `player_panel/no_link` and is called by eight `@Get` handlers, so a
+handler-body-only check wrongly reported it unreachable.
+
+Two traps hit while writing it, both worth knowing:
+
+- A view path can have a numeric second segment (`errors/403`). The first
+  extractor regex required `[a-z_]` there and silently reported both error
+  pages as orphans.
+- `bodyAfter()` brace-matching does not work on a method whose **return type**
+  is braced. `resolvePlayer(): Promise<{ playerId; player }>` made it extract
+  the type annotation as the "body". The helper walk now slices to the next
+  two-space-indented class member instead.
+
+Also note `node_modules` can vanish between turns in this sandbox; `ts-jest`
+went missing and `npm install` restored it.
+
+### Verification as of this commit
+
+`npx tsc --noEmit` exit 0; `npx jest` 8 suites / 77 tests passed; route parity
+78/78; view parity 44/44; render check 42/42; view wiring 44/44 referenced and
+42/42 pages routed. Still no database: no SQL has ever been executed.
