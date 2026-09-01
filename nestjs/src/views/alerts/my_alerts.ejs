@@ -1,0 +1,90 @@
+<% /**
+ * My Alerts View
+ * Player can view alerts targeted to them
+ */
+const priorityLabels = {
+    low: 'کم',
+    medium: 'متوسط',
+    high: 'بالا',
+    urgent: 'فوری',
+};
+const nl2brEsc = (v) => esc(v).replace(/\n/g, '<br />\n');
+const dt = (v) => {
+    if (__empty(v)) return '';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+%>
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">اعلانات من</h2>
+                </div>
+                <div class="card-body">
+
+                    <% if (!__empty(locals.alerts)) { %>
+                        <div class="list-group">
+                            <% for (const alert of __iter(locals.alerts)) {
+                                const priorityClass = ({
+                                    low: 'success',
+                                    medium: 'primary',
+                                    high: 'warning',
+                                    urgent: 'danger',
+                                })[alert['priority']] ?? 'secondary';
+
+                                // PHP: !empty(expires_at) && strtotime(expires_at) < time()
+                                const isExpired = !__empty(alert['expires_at']) &&
+                                    (new Date(String(alert['expires_at']).replace(' ', 'T')).getTime() / 1000) < (Date.now() / 1000);
+                            %>
+                            <div class="list-group-item <%- isExpired ? 'text-muted' : '' %>">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div class="flex-grow-1">
+                                        <div class="d-flex align-items-center gap-2 mb-2">
+                                            <h5 class="mb-0">
+                                                <%- esc(alert['title'] ?? 'بدون عنوان') %>
+                                                <% if (isExpired) { %>
+                                                    <span class="badge bg-secondary">منقضی شده</span>
+                                                <% } %>
+                                            </h5>
+                                            <span class="badge bg-<%- priorityClass %>">
+                                                <%- priorityLabels[alert['priority']] ?? alert['priority'] %>
+                                            </span>
+                                        </div>
+                                        <p class="mb-2">
+                                            <%- nl2brEsc(alert['message'] ?? '') %>
+                                        </p>
+                                        <div class="d-flex align-items-center gap-3 text-muted small">
+                                            <span>
+                                                <i class="bi bi-calendar"></i>
+                                                <%- esc(dt(alert['created_at'] ?? '')) %>
+                                            </span>
+                                            <% if (!__empty(alert['author_name'])) { %>
+                                                <span>
+                                                    <i class="bi bi-person"></i>
+                                                    <%- esc(alert['author_name']) %>
+                                                </span>
+                                            <% } %>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                        </div>
+                    <% } else { %>
+                        <div class="alert alert-info text-center">
+                            <i class="bi bi-info-circle"></i>
+                            <p class="mb-0">هیچ اعلان جدیدی برای شما وجود ندارد.</p>
+                        </div>
+                    <% } %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
