@@ -172,3 +172,15 @@ export const SMS_PROVIDER = process.env.SMS_PROVIDER ?? 'mock'; // twilio, nexmo
 export const SMS_API_KEY = process.env.SMS_API_KEY ?? '';
 export const SMS_API_SECRET = process.env.SMS_API_SECRET ?? '';
 export const SMS_FROM_NUMBER = process.env.SMS_FROM_NUMBER ?? '';
+
+// ---------------------------------------------------------------------------
+// Uploads  (config.php: UPLOAD_PATH / DOCS_UPLOAD_PATH / MAX_FILE_SIZE /
+//           ALLOWED_UPLOAD_EXTENSIONS / ALLOWED_MIME_TYPES)
+// ---------------------------------------------------------------------------
+export const UPLOAD_PATH =
+  process.env.UPLOAD_PATH ?? `${process.cwd()}/src/public/uploads`;
+export const PLAYER_UPLOAD_PATH = `${UPLOAD_PATH}/players`;
+export const DOCS_UPLOAD_PATH = `${UPLOAD_PATH}/docs`;
+
+// MAX_FILE_SIZE / ALLOWED_UPLOAD_EXTENSIONS / ALLOWED_MIME_TYPES are
+// already declared in the file-upload section above.
