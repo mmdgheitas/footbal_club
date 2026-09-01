@@ -1,0 +1,92 @@
+<% /**
+ * Financial Report View
+ */
+const year = locals.year ?? new Date().getFullYear();
+locals.yearly_revenue = locals.yearly_revenue ?? [];
+const csrfToken = locals.csrf_token ?? '';
+const months = ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور',
+                'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+const revenueMap = {};
+for (const item of __iter(locals.yearly_revenue)) {
+    revenueMap[item['month']] = item['total'];
+}
+// PHP array_sum(array_values($revenueMap)) - only the months actually present.
+const yearlyTotal = Object.values(revenueMap).reduce((s, v) => s + Number(v || 0), 0);
+%>
+
+<div class="financial-section">
+    <div class="section-header">
+        <h3>گزارش مالی - <%- year %></h3>
+        <form method="GET" class="year-filter">
+            <input type="number" name="year" value="<%- year %>" min="2000" max="<%- new Date().getFullYear() + 1 %>">
+            <button type="submit" class="btn btn-secondary">فیلتر</button>
+        </form>
+    </div>
+
+    <% if (__empty(locals.yearly_revenue)) { %>
+        <p class="empty-message">داده‌ای برای این سال وجود ندارد.</p>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>ماه</th>
+                    <th>درآمد</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (let i = 1; i <= 12; i++) {
+                    const revenue = revenueMap[i] ?? 0;
+                %>
+                <tr>
+                    <td><%- months[i - 1] %></td>
+                    <td><%- __num(revenue, 0) %> تومان</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <h3>مجموع درآمد سالانه: <%- __num(yearlyTotal, 0) %> تومان</h3>
+        </div>
+    <% } %>
+</div>
+
+<style>
+.financial-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.year-filter {
+    display: flex;
+    gap: 10px;
+}
+
+.year-filter input {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 80px;
+}
+
+.totals {
+    background: #f9f9f9;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.totals h3 {
+    margin: 0;
+    color: #333;
+}
+</style>

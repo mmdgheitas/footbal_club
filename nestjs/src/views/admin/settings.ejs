@@ -1,0 +1,95 @@
+<% locals.settings = locals.settings ?? {};
+const csrfToken = locals.csrf_token ?? '';
+
+const appName = locals.settings['app_name'] ?? APP_NAME;
+const attendanceThreshold = locals.settings['attendance_warning_threshold'] ?? String(constants.ATTENDANCE_WARNING_THRESHOLD);
+const maxUploadSize = locals.settings['max_upload_size'] ?? String(constants.MAX_FILE_SIZE);
+let smsProvider = locals.settings['sms_provider'] ?? constants.SMS_PROVIDER;
+if (smsProvider === 'log') {
+    smsProvider = 'mock';
+}
+%>
+
+<div class="settings-section panel">
+    <div class="admin-nav section-header">
+        <a href="<%- APP_URL %>/admin/users" class="btn btn-secondary">مدیریت کاربران</a>
+        <a href="<%- APP_URL %>/admin/settings" class="btn btn-primary">تنظیمات</a>
+    </div>
+
+    <form id="settingsForm" method="POST" action="<%- APP_URL %>/admin/settings" class="settings-form">
+        <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
+
+        <div class="form-group">
+            <label for="app_name">نام باشگاه / اپلیکیشن</label>
+            <input type="text" id="app_name" name="app_name" value="<%- escAttr(appName) %>" required>
+        </div>
+
+        <div class="form-group">
+            <label for="attendance_warning_threshold">آستانه هشدار غیبت (%)</label>
+            <input type="number" id="attendance_warning_threshold" name="attendance_warning_threshold"
+                   value="<%- escAttr(attendanceThreshold) %>" min="0" max="100" required>
+        </div>
+
+        <div class="form-group">
+            <label for="max_upload_size">حداکثر حجم آپلود (بایت)</label>
+            <input type="number" id="max_upload_size" name="max_upload_size"
+                   value="<%- escAttr(maxUploadSize) %>" min="1024" required>
+            <small style="color:var(--text-muted);">پیش‌فرض: <%- __num(constants.MAX_FILE_SIZE) %> بایت (۱۰ مگابایت)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="sms_provider">سرویس پیامک</label>
+            <select id="sms_provider" name="sms_provider">
+                <option value="mock" <%- smsProvider === 'mock' ? 'selected' : '' %>>آزمایشی (Mock)</option>
+                <option value="twilio" <%- smsProvider === 'twilio' ? 'selected' : '' %>>Twilio</option>
+                <option value="nexmo" <%- smsProvider === 'nexmo' ? 'selected' : '' %>>Nexmo (Vonage)</option>
+            </select>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <button type="submit" class="btn btn-primary">ذخیره تنظیمات</button>
+            <span id="saveStatus" class="save-status"></span>
+        </div>
+    </form>
+</div>
+
+<script>
+document.getElementById('settingsForm')?.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const status = document.getElementById('saveStatus');
+    status.textContent = 'در حال ذخیره...';
+    status.className = 'save-status';
+
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (window.defaultCsrfToken) {
+        headers['X-CSRF-Token'] = window.defaultCsrfToken;
+    }
+
+    fetch(form.action, { method: 'POST', body: new FormData(form), headers })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                status.className = 'save-status success';
+                status.textContent = data.message || 'ذخیره شد.';
+                if (typeof APP !== 'undefined') APP.showMessage('success', status.textContent);
+            } else {
+                status.className = 'save-status error';
+                status.textContent = data.error || 'خطا در ذخیره';
+                if (typeof APP !== 'undefined') APP.showMessage('error', status.textContent);
+            }
+        })
+        .catch(() => {
+            status.className = 'save-status error';
+            status.textContent = 'خطای شبکه';
+        });
+});
+</script>
+
+<style>
+.settings-form { max-width: 560px; }
+.save-status { font-size: 0.9rem; font-weight: 600; }
+.save-status.success { color: var(--grass-bright, #137333); }
+.save-status.error { color: #ff5252; }
+.admin-nav { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+</style>
