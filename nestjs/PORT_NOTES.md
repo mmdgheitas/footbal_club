@@ -179,3 +179,49 @@ arithmetic (bar percentages, revenue rows, empty state, escaping), the auth
 views, and the live HTTP stack.
 
 Remaining: 14 controllers (~72 routes) and ~33 views.
+
+## 10. Controllers-first phase complete: 78/78 routes
+
+All 16 controllers are ported and every legacy route in `app/Core/App.php`
+is registered. `test/route-parity.spec.ts` asserts this exactly: it parses the
+78 method+path pairs out of `App.php`, boots the Nest app, enumerates what
+Express actually registered, and fails on any missing *or* extra route.
+
+Two Express 5 details worth keeping:
+
+- The router is `httpAdapter.getInstance().router.stack`. The Express 4 path
+  `server._events.request._router.stack` silently yields an empty set, which
+  reports all 78 routes as missing rather than erroring.
+- Stacking two path decorators on one method drops a route; Nest keeps only
+  the last applied. One `@Get`/`@Post` per path.
+
+### Deliberate omissions
+
+- `DocumentController::delete()` is **not** ported. It has no route in
+  `App.php`, and it calls `DocumentSubmission::softDelete()`, which exists on
+  neither that model nor the `Model` base class — the legacy action would
+  fatal if reachable. Porting it would add a route the PHP app does not have.
+
+### Behaviour preserved rather than fixed
+
+- SMS length check uses PHP `strlen()` (bytes), so Persian text trips the
+  160 limit at ~53 characters. `Buffer.byteLength()` keeps this.
+- `getAlertsForPlayer()` on `/my-alerts` passes only `ageCategory`, so the
+  `class` and `player` branches can never match.
+- `Classroom::find()` / `all()` are `Model::find()` / `all()` — no
+  `deleted_at` filter, and `all()` has no `ORDER BY`. Same for
+  `Injury::findAllBy()`. `Player::find()` *does* filter; the asymmetry is kept.
+- Achievement and CaseNote `store()` write `created_by`; `update()` does not,
+  so an edit leaves authorship alone.
+- `is_published` defaults to true on create, `is_visible_to_player` to false.
+  Both use PHP `(bool)` + `??`, where `"0"` and `""` are false — a plain JS
+  `Boolean()` would make `"0"` true.
+- The December Jalali off-by-one (§3) is still inherited, not fixed.
+
+### Not verified
+
+No MySQL or MariaDB server is installable in this sandbox, so **none of the
+ported SQL has been executed**. It is verified only against `schema.sql` for
+shape (245 columns, exact parity both directions). Runtime behaviour against
+a real database, and the upload flows end to end, still need a machine with
+MySQL.
