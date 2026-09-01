@@ -16,6 +16,7 @@ import { ClassroomsModule } from './modules/classrooms/classroom.module';
 import { AlertsModule } from './modules/alerts/alert.module';
 import { PlayerPanelModule } from './modules/player-panel/player-panel.module';
 import { AchievementsModule } from './modules/achievements/achievement.module';
+import { CaseNotesModule } from './modules/case-notes/case-note.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -51,6 +52,7 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     AlertsModule,
     PlayerPanelModule,
     AchievementsModule,
+    CaseNotesModule,
   ],
   providers: [
     {
