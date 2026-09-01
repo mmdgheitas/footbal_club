@@ -1,0 +1,110 @@
+<%
+/**
+ * Dashboard view — hand-ported from app/Views/dashboard/index.php.
+ * The computation header is translated to JS; markup and Persian text unchanged.
+ */
+const totalPlayers = locals.total_players ?? 0;
+const monthlyRevenue = locals.monthly_revenue ?? 0;
+const totalOutstanding = locals.total_outstanding ?? 0;
+const playersWithDebt = locals.players_with_debt ?? 0;
+const lowAttendanceCount = locals.low_attendance_count ?? 0;
+const byCategory = locals.players_by_category ?? [];
+const yearlyRevenue = locals.yearly_revenue ?? [];
+
+let maxCategory = 1;
+for (const row of byCategory) {
+  maxCategory = Math.max(maxCategory, Number(row.count ?? 0));
+}
+
+const monthLabels = ['', 'فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور', 'مهر', 'آبان', 'آذر', 'دی', 'بهمن', 'اسفند'];
+
+const revenueByMonth = new Array(13).fill(0);
+for (const row of yearlyRevenue) {
+  const m = Number(row.month ?? 0);
+  if (m >= 1 && m <= 12) {
+    revenueByMonth[m] = Number(row.total ?? 0);
+  }
+}
+const maxRevenue = Math.max(1, ...revenueByMonth.slice(1));
+%>
+
+<div class="dashboard">
+    <div class="quick-actions">
+        <a href="<%- APP_URL %>/player/create" class="quick-action-btn">⚽ بازیکن جدید</a>
+        <a href="<%- APP_URL %>/attendance" class="quick-action-btn">📋 ثبت حضور</a>
+        <a href="<%- APP_URL %>/payments" class="quick-action-btn">💰 ثبت پرداخت</a>
+        <a href="<%- APP_URL %>/sms/send" class="quick-action-btn">📱 ارسال پیامک</a>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card stat-success">
+            <span class="stat-icon">⚽</span>
+            <h3>بازیکنان فعال</h3>
+            <p class="stat-value" data-count="<%- Math.trunc(totalPlayers) %>">0</p>
+        </div>
+
+        <div class="stat-card">
+            <span class="stat-icon">💵</span>
+            <h3>درآمد این ماه</h3>
+            <p class="stat-value" data-count="<%- Number(monthlyRevenue) %>" data-money>0</p>
+        </div>
+
+        <div class="stat-card stat-warning">
+            <span class="stat-icon">📌</span>
+            <h3>بدهی معوق</h3>
+            <p class="stat-value" data-count="<%- Number(totalOutstanding) %>" data-money>0</p>
+            <p class="stat-subtitle"><%- Math.trunc(playersWithDebt) %> بازیکن</p>
+        </div>
+
+        <div class="stat-card stat-info">
+            <span class="stat-icon">⚠️</span>
+            <h3>غیبت زیاد</h3>
+            <p class="stat-value" data-count="<%- Math.trunc(lowAttendanceCount) %>">0</p>
+            <p class="stat-subtitle">زیر <%- locals.attendance_warning_threshold %>٪ حضور</p>
+        </div>
+    </div>
+
+    <div class="charts-section">
+        <div class="chart-container">
+            <h3>📊 بازیکنان بر اساس رده سنی</h3>
+            <% if (!byCategory.length) { %>
+                <p class="empty-message">هنوز بازیکنی ثبت نشده</p>
+            <% } else { %>
+                <div class="bar-chart">
+                    <% for (const row of byCategory) {
+                         const count = Number(row.count ?? 0);
+                         const cat = row.age_category ?? '';
+                         const label = (constants.AGE_CATEGORIES[cat] || {}).label || cat;
+                         const pct = Math.round((count / maxCategory) * 100);
+                    %>
+                    <div class="bar-row">
+                        <span class="bar-label"><%- esc(label) %></span>
+                        <div class="bar-track">
+                            <div class="bar-fill" data-width="<%- pct %>"></div>
+                        </div>
+                        <span class="bar-value"><%- count %></span>
+                    </div>
+                    <% } %>
+                </div>
+            <% } %>
+        </div>
+
+        <div class="chart-container">
+            <h3>📈 درآمد ماهانه (<%- currentYear %>)</h3>
+            <div class="bar-chart">
+                <% for (let m = 1; m <= 12; m++) {
+                     const amount = revenueByMonth[m];
+                     const pct = Math.round((amount / maxRevenue) * 100);
+                %>
+                <div class="bar-row">
+                    <span class="bar-label"><%- monthLabels[m] %></span>
+                    <div class="bar-track">
+                        <div class="bar-fill bar-fill-revenue" data-width="<%- pct %>"></div>
+                    </div>
+                    <span class="bar-value"><%- amount > 0 ? __num(amount, 0) : '—' %></span>
+                </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

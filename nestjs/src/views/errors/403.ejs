@@ -1,0 +1,58 @@
+<% locals.title = locals.title ?? 'دسترسی غیرمجاز';
+locals.message = locals.message ?? 'شما مجوز دسترسی به این بخش را ندارید+ ';
+locals.homeUrl = locals.homeUrl ?? (true ? APP_URL + '/dashboard' : '/');
+locals.appName = APP_NAME; %>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - <%- esc(locals.title) %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- true ? APP_URL + '/assets/css/style.css' : '/assets/css/style.css' %>">
+    <link rel="stylesheet" href="<%- true ? APP_URL + '/assets/css/animations.css' : '/assets/css/animations.css' %>">
+    <style>
+        body { display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px; }
+        .error-card {
+            background: var(--card-bg);
+            border: 2px solid #ff5252;
+            border-radius: var(--radius);
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 100%;
+            text-align: center;
+            animation: fadeInUp 0.6s ease-out;
+            box-shadow: 0 20px 60px rgba(255, 82, 82, 0.2);
+        }
+        .error-code {
+            font-size: 88px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ff5252, #ffeb3b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shake 0.5s ease-in-out 0.3s;
+        }
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        .error-card h1 { margin: 12px 0; font-size: 1.4rem; }
+        .error-card p { color: var(--text-muted); line-height: 1.7; margin-bottom: 28px; }
+        .error-actions { display: flex; flex-direction: column; gap: 10px; }
+    </style>
+</head>
+<body>
+    <div class="error-card">
+        <div style="font-size:3rem;margin-bottom:8px;">🚫</div>
+        <div class="error-code">403</div>
+        <h1><%- esc(locals.title) %></h1>
+        <p><%- esc(locals.message) %></p>
+        <div class="error-actions">
+            <a href="<%- escAttr(locals.homeUrl) %>" class="btn btn-primary">بازگشت به داشبورد</a>
+            <a href="javascript:history.back()" class="btn btn-secondary">صفحه قبل</a>
+        </div>
+        <p style="margin-top:24px;font-size:0.8rem;color:var(--text-muted);">⚽ <%- esc(locals.appName) %></p>
+    </div>
+</body>
+</html>

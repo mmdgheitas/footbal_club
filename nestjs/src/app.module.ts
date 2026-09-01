@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { ALL_ENTITIES } from './database/entities';
 import { AuthModule } from './modules/auth/auth.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
+import { PermissionsGuard } from './common/guards/permissions.guard';
 
 @Module({
   imports: [
@@ -26,11 +28,16 @@ import { AuthenticatedGuard } from './common/guards/authenticated.guard';
       retryDelay: 1000,
     }),
     AuthModule,
+    DashboardModule,
   ],
   providers: [
     {
       provide: APP_GUARD,
       useClass: AuthenticatedGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: PermissionsGuard,
     },
   ],
 })

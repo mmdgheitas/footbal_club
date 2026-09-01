@@ -132,3 +132,50 @@ because no MySQL server is installable here.
 
 Not yet ported: the remaining 15 controllers, ~73 routes, ~40 views, SMS
 providers, file uploads, and the financial double-entry logic.
+
+## 8. View conversion: the automated approach failed
+
+`scripts/convert-views.ts` mechanically converted all 40 remaining PHP views to
+EJS. **34 of the 40 produced templates that do not compile**, so they were
+deleted rather than committed. Only 6 converted cleanly.
+
+The reason is that these are not simple templates. Each one opens with a PHP
+computation block, for example `dashboard/index.php`:
+
+```php
+$maxCategory = 1;
+foreach ($byCategory as $row) {
+    $maxCategory = max($maxCategory, (int)($row['count'] ?? 0));
+}
+$revenueByMonth = array_fill(1, 12, 0);
+```
+
+That is a program, not markup: brace-syntax `foreach`, `(int)` casts,
+`array_fill()`, `max()`. A regex transpiler handles `<?= ?>` → `<%- %>` and
+alternative-syntax control structures, but it cannot translate arbitrary PHP.
+(The `.` → `+` concatenation fix alone moved 403.ejs from broken to passing.)
+
+**Conclusion: the remaining ~33 views must be hand-ported one at a time,
+alongside their controllers.** The converter is kept in `scripts/` because it
+still produces a useful first draft of the markup portions, but every file it
+emits needs manual review.
+
+`test/views-compile.spec.ts` now guards this: it compiles every template under
+`src/views`, asserts no PHP tags survive, and asserts the expected template
+count so a half-ported view cannot slip in silently.
+
+## 9. Coverage after this pass
+
+**11 of 44 views ported** (4 auth/layouts, 6 clean conversions, dashboard by
+hand) and **2 of 16 controllers** (auth, dashboard).
+
+Dashboard SQL is copied verbatim from the legacy models — `getStatistics`,
+`getMonthlyRevenue`, `getYearlyRevenue`, `getDebtsReport`,
+`getPlayersWithLowAttendance` — so the figures displayed are identical.
+
+Verification: `npx tsc --noEmit` exit 0; `npx jest` **34 passed / 5 suites**,
+covering Jalali conversion, EJS compilation of every template, dashboard render
+arithmetic (bar percentages, revenue rows, empty state, escaping), the auth
+views, and the live HTTP stack.
+
+Remaining: 14 controllers (~72 routes) and ~33 views.

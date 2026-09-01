@@ -1,0 +1,98 @@
+<% /**
+ * Admin Users List View
+ */
+locals.users = locals.users ?? [];
+locals.roles = locals.roles ?? [];
+locals.selectedRole = locals.selected_role ?? ''; %>
+
+<div class="admin-section">
+    <div class="admin-nav" style="margin-bottom: 20px; display: flex; gap: 15px;">
+        <a href="<%- APP_URL %>/admin/users" class="btn btn-primary">مدیریت کاربران</a>
+        <a href="<%- APP_URL %>/admin/settings" class="btn btn-secondary">تنظیمات</a>
+    </div>
+
+    <div class="section-header">
+        <h3>مدیریت کاربران</h3>
+        <form method="GET" class="role-filter">
+            <select name="role" onchange="this.form.submit()">
+                <option value="">همه نقش‌ها</option>
+                <% for (const [key, label] of __entries(locals.roles)) { %>
+                    <option value="<%- locals.key %>" <%- locals.selectedRole === locals.key ? 'selected' : '' %>><%- locals.label %></option>
+                <% } %>
+            </select>
+        </form>
+    </div>
+
+    <% if (__empty(locals.users)) { %>
+        <p class="empty-message">کاربری یافت نشد.</p>
+    <% } else { %>
+        <table>
+            <thead>
+                <tr>
+                    <th>نام</th>
+                    <th>ایمیل</th>
+                    <th>تلفن</th>
+                    <th>نقش</th>
+                    <th>وضعیت</th>
+                    <th>تاریخ ایجاد</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (const user of __iter(locals.users)) { %>
+                <tr>
+                    <td><%- esc(locals.user['name']) %></td>
+                    <td><%- esc(locals.user['email']) %></td>
+                    <td><%- esc(locals.user['phone'] ?? '-') %></td>
+                    <td><%- esc(constants.ROLES[locals.user['role']] ?? locals.user['role']) %></td>
+                    <td>
+                        <span class="status-badge <%- locals.user['status'] ? 'status-active' : 'status-inactive' %>">
+                            <%- locals.user['status'] ? 'فعال' : 'غیرفعال' %>
+                        </span>
+                    </td>
+                    <td><%- date('Y-m-d H:i', strtotime(locals.user['created_at'])) %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    <% } %>
+</div>
+
+<style>
+.admin-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.role-filter select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+}
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+.status-active {
+    background: #e6f4ea;
+    color: #137333;
+}
+.status-inactive {
+    background: #fce8e6;
+    color: #c5221f;
+}
+.empty-message {
+    text-align: center;
+    color: #999;
+    padding: 40px;
+}
+</style>
