@@ -1,0 +1,71 @@
+<% locals.logs = locals.logs ?? [];
+const filter = locals.filter ?? 'all';
+const statusLabels = {
+    pending: 'در انتظار',
+    sent: 'ارسال شده',
+    delivered: 'تحویل شده',
+    failed: 'ناموفق',
+};
+// PHP date('Y-m-d H:i', strtotime($v))
+const dt = (v) => {
+    if (__empty(v)) return '—';
+    const d = new Date(String(v).replace(' ', 'T'));
+    if (isNaN(d.getTime())) return '—';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+};
+%>
+
+<div class="sms-section panel">
+    <div class="section-header">
+        <h3 style="margin:0;color:var(--grass-bright);">گزارش پیامک‌ها</h3>
+        <form method="GET" class="filter-form" style="display:flex;gap:8px;align-items:center;">
+            <select name="filter">
+                <option value="all" <%- filter === 'all' ? 'selected' : '' %>>همه</option>
+                <option value="sent" <%- filter === 'sent' ? 'selected' : '' %>>ارسال شده</option>
+                <option value="pending" <%- filter === 'pending' ? 'selected' : '' %>>در انتظار</option>
+                <option value="failed" <%- filter === 'failed' ? 'selected' : '' %>>ناموفق</option>
+            </select>
+            <button type="submit" class="btn btn-secondary btn-sm">فیلتر</button>
+            <a href="<%- APP_URL %>/sms/send" class="btn btn-primary btn-sm">ارسال جدید</a>
+        </form>
+    </div>
+
+    <% if (__empty(locals.logs)) { %>
+        <p class="empty-message">پیامکی ثبت نشده است.</p>
+    <% } else { %>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>گیرنده</th>
+                        <th>پیام</th>
+                        <th>نوع</th>
+                        <th>وضعیت</th>
+                        <th>تاریخ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const log of __iter(locals.logs)) {
+                        const msg = String(log['message'] ?? '');
+                        // PHP mb_strlen / mb_substr - Persian is BMP, so JS length matches.
+                        const preview = msg.length > 50 ? msg.slice(0, 50) + '…' : msg;
+                        const status = String(log['status'] ?? '');
+                    %>
+                    <tr>
+                        <td><code><%- esc(log['recipient_phone'] ?? '') %></code></td>
+                        <td><%- esc(preview) %></td>
+                        <td><%- esc(log['sms_type'] ?? '-') %></td>
+                        <td>
+                            <span class="status-pill <%- status === 'failed' ? 'status-absent' : 'status-present' %>">
+                                <%- esc(statusLabels[status] ?? status) %>
+                            </span>
+                        </td>
+                        <td><%- dt(log['created_at']) %></td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>

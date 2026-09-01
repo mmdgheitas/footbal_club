@@ -1,0 +1,49 @@
+<% locals.classrooms = locals.classrooms ?? [];
+const csrfToken = locals.csrf_token ?? ''; %>
+
+<div class="classrooms-section panel">
+    <div class="section-header">
+        <a href="<%- APP_URL %>/classroom/create" class="btn btn-primary">➕ کلاس جدید</a>
+        <div style="color:var(--text-muted);font-size:0.9rem;">
+            مدیریت کلاس‌ها و تیم‌های ورزشی باشگاه
+        </div>
+    </div>
+
+    <% if (__empty(locals.classrooms)) { %>
+        <p class="empty-message">هنوز هیچ کلاسی تعریف نشده است! <a href="<%- APP_URL %>/classroom/create">اولین کلاس را ایجاد کنید.</a></p>
+    <% } else { %>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>نام کلاس</th>
+                        <th>توضیحات</th>
+                        <th>تعداد بازیکنان</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const classroom of __iter(locals.classrooms)) { %>
+                    <tr>
+                        <td><strong><%- esc(classroom['name']) %></strong></td>
+                        <td><%- esc(classroom['description'] || 'بدون توضیح') %></td>
+                        <td>
+                            <span class="status-pill status-present">
+                                <%- parseInt(classroom['player_count'], 10) || 0 %> بازیکن
+                            </span>
+                        </td>
+                        <td>
+                            <a href="<%- APP_URL %>/classroom/view/<%- classroom['id'] %>" class="btn btn-secondary btn-sm">مدیریت لیست</a>
+                            <a href="<%- APP_URL %>/classroom/edit/<%- classroom['id'] %>" class="btn btn-secondary btn-sm">ویرایش</a>
+                            <form method="POST" action="<%- APP_URL %>/classroom/delete/<%- classroom['id'] %>" style="display:inline;" data-confirm="آیا از حذف این کلاس مطمئن هستید؟ بازیکنان کلاس حذف نخواهند شد.">
+                                <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
+                                <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>

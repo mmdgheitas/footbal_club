@@ -1,0 +1,90 @@
+<% locals.players = locals.players ?? [];
+locals.classrooms = locals.classrooms ?? [];
+const selectedClassroomId = locals.selected_classroom_id ?? null;
+const pagination = locals.pagination ?? [];
+const search = locals.search ?? '';
+const csrfToken = locals.csrf_token ?? ''; %>
+
+<div class="players-section panel">
+    <div class="section-header">
+        <a href="<%- APP_URL %>/player/create" class="btn btn-primary">⚽ بازیکن جدید</a>
+        <form method="GET" class="search-form" style="display:flex;gap:8px;align-items:center;">
+            <select name="classroom_id" style="padding: 8px 12px;border: 1px solid var(--border-color);border-radius: var(--radius-sm);background-color: var(--navy-light);color: var(--white);font-family: inherit;">
+                <option value="">همه کلاس‌ها</option>
+                <% for (const cls of __iter(locals.classrooms)) { %>
+                    <option value="<%- parseInt(cls['id'], 10) %>" <%- selectedClassroomId === parseInt(cls['id'], 10) ? 'selected' : '' %>>
+                        <%- esc(cls['name']) %>
+                    </option>
+                <% } %>
+            </select>
+            <input type="text" name="search" placeholder="🔍 جستجو نام یا کد ملی..." value="<%- escAttr(search) %>">
+            <button type="submit" class="btn btn-secondary">جستجو</button>
+        </form>
+    </div>
+
+    <% if (__empty(locals.players)) { %>
+        <p class="empty-message">هنوز بازیکنی با این شرایط یافت نشد! <a href="<%- APP_URL %>/player/create">بازیکن جدید اضافه کن ⚽</a></p>
+    <% } else { %>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>نام</th>
+                        <th>کلاس</th>
+                        <th>پست</th>
+                        <th>رده</th>
+                        <th>کد ملی</th>
+                        <th>وضعیت</th>
+                        <th>پزشکی</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const player of __iter(locals.players)) { %>
+                    <tr>
+                        <td><strong><%- esc(player['name']) %></strong></td>
+                        <td>
+                            <span style="color:var(--grass-bright);font-weight:600;">
+                                <%- esc(player['classroom_name'] || 'بدون کلاس') %>
+                            </span>
+                        </td>
+                        <td><%- esc(constants.PLAYER_POSITIONS[player['position']] ?? player['position']) %></td>
+                        <td><%- esc((constants.AGE_CATEGORIES[player['age_category']] || {})['label'] ?? '') %></td>
+                        <td><code><%- esc(player['national_id']) %></code></td>
+                        <td>
+                            <span class="status-pill <%- player['status'] ? 'status-present' : 'status-absent' %>">
+                                <%- player['status'] ? 'فعال' : 'غیرفعال' %>
+                            </span>
+                        </td>
+                        <td><%- player['medical_clearance'] ? '✅' : '❌' %></td>
+                        <td>
+                            <a href="<%- APP_URL %>/player/view/<%- player['id'] %>" class="btn btn-secondary btn-sm">مشاهده</a>
+                            <a href="<%- APP_URL %>/player/edit/<%- player['id'] %>" class="btn btn-secondary btn-sm">ویرایش</a>
+                            <form method="POST" action="<%- APP_URL %>/player/delete/<%- player['id'] %>" style="display:inline;" data-confirm="مطمئنی؟">
+                                <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
+                                <button type="submit" class="btn btn-danger btn-sm">حذف</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (!__empty(pagination)) {
+            const queryString = '?search=' + encodeURIComponent(search) + '&classroom_id=' + (parseInt(selectedClassroomId, 10) || 0);
+        %>
+        <div class="pagination">
+            <% if (pagination['page'] > 1) { %>
+                <a href="<%- queryString %>&page=1" class="btn btn-secondary btn-sm">اول</a>
+                <a href="<%- queryString %>&page=<%- pagination['page'] - 1 %>" class="btn btn-secondary btn-sm">قبلی</a>
+            <% } %>
+            <span>صفحه <%- pagination['page'] %> از <%- pagination['last_page'] %></span>
+            <% if (pagination['page'] < pagination['last_page']) { %>
+                <a href="<%- queryString %>&page=<%- pagination['page'] + 1 %>" class="btn btn-secondary btn-sm">بعدی</a>
+                <a href="<%- queryString %>&page=<%- pagination['last_page'] %>" class="btn btn-secondary btn-sm">آخر</a>
+            <% } %>
+        </div>
+        <% } %>
+    <% } %>
+</div>

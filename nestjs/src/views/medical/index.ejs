@@ -1,0 +1,40 @@
+<% locals.players = locals.players ?? []; %>
+
+<div class="medical-section panel">
+    <div class="section-header">
+        <h3 style="margin:0;color:var(--grass-bright);">پرونده و تأیید پزشکی</h3>
+    </div>
+
+    <% if (__empty(locals.players)) { %>
+        <p class="empty-message">بازیکن فعالی یافت نشد.</p>
+    <% } else { %>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>نام بازیکن</th>
+                        <th>رده سنی</th>
+                        <th>تأیید پزشکی</th>
+                        <th>عملیات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (const player of __iter(locals.players)) { %>
+                    <tr>
+                        <td><strong><%- esc(player['name']) %></strong></td>
+                        <td><%- esc((constants.AGE_CATEGORIES[player['age_category']] || {})['label'] ?? '') %></td>
+                        <td>
+                            <span class="status-pill <%- !__empty(player['medical_clearance']) ? 'status-present' : 'status-absent' %>">
+                                <%- !__empty(player['medical_clearance']) ? '✓ تأیید شده' : '✗ در انتظار' %>
+                            </span>
+                        </td>
+                        <td>
+                            <a href="<%- APP_URL %>/medical/view/<%- parseInt(player['id'], 10) %>" class="btn btn-secondary btn-sm">مشاهده / ویرایش</a>
+                        </td>
+                    </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    <% } %>
+</div>
