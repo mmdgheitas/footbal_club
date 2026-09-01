@@ -1,0 +1,147 @@
+<% /**
+ * Player profile view
+ */
+const player = locals.player ?? {};
+const playerId = parseInt(player['id'] ?? 0, 10) || 0;
+const guardians = player['guardians'] ?? [];
+const medical = player['medical'] ?? null;
+const injuries = player['injuries'] ?? [];
+const files = player['files'] ?? [];
+const canManage = hasPerm('manage_players');
+const canViewMedical = hasPerm('view_medical');
+const nl2brEsc = (v) => esc(v).replace(/\n/g, '<br />\n');
+%>
+<div class="player-profile panel">
+    <div class="profile-header">
+        <div>
+            <h3><%- esc(player['name'] ?? '') %></h3>
+            <p class="meta">
+                <%- esc(constants.PLAYER_POSITIONS[player['position']] ?? player['position'] ?? '') %>
+                &bull;
+                <%- esc((constants.AGE_CATEGORIES[player['age_category']] || {})['label'] ?? player['age_category'] ?? '') %>
+            </p>
+        </div>
+        <div class="profile-actions">
+            <a href="<%- APP_URL %>/players" class="btn btn-secondary">لیست بازیکنان</a>
+            <% if (canManage) { %>
+                <a href="<%- APP_URL %>/player/edit/<%- playerId %>" class="btn btn-primary">ویرایش</a>
+            <% } %>
+            <% if (canViewMedical) { %>
+                <a href="<%- APP_URL %>/medical/view/<%- playerId %>" class="btn btn-secondary">پرونده پزشکی</a>
+            <% } %>
+            <a href="<%- APP_URL %>/attendance/report/<%- playerId %>" class="btn btn-secondary">گزارش حضور</a>
+        </div>
+    </div>
+
+    <div class="info-cards">
+        <div class="info-card">
+            <h4>اطلاعات شخصی</h4>
+            <dl>
+                <dt>کلاس (تیم)</dt>
+                <dd><strong><%- esc((player['classroom'] || {})['name'] ?? 'بدون کلاس') %></strong></dd>
+                <dt>کد ملی</dt>
+                <dd><%- esc(player['national_id'] ?? '-') %></dd>
+                <dt>تاریخ تولد</dt>
+                <dd><%- esc(player['date_of_birth'] ? toJalali(player['date_of_birth']) + ' (' + toJalaliText(player['date_of_birth']) + ')' : '-') %></dd>
+                <dt>تلفن</dt>
+                <dd><%- esc(player['phone'] ?? '-') %></dd>
+                <dt>ایمیل</dt>
+                <dd><%- esc(player['email'] ?? '-') %></dd>
+                <dt>وضعیت</dt>
+                <dd><%- !__empty(player['status']) ? 'فعال' : 'غیرفعال' %></dd>
+                <dt>تأیید پزشکی</dt>
+                <dd><%- !__empty(player['medical_clearance']) ? 'بله' : 'خیر' %></dd>
+            </dl>
+        </div>
+
+        <div class="info-card">
+            <h4>سرپرستان</h4>
+            <% if (__empty(guardians)) { %>
+                <p class="muted">ثبت نشده</p>
+            <% } else { %>
+                <ul class="list-plain">
+                    <% for (const g of __iter(guardians)) { %>
+                    <li>
+                        <strong><%- esc(g['name']) %></strong>
+                        — <%- esc(g['phone']) %>
+                        <% if (!__empty(g['relationship'])) { %>
+                            <span class="muted">(<%- esc(g['relationship']) %>)</span>
+                        <% } %>
+                    </li>
+                    <% } %>
+                </ul>
+            <% } %>
+        </div>
+
+        <div class="info-card">
+            <h4>خلاصه پزشکی</h4>
+            <% if (__empty(medical)) { %>
+                <p class="muted">پرونده پزشکی ثبت نشده.
+                    <% if (canViewMedical) { %>
+                        <a href="<%- APP_URL %>/medical/view/<%- playerId %>">ثبت کنید</a>
+                    <% } %>
+                </p>
+            <% } else { %>
+                <dl>
+                    <dt>گروه خونی</dt>
+                    <dd><%- esc(medical['blood_type'] ?? '-') %></dd>
+                    <dt>آلرژی</dt>
+                    <dd><%- esc(medical['allergies'] ?? '-') %></dd>
+                </dl>
+            <% } %>
+        </div>
+    </div>
+
+    <% if (!__empty(player['notes'])) { %>
+    <div class="notes-block">
+        <h4>یادداشت</h4>
+        <p><%- nl2brEsc(player['notes']) %></p>
+    </div>
+    <% } %>
+
+    <% if (!__empty(injuries)) { %>
+    <div class="section-block">
+        <h4>سوابق مصدومیت</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>نوع</th>
+                    <th>شدت</th>
+                    <th>تاریخ</th>
+                    <th>بهبود</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% for (const injury of __iter(injuries)) { %>
+                <tr>
+                    <td><%- esc(injury['injury_type']) %></td>
+                    <td><%- esc(injury['severity']) %></td>
+                    <td><%- esc(injury['date_of_injury']) %></td>
+                    <td><%- injury['recovery_date'] ? esc(injury['recovery_date']) : 'در حال بهبود' %></td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+    <% } %>
+
+    <% if (!__empty(files)) { %>
+    <div class="section-block">
+        <h4>فایل‌های پیوست</h4>
+        <ul class="list-plain">
+            <% for (const file of __iter(files)) { %>
+            <li>
+                <%- esc(file['file_type'] ?? 'document') %>
+                — <%- esc(file['original_name'] ?? file['stored_name'] ?? '') %>
+            </li>
+            <% } %>
+        </ul>
+    </div>
+    <% } %>
+</div>
+
+<style>
+.profile-header h3 { margin: 0 0 4px; font-size: 22px; color: var(--white); }
+.meta { color: var(--text-muted); margin: 0; }
+.notes-block, .section-block { margin-top: 24px; }
+</style>

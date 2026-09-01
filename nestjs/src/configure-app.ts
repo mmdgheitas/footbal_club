@@ -4,6 +4,8 @@ import { ValidationPipe } from '@nestjs/common';
 import * as path from 'path';
 import session from 'express-session';
 import { viewHelpers } from './common/views/view.helpers';
+import { getSessionUserRole } from './common/session/session.types';
+import { RbacService } from './common/rbac/rbac.service';
 
 /**
  * Shared application configuration, used by both bootstrap() and the e2e tests
@@ -61,8 +63,12 @@ export function configureApp(app: NestExpressApplication): void {
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   // Locals available to every view (APP_URL, esc(), Jalali helpers, constants).
-  app.use((_req, res, next) => {
+  app.use((req, res, next) => {
     Object.assign(res.locals, viewHelpers(appUrl), { assetVer });
+    // Views that call RbacMiddleware::hasPermission() inline (e.g.
+    // players/view.php) need the same check against the session role.
+    res.locals.hasPerm = (permission: string): boolean =>
+      RbacService.hasPermission(permission, getSessionUserRole(req));
     next();
   });
 }
