@@ -1,0 +1,38 @@
+<%
+/** Auth layout — EJS port of app/Views/layouts/auth.php */
+const pageTitle = (locals.title || 'ورود') + ' - ' + APP_NAME;
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="app-url" content="<%- escAttr(APP_URL) %>">
+    <meta name="csrf-token" content="<%- escAttr(locals.csrf_token || '') %>">
+    <title><%- esc(pageTitle) %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/animations.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body class="auth-layout">
+    <% const flashes = locals.flashes || {}; %>
+    <% for (const type of Object.keys(flashes)) { %>
+      <% for (const message of flashes[type]) { %>
+    <div class="alert alert-<%- esc(type) %>" style="position:fixed;top:max(16px, env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:9999;min-width:280px;max-width:92%;animation:slideInAlert 0.4s ease;">
+        <%- esc(message) %>
+        <button class="alert-close" type="button">&times;</button>
+    </div>
+      <% } %>
+    <% } %>
+
+    <%- locals.content || '' %>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        document.body.classList.add('is-loaded');
+    });
+    </script>
+    <script src="<%- APP_URL %>/assets/js/main.js?v=<%- locals.assetVer || '' %>"></script>
+</body>
+</html>

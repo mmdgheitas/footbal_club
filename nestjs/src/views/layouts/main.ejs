@@ -1,0 +1,164 @@
+<%
+/**
+ * Main layout — EJS port of app/Views/layouts/main.php.
+ * Markup, classes, Persian strings and nav structure are unchanged.
+ */
+const pageTitle = (locals.title || 'Football Club Manager') + ' - ' + APP_NAME;
+const currentUser = locals.user || {};
+const currentPath = locals.currentPath || '/';
+
+const isActive = (path) => {
+  if (path === '/dashboard' || path === '/player-panel') {
+    return currentPath === '/' || currentPath === '/dashboard' || currentPath === '/player-panel';
+  }
+  return currentPath.startsWith(path);
+};
+
+let navItems, moreNavItems;
+if (locals.userRole === 'player') {
+  navItems = [
+    ['/player-panel', { label: 'داشبورد', icon: '🏠' }],
+    ['/player-panel/homework', { label: 'تمرینات', icon: '📹' }],
+    ['/player-panel/achievements', { label: 'دستاوردها', icon: '🏆' }],
+  ];
+  moreNavItems = [
+    ['/player-panel/financial', { label: 'وضعیت مالی', icon: '💰' }],
+    ['/player-panel/attendance', { label: 'حضور و غیاب', icon: '📋' }],
+    ['/player-panel/profile', { label: 'مشخصات فردی', icon: '👤' }],
+    ['/player-panel/case-notes', { label: 'یادداشت‌ها', icon: '📝' }],
+    ['/player-panel/alerts', { label: 'اعلانات', icon: '📢' }],
+  ];
+} else {
+  navItems = [
+    ['/dashboard', { label: 'داشبورد', icon: '🏠' }],
+    ['/classrooms', { label: 'کلاس‌ها', icon: '🏫' }],
+    ['/players', { label: 'بازیکنان', icon: '⚽' }],
+    ['/payments', { label: 'مالی', icon: '💰' }],
+    ['/attendance', { label: 'حضور', icon: '📋' }],
+  ];
+  moreNavItems = [
+    ['/medical', { label: 'پزشکی', icon: '🏥' }],
+    ['/sms/send', { label: 'پیامک', icon: '📱' }],
+    ['/admin/alerts', { label: 'اعلانات', icon: '📢' }],
+    ['/achievements', { label: 'دستاوردها', icon: '🏆' }],
+    ['/case-notes', { label: 'یادداشت‌ها', icon: '📝' }],
+    ['/homework/review-list', { label: 'بررسی تمرینات', icon: '📹' }],
+    ['/admin/documents/pending', { label: 'اسناد در انتظار', icon: '📄' }],
+  ];
+}
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0a1628">
+    <meta name="app-url" content="<%- escAttr(APP_URL) %>">
+    <meta name="csrf-token" content="<%- escAttr(locals.csrf_token || '') %>">
+    <title><%- esc(pageTitle) %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/animations.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body class="has-bottom-nav">
+    <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
+
+    <div class="wrapper">
+        <header class="navbar">
+            <div class="navbar-brand">
+                <span class="logo-ball" aria-hidden="true">⚽</span>
+                <h1><%- APP_NAME %></h1>
+            </div>
+
+            <button type="button" class="nav-toggle" id="navToggle" aria-label="منو" aria-expanded="false">☰</button>
+
+            <nav class="navbar-nav desktop-only" id="mainNav">
+                <ul>
+                    <% for (const [path, item] of [...navItems, ...moreNavItems]) { %>
+                    <li>
+                        <a href="<%- APP_URL %><%- path %>" class="<%- isActive(path) ? 'active' : '' %>">
+                            <span aria-hidden="true"><%- item.icon %></span>
+                            <%- esc(item.label) %>
+                        </a>
+                    </li>
+                    <% } %>
+                    <% if (locals.userRole === 'super_admin') { %>
+                    <li>
+                        <a href="<%- APP_URL %>/admin/users" class="<%- currentPath.startsWith('/admin/users') ? 'active' : '' %>">
+                            <span aria-hidden="true">👥</span> کاربران
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<%- APP_URL %>/admin/settings" class="<%- currentPath === '/admin/settings' ? 'active' : '' %>">
+                            <span aria-hidden="true">⚙️</span> تنظیمات
+                        </a>
+                    </li>
+                    <% } %>
+                </ul>
+            </nav>
+
+            <div class="user-menu">
+                <span class="user-badge"> <%- esc(currentUser.name || 'کاربر') %></span>
+                <a href="<%- APP_URL %>/logout" class="btn-logout">خروج</a>
+            </div>
+        </header>
+
+        <main class="container">
+            <% const flashes = locals.flashes || {}; %>
+            <% for (const type of Object.keys(flashes)) { %>
+              <% for (const message of flashes[type]) { %>
+            <div class="alert alert-<%- esc(type) %>">
+                <%- esc(message) %>
+                <button type="button" class="alert-close">&times;</button>
+            </div>
+              <% } %>
+            <% } %>
+
+            <div class="page-header">
+                <h2><%- esc(locals.title || 'صفحه') %></h2>
+            </div>
+
+            <div class="content">
+                <%- locals.content || '' %>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>⚽ &copy; <%- locals.currentYear %> <%- APP_NAME %></p>
+        </footer>
+    </div>
+
+    <!-- Mobile bottom tab bar -->
+    <nav class="bottom-nav" aria-label="منوی اصلی موبایل">
+        <% for (const [path, item] of navItems) { %>
+        <a href="<%- APP_URL %><%- path %>"
+           class="bottom-nav-item <%- isActive(path) ? 'active' : '' %>">
+            <span class="nav-emoji" aria-hidden="true"><%- item.icon %></span>
+            <span><%- esc(item.label) %></span>
+        </a>
+        <% } %>
+        <button type="button" class="bottom-nav-item" id="bottomNavMore" aria-label="بیشتر">
+            <span class="nav-emoji" aria-hidden="true">➕</span>
+            <span>بیشتر</span>
+        </button>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu" role="menu">
+        <% for (const [path, item] of moreNavItems) { %>
+        <a href="<%- APP_URL %><%- path %>" role="menuitem">
+            <span><%- item.icon %></span>
+            <%- esc(item.label) %>
+        </a>
+        <% } %>
+        <% if (locals.userRole === 'super_admin') { %>
+        <a href="<%- APP_URL %>/admin/users" role="menuitem"><span>👥</span> کاربران</a>
+        <a href="<%- APP_URL %>/admin/settings" role="menuitem"><span>⚙️</span> تنظیمات</a>
+        <% } %>
+        <a href="<%- APP_URL %>/player/create" role="menuitem"><span>⚽</span> بازیکن جدید</a>
+    </div>
+
+    <script src="<%- APP_URL %>/assets/js/main.js?v=<%- locals.assetVer || '' %>"></script>
+</body>
+</html>
