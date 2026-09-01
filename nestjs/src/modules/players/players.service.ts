@@ -98,17 +98,21 @@ export class PlayersService {
       'SELECT * FROM fc_guardians WHERE player_id = ? AND deleted_at IS NULL',
       [id],
     );
+    // Medical::getByPlayerId() - no deleted_at filter in the legacy query.
     const med = await this.db.query(
-      'SELECT * FROM fc_medical_records WHERE player_id = ? AND deleted_at IS NULL',
+      'SELECT * FROM fc_medical_records WHERE player_id = ?',
       [id],
     );
     player.medical = med?.[0] ?? null;
+    // Injury::findAllBy('player_id', id) - no deleted_at filter, no ORDER BY.
     player.injuries = await this.db.query(
-      'SELECT * FROM fc_injuries WHERE player_id = ? AND deleted_at IS NULL',
+      'SELECT * FROM fc_injuries WHERE player_id = ?',
       [id],
     );
+    // FileUpload::getByPlayerId()
     player.files = await this.db.query(
-      'SELECT * FROM fc_file_uploads WHERE player_id = ? AND deleted_at IS NULL',
+      `SELECT * FROM fc_file_uploads
+       WHERE player_id = ? AND deleted_at IS NULL ORDER BY created_at DESC`,
       [id],
     );
 

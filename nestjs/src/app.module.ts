@@ -13,6 +13,8 @@ import { AdminModule } from './modules/admin/admin.module';
 import { FinancialModule } from './modules/financial/financial.module';
 import { SmsModule } from './modules/sms/sms.module';
 import { ClassroomsModule } from './modules/classrooms/classroom.module';
+import { AlertsModule } from './modules/alerts/alert.module';
+import { PlayerPanelModule } from './modules/player-panel/player-panel.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -45,6 +47,8 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     FinancialModule,
     SmsModule,
     ClassroomsModule,
+    AlertsModule,
+    PlayerPanelModule,
   ],
   providers: [
     {
