@@ -5,6 +5,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { ALL_ENTITIES } from './database/entities';
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { PlayersModule } from './modules/players/players.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -29,6 +30,7 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     }),
     AuthModule,
     DashboardModule,
+    PlayersModule,
   ],
   providers: [
     {
