@@ -6,6 +6,11 @@ import { ALL_ENTITIES } from './database/entities';
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PlayersModule } from './modules/players/players.module';
+import { ErrorsModule } from './modules/errors/errors.module';
+import { MedicalModule } from './modules/medical/medical.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { AdminModule } from './modules/admin/admin.module';
+import { FinancialModule } from './modules/financial/financial.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -31,6 +36,11 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     AuthModule,
     DashboardModule,
     PlayersModule,
+    ErrorsModule,
+    MedicalModule,
+    AttendanceModule,
+    AdminModule,
+    FinancialModule,
   ],
   providers: [
     {

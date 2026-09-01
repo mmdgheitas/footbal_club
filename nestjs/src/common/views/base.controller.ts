@@ -23,6 +23,7 @@ export abstract class BaseController {
     res: Response,
     view: string,
     data: Record<string, unknown> = {},
+    statusCode?: number,
   ): void {
     // View helpers (APP_URL, esc(), Jalali, constants) are injected into
     // res.locals by the middleware in configure-app.ts.
@@ -47,6 +48,11 @@ export abstract class BaseController {
         if (err2) {
           // Legacy falls back to bare content when the layout is missing.
           res.send(content);
+          return;
+        }
+        // ErrorResponse::render() returns a real 403/404 status code.
+        if (statusCode) {
+          res.status(statusCode).send(html);
           return;
         }
         res.send(html);
