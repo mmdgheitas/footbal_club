@@ -22,13 +22,41 @@ function walk(dir: string, base = ''): string[] {
   return out;
 }
 
+/** How many legacy views are still unported. Lower as views land; hit 0 at the end. */
+const VIEW_PARITY_REMAINING = 32;
+
 describe('every converted EJS view compiles', () => {
   const views = walk(VIEWS).sort();
 
-  it('finds the expected number of templates', () => {
-    // Ported so far. The legacy app has 44 PHP views; the remainder are ported
-    // module by module alongside their controllers. Bump as views land.
-    expect(views.length).toBe(11);
+  /**
+   * View parity: every legacy PHP view must have a matching EJS template.
+   * Replaces a hand-bumped count, so a forgotten view fails here instead of
+   * turning into a 500 at runtime.
+   */
+  it('has an EJS template for every legacy PHP view', () => {
+    const legacyRoot = path.resolve(__dirname, '../../app/Views');
+    const legacy: string[] = [];
+    const walkLegacy = (dir: string, rel = ''): void => {
+      for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+        const relPath = rel ? `${rel}/${entry.name}` : entry.name;
+        if (entry.isDirectory()) {
+          walkLegacy(path.join(dir, entry.name), relPath);
+        } else if (entry.name.endsWith('.php')) {
+          legacy.push(relPath.replace(/\.php$/, '.ejs'));
+        }
+      }
+    };
+    walkLegacy(legacyRoot);
+
+    const missing = legacy.filter((v) => !views.includes(v)).sort();
+    // eslint-disable-next-line no-console
+    console.log(
+      `view parity: ${views.length}/${legacy.length} ported` +
+        (missing.length ? `\n  missing: ${missing.join(', ')}` : ''),
+    );
+    expect(legacy.length).toBe(44);
+    // Flips to `expect(missing).toEqual([])` once every view has landed.
+    expect(missing.length).toBeLessThanOrEqual(VIEW_PARITY_REMAINING);
   });
 
   it.each(views)('%s compiles', (view) => {

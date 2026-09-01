@@ -136,7 +136,7 @@ export class FinancialController extends BaseController {
       }
     } else if (!RbacService.hasPermission('view_payments', userRole)) {
       // RbacMiddleware::requirePermission() renders the 403 page.
-      return this.render(
+      return this.renderStandalone(
         req,
         res,
         'errors/403',

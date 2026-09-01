@@ -11,6 +11,7 @@
 // Application information
 // ---------------------------------------------------------------------------
 export const APP_NAME = 'Football Club Manager';
+export const APP_DEBUG = ['1','true','yes','on'].includes(String(process.env.APP_DEBUG ?? '').toLowerCase());
 export const APP_VERSION = '1.0.0';
 
 // ---------------------------------------------------------------------------

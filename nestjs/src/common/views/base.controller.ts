@@ -60,6 +60,30 @@ export abstract class BaseController {
     });
   }
 
+  /**
+   * Renders a view on its own, with no layout.
+   *
+   * ErrorResponse::render() sets the status code and `require`s
+   * Views/errors/<code>.php, which is a complete HTML document. Wrapping it in
+   * layouts/main would nest a second <html> inside the first.
+   */
+  protected renderStandalone(
+    req: Request,
+    res: Response,
+    view: string,
+    data: Record<string, unknown> = {},
+    statusCode = 200,
+  ): void {
+    const locals = { ...res.locals, ...data };
+    res.render(view, locals, (err: Error | null, content: string) => {
+      if (err) {
+        throw err;
+      }
+      res.status(statusCode).send(content);
+    });
+    void req;
+  }
+
   /** Controller::json() — JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES */
   protected json(res: Response, data: unknown, statusCode = 200): void {
     res

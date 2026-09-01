@@ -23,7 +23,7 @@ export class ErrorController extends BaseController {
       'شما مجوز دسترسی به این بخش را ندارید.';
 
     // ErrorResponse::render(403, 'دسترسی غیرمجاز', $message)
-    return this.render(
+    return this.renderStandalone(
       req,
       res,
       'errors/403',
@@ -40,7 +40,7 @@ export class ErrorController extends BaseController {
   @Public()
   notFound(@Req() req: Request, @Res() res: Response) {
     // ErrorResponse::notFound()
-    return this.render(
+    return this.renderStandalone(
       req,
       res,
       'errors/404',
@@ -48,6 +48,12 @@ export class ErrorController extends BaseController {
         title: 'صفحه یافت نشد',
         code: 404,
         message: 'صفحه مورد نظر شما یافت نشد.',
+        // The 404 page prints a DEBUG INFO block built from $_SERVER.
+        req: {
+          method: req.method,
+          originalUrl: req.originalUrl,
+          scriptName: (req as any).scriptName,
+        },
       },
       404,
     );

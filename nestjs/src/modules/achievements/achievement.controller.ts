@@ -327,7 +327,7 @@ export class AchievementController extends BaseController {
     if (RbacService.hasPermission(permission, this.getUserRole(req))) {
       return true;
     }
-    this.render(
+    this.renderStandalone(
       req,
       res,
       'errors/403',

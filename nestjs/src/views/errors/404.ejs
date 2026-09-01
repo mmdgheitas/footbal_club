@@ -1,0 +1,80 @@
+<% /**
+ * Custom 404 Not Found page
+ * Port of app/Views/errors/404.php - a complete standalone document, rendered
+ * without a layout (see ErrorResponse::render()).
+ */
+locals.title = locals.title ?? 'صفحه پیدا نشد';
+locals.message = locals.message ?? 'صفحه‌ای که دنبال آن هستید وجود ندارد یا جابه‌جا شده است.';
+locals.homeUrl = locals.homeUrl ?? (APP_URL + '/dashboard');
+locals.appName = APP_NAME;
+const req = locals.req ?? {};
+const appDebugText = APP_DEBUG ? 'true' : 'false';
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - <%- esc(locals.title) %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/animations.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+            color: #fff;
+            padding: 20px;
+        }
+        .error-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+        }
+        .error-code {
+            font-size: 96px;
+            font-weight: 700;
+            color: #74b9ff;
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+        .error-card h1 { font-size: 24px; margin-bottom: 12px; }
+        .error-card p {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            background: #0984e3;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .btn:hover { background: #0770c9; }
+        .brand { margin-top: 24px; font-size: 13px; opacity: 0.6; }
+    </style>
+</head>
+<body>
+    <div style="background:#ff6b6b;padding:15px;margin:15px 0;border-radius:8px;text-align:left;font-family:monospace;font-size:12px;color:#000;"><strong>DEBUG INFO:</strong><br><strong>Method:</strong> <%- esc(req.method ?? 'N/A') %><br><strong>URI:</strong> <%- esc(req.originalUrl ?? 'N/A') %><br><strong>Script:</strong> <%- esc(req.scriptName ?? 'N/A') %><br><strong>APP_DEBUG:</strong> <%- appDebugText %><br></div>
+    <div class="error-card">
+        <div class="error-code">404</div>
+        <h1><%- esc(locals.title) %></h1>
+        <p><%- esc(locals.message) %></p>
+        <a href="<%- escAttr(locals.homeUrl) %>" class="btn">بازگشت به خانه</a>
+        <p class="brand"><%- esc(locals.appName) %></p>
+    </div>
+</body>
+</html>
