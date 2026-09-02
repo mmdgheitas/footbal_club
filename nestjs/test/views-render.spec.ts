@@ -67,9 +67,7 @@ const player = {
 /** Representative locals: enough for every template to take its non-empty branch. */
 const DATA: Record<string, unknown> = {
   csrf_token: 'deadbeef',
-  user: { id: 1, name: 'مدیر', email: 'admin@example.com', role: 'super_admin' },
   currentUser: { id: 1, name: 'مدیر', email: 'admin@example.com', role: 'super_admin' },
-  userRole: 'super_admin',
   session_date: '2026-09-01',
   session_date_jalali: '۱۴۰۵/۰۶/۱۰',
   is_admin: true,

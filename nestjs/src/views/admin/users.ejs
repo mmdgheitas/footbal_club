@@ -25,7 +25,7 @@ const dt = (v) => {
             <select name="role" onchange="this.form.submit()">
                 <option value="">همه نقش‌ها</option>
                 <% for (const [key, label] of __entries(locals.roles)) { %>
-                    <option value="<%- locals.key %>" <%- locals.selectedRole === locals.key ? 'selected' : '' %>><%- locals.label %></option>
+                    <option value="<%- key %>" <%- locals.selectedRole === key ? 'selected' : '' %>><%- label %></option>
                 <% } %>
             </select>
         </form>
@@ -48,16 +48,16 @@ const dt = (v) => {
             <tbody>
                 <% for (const user of __iter(locals.users)) { %>
                 <tr>
-                    <td><%- esc(locals.user['name']) %></td>
-                    <td><%- esc(locals.user['email']) %></td>
-                    <td><%- esc(locals.user['phone'] ?? '-') %></td>
-                    <td><%- esc(constants.ROLES[locals.user['role']] ?? locals.user['role']) %></td>
+                    <td><%- esc(user['name']) %></td>
+                    <td><%- esc(user['email']) %></td>
+                    <td><%- esc(user['phone'] ?? '-') %></td>
+                    <td><%- esc(constants.ROLES[user['role']] ?? user['role']) %></td>
                     <td>
-                        <span class="status-badge <%- locals.user['status'] ? 'status-active' : 'status-inactive' %>">
-                            <%- locals.user['status'] ? 'فعال' : 'غیرفعال' %>
+                        <span class="status-badge <%- user['status'] ? 'status-active' : 'status-inactive' %>">
+                            <%- user['status'] ? 'فعال' : 'غیرفعال' %>
                         </span>
                     </td>
-                    <td><%- dt(locals.user['created_at']) %></td>
+                    <td><%- dt(user['created_at']) %></td>
                 </tr>
                 <% } %>
             </tbody>

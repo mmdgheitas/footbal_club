@@ -385,3 +385,52 @@ mode is a hang, not an error.
 `dist/views`; `npx jest` 9 suites / 85 tests passed. Still no MySQL in this
 sandbox, so the dashboard query itself remains unexercised here - these two
 fixes were found from the user's runtime output, not reproduced locally.
+
+## 14. Loop variables shadowed by `locals.` — 26 broken reads across 4 views
+
+`admin/users` 500'd with `Cannot read properties of undefined (reading 'name')`.
+The cause was the mechanical conversion: it rewrote every `$x` to `locals.x`,
+*including inside loops*.
+
+```php
+<?php foreach ($users as $user): ?>
+    <td><?= escape($user['name']) ?></td>
+```
+became
+```ejs
+<% for (const user of __iter(locals.users)) { %>
+    <td><%- esc(locals.user['name']) %></td>   <!-- wrong -->
+```
+
+`locals.user` is the **session** user that `renderLayout()` adds, not the row.
+On the content render it is undefined, so the property read throws.
+
+26 such reads in 4 views: `admin/users` (`user`, plus `key`/`label` in the role
+filter), `attendance/report` (`record`), `player_panel/alerts` (`alert`),
+`player_panel/index` (`alert`). All replaced with the bare loop variable, which
+is what the PHP used.
+
+### Why neither existing test caught it
+
+`test/views-render.spec.ts` had `user` and `userRole` in its per-view fixture.
+They are layout-only locals, so supplying them made `locals.user['name']`
+resolve to the fixture object instead of throwing. Both are now removed from
+the fixture and live only in `LAYOUT_ONLY`.
+
+### New check
+
+`test/view-loop-scope.spec.ts` re-derives each template's loop scope by
+tracking braces across the `<% %>` scriptlets and fails on any `locals.X` read
+where X is a loop variable in scope. It carries a self-test with a synthetic
+template, so it cannot go quietly vacuous.
+
+Both checks were verified by reintroducing one shadow: the render test
+reproduced the exact `admin/users.ejs:51` error and the scope test reported
+`43/44 views clean`.
+
+### Verification as of this commit
+
+`npx tsc --noEmit` exit 0; `npm run build` clean with 44 views in `dist/views`;
+`npx jest` 10 suites / 88 tests passed; loop scope 44/44 clean; render check
+42/42; route parity 78/78; view parity 44/44. Still no MySQL here, so no SQL
+has been executed.

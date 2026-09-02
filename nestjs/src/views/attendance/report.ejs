@@ -46,13 +46,13 @@ const dt = (v) => {
             <tbody>
                 <% for (const record of __iter(locals.attendance)) { %>
                 <tr>
-                    <td><%- dt(locals.record['session_date']) %></td>
+                    <td><%- dt(record['session_date']) %></td>
                     <td>
-                        <span class="status-badge status-<%- locals.record['status'] %>">
-                            <%- esc(locals.attendanceStatus[locals.record['status']] ?? 'نامشخص') %>
+                        <span class="status-badge status-<%- record['status'] %>">
+                            <%- esc(locals.attendanceStatus[record['status']] ?? 'نامشخص') %>
                         </span>
                     </td>
-                    <td><%- esc(locals.record['recorder_name'] ?? 'سیستم') %></td>
+                    <td><%- esc(record['recorder_name'] ?? 'سیستم') %></td>
                 </tr>
                 <% } %>
             </tbody>
