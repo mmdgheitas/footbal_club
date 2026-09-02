@@ -36,7 +36,8 @@ const statusClass = { 1: 'status-present', 2: 'status-absent', 3: 'status-excuse
 
             <div class="form-group" style="margin:0;min-width:150px;">
                 <label for="sessionDate">📅 تاریخ جلسه (شمسی)</label>
-                <input type="text" class="jalali-date-input" id="sessionDate" value="<%- escAttr(sessionDateJalali) %>" style="padding:8px 12px;background-color:var(--navy-light);color:var(--white);border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:inherit;">
+                <input type="hidden" class="jalali-date-value" id="sessionDate" data-format="jalali" value="<%- escAttr(sessionDateJalali) %>">
+                <input type="text" class="jalali-date-input" id="sessionDate_display" data-for="sessionDate" readonly style="padding:8px 12px;background-color:var(--navy-light);color:var(--white);border:1px solid var(--border-color);border-radius:var(--radius-sm);font-family:inherit;cursor:pointer;">
             </div>
 
             <button type="button" class="btn btn-secondary" id="btnChangeDate" style="height:38px;padding:0 16px;">نمایش</button>

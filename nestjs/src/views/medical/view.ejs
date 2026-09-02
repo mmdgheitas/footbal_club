@@ -35,8 +35,11 @@ const ucfirst = (s) => { const t = String(s); return t.charAt(0).toUpperCase() +
             </div>
             <div class="form-group">
                 <label for="last_exam_date">آخرین معاینه (شمسی)</label>
-                <input type="text" class="jalali-date-input" id="last_exam_date" name="last_exam_date"
+                <input type="hidden" class="jalali-date-value" id="last_exam_date" name="last_exam_date"
+                       data-format="jalali"
                        value="<%- escAttr(!__empty(medical['last_exam_date']) ? toJalali(medical['last_exam_date']) : '') %>">
+                <input type="text" class="jalali-date-input" id="last_exam_date_display"
+                       data-for="last_exam_date" readonly>
             </div>
             <div class="form-group form-group-full">
                 <label for="allergies">آلرژی‌ها</label>

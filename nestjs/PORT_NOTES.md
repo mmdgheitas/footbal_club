@@ -471,3 +471,84 @@ coercion.
 query has ever returned a real column value here. The fix follows from the
 documented PDO-versus-mysql2 type behaviour and from the stack trace, not from
 observing it locally.
+
+## 16. Jalali date picker on every date field (requested UI change)
+
+This one is a deliberate departure from "do not change the UI", asked for
+directly: every date entry point now uses a Jalali calendar and **cannot be
+typed into**.
+
+### What was there before
+
+Five date fields, all different: `players/form` and `medical/view` carried a
+`.jalali-date-input` class that `main.js` only auto-formatted *as you typed*;
+`auth/register` was a plain text box with a `YYYY/MM/DD` placeholder;
+`achievements/form` used a native `<input type="date">` (Gregorian). There was
+no calendar anywhere.
+
+### The format problem
+
+The endpoints do not agree on what they accept, which is why this could not be
+one uniform widget:
+
+| Field | Server behaviour | Submits |
+| --- | --- | --- |
+| `auth/register` `date_of_birth` | `toGregorianString()` | jalali |
+| `medical/view` `last_exam_date` | converts when year 1300-1500 | jalali |
+| `attendance/index` `session_date` | converts when year 1300-1500 | jalali |
+| `players/form` `date_of_birth` | `/^\d{4}-\d{2}-\d{2}$/` | gregorian |
+| `achievements/form` `date_achieved` | stored as-is | gregorian |
+
+`players/form` is the trap: it is labelled شمسی and had the jalali class, but
+the server demands Gregorian. A picker that submitted `1405/03/31` there would
+fail validation. So the widget shows Jalali everywhere and submits per
+`data-format`, converting client-side where the endpoint wants Gregorian. No
+server validation was changed.
+
+### Implementation
+
+`src/public/assets/js/jalali-picker.js` - vanilla, no dependencies, loaded in
+both layouts ahead of `main.js`. Two elements per field:
+
+- a hidden `.jalali-date-value` that keeps the original `id`/`name` and always
+  holds the **submit** format, so existing form posts and any JS reading
+  `#sessionDate.value` keep working unchanged;
+- a visible readonly `.jalali-date-input` showing Persian digits, bound with
+  `data-for`.
+
+Readonly plus `inputmode="none"` and blocked paste/drop; the calendar is the
+only input path. Keyboard navigation works inside the open calendar (arrows,
+Enter, Escape, PageUp/Down, RTL-aware left/right), with today and clear
+buttons.
+
+The conversion functions are a line-for-line port of `jalali.helper.ts`, so
+client and server agree exactly - including the inherited December off-by-one,
+which is deliberately reproduced rather than fixed. `daysInJalaliMonth()`
+round-trips through the same functions instead of using an independent leap
+rule, so the grid can never disagree with the server.
+
+`main.js`'s `initJalaliInputs()` now returns early for picker-bound fields;
+otherwise its format-as-you-types handler and placeholder would fight the
+readonly input.
+
+### Tests
+
+- `test/jalali-picker.spec.ts` - extracts the picker's pure functions and
+  compares them to `JalaliHelper` over **73,566** `jalaliToGregorian` and
+  **64,283** `gregorianToJalali` conversions, all identical; plus format
+  round-trips, Persian-digit input, junk rejection and month lengths including
+  the 1399 leap year.
+- `test/date-fields.spec.ts` - asserts each of the five fields carries the
+  right `data-format` for its endpoint, is readonly, has no `name` on the
+  visible input, that no `type="date"` or unbound `.jalali-date-input` remains
+  anywhere, and that both layouts load the asset before `main.js`.
+
+### Verification as of this commit
+
+`npx tsc --noEmit` exit 0; `npm run build` clean with `jalali-picker.js` copied
+to `dist/public/assets/js/`; `npx jest` 12 suites / 106 tests passed.
+
+**Not verified here:** the picker has not been opened in a browser in this
+sandbox, so the popup positioning, focus handling and keyboard navigation are
+unexercised. The arithmetic and the markup wiring are covered by tests; the DOM
+interaction is not.

@@ -33,6 +33,7 @@ const pageTitle = (locals.title || 'ورود') + ' - ' + APP_NAME;
         document.body.classList.add('is-loaded');
     });
     </script>
+    <script src="<%- APP_URL %>/assets/js/jalali-picker.js?v=<%- locals.assetVer || '' %>"></script>
     <script src="<%- APP_URL %>/assets/js/main.js?v=<%- locals.assetVer || '' %>"></script>
 </body>
 </html>

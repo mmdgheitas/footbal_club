@@ -30,8 +30,10 @@ const formAction = isEdit
 
             <div class="form-group">
                 <label for="date_of_birth">تاریخ تولد (شمسی) *</label>
-                <input type="text" class="jalali-date-input" id="date_of_birth" name="date_of_birth" required
-                       value="<%- escAttr(player ? player['date_of_birth'] ?? '' : '') %>">
+                <input type="hidden" class="jalali-date-value" id="date_of_birth" name="date_of_birth"
+                       data-format="gregorian" value="<%- escAttr(player ? player['date_of_birth'] ?? '' : '') %>">
+                <input type="text" class="jalali-date-input" id="date_of_birth_display"
+                       data-for="date_of_birth" readonly required>
             </div>
 
             <div class="form-group">

@@ -347,6 +347,10 @@ const APP = {
 
     initJalaliInputs() {
         document.querySelectorAll('.jalali-date-input').forEach((input) => {
+            // jalali-picker.js owns these now: the field is readonly and the
+            // calendar is the only way to set a value, so the old
+            // format-as-you-types behaviour must not run on them.
+            if (input.dataset.jdpBound === '1') return;
             input.setAttribute('placeholder', 'مثال: ۱۴۰۵/۰۳/۳۱');
             input.setAttribute('maxlength', '10');
             

@@ -73,8 +73,11 @@ const today = `${_d.getFullYear()}-${p(_d.getMonth() + 1)}-${p(_d.getDate())}`;
                             <div class="col-md-4">
                                 <div class="mb-3">
                                     <label for="date_achieved" class="form-label">تاریخ دستاورد</label>
-                                    <input type="date" class="form-control" id="date_achieved" name="date_achieved"
+                                    <input type="hidden" class="jalali-date-value" id="date_achieved" name="date_achieved"
+                                           data-format="gregorian"
                                            value="<%- esc(achievement ? achievement['date_achieved'] ?? today : today) %>">
+                                    <input type="text" class="jalali-date-input form-control" id="date_achieved_display"
+                                           data-for="date_achieved" readonly>
                                 </div>
                             </div>
                         </div>
