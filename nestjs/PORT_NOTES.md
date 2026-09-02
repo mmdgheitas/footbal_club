@@ -434,3 +434,40 @@ reproduced the exact `admin/users.ejs:51` error and the scope test reported
 `npx jest` 10 suites / 88 tests passed; loop scope 44/44 clean; render check
 42/42; route parity 78/78; view parity 44/44. Still no MySQL here, so no SQL
 has been executed.
+
+## 15. mysql2 returns Date objects where PDO returns strings
+
+`players/view` 500'd with `gregorianDateString.trim is not a function`. The
+`date_of_birth` column is a MySQL `DATE`; mysql2 converts it to a JS `Date`,
+while PDO returns the string `"2012-05-14"`. `toJalaliString()` then called
+`.trim()` on a `Date`.
+
+Fixed at the driver rather than per call site, because it is not specific to
+this view: **every** `DATE`, `DATETIME` and `TIMESTAMP` column in every query
+has the same divergence. `dateStrings: true` is now set on both the
+`TypeOrmModule.forRoot()` options and `dataSourceOptions`, so the driver
+returns the same strings PDO does and the existing string helpers work
+unchanged.
+
+Checked that nothing depended on the `Date` behaviour: the only `.getTime()`
+uses in `src/` are on `new Date(...)` built from request input in validation
+code, never on a column value.
+
+`toJalaliString()` and `toJalaliText()` additionally coerce a `Date` to
+`YYYY-MM-DD` (local) and treat an invalid `Date` as empty. That is defence in
+depth, not the fix - a hand-built object or a caller that bypasses the driver
+can still pass a `Date`, and it should not take the page down.
+`toGregorianString()` was left alone: it parses Jalali text from form input,
+which is always a string.
+
+### Verification as of this commit
+
+`npx tsc --noEmit` exit 0; `npm run build` clean with `dateStrings` present in
+both `dist/app.module.js` and `dist/database/data-source.js`; `npx jest`
+10 suites / 92 tests passed, including 4 new cases pinning the `Date`
+coercion.
+
+**This one is not verifiable in this sandbox at all.** There is no MySQL, so no
+query has ever returned a real column value here. The fix follows from the
+documented PDO-versus-mysql2 type behaviour and from the stack trace, not from
+observing it locally.

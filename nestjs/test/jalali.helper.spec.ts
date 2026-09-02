@@ -44,3 +44,37 @@ describe('JalaliHelper', () => {
     expect(JalaliHelper.toJalaliText('2026-09-01')).toBe('۱۰ شهریور ۱۴۰۵');
   });
 });
+
+/**
+ * PDO returns DATE/DATETIME/TIMESTAMP columns as strings, and the driver is
+ * configured with dateStrings to match. Before that, mysql2 handed back JS
+ * Date objects and toJalaliString() called .trim() on one, which threw
+ * "gregorianDateString.trim is not a function" and 500'd players/view.
+ *
+ * These pin the defensive coercion so a Date can never hard-crash the view
+ * layer again, whatever the driver does.
+ */
+describe('Jalali helpers tolerate non-string input', () => {
+  it('converts a Date to the same value as its string form', () => {
+    const asDate = new Date(2012, 4, 14); // local 2012-05-14
+    expect(JalaliHelper.toJalaliString(asDate)).toBe(JalaliHelper.toJalaliString('2012-05-14'));
+    expect(JalaliHelper.toJalaliText(asDate)).toBe(JalaliHelper.toJalaliText('2012-05-14'));
+  });
+
+  it('produces a real Jalali date from a Date, not a crash', () => {
+    expect(() => JalaliHelper.toJalaliString(new Date(2026, 8, 1))).not.toThrow();
+    expect(JalaliHelper.toJalaliString(new Date(2026, 8, 1))).toMatch(/^\d{4}\/\d{2}\/\d{2}$/);
+  });
+
+  it('handles an invalid Date as empty rather than throwing', () => {
+    expect(JalaliHelper.toJalaliString(new Date('nonsense'))).toBe('');
+    expect(JalaliHelper.toJalaliText(new Date('nonsense'))).toBe('');
+  });
+
+  it('still returns empty for null, undefined and empty string', () => {
+    for (const v of [null, undefined, '']) {
+      expect(JalaliHelper.toJalaliString(v as any)).toBe('');
+      expect(JalaliHelper.toJalaliText(v as any)).toBe('');
+    }
+  });
+});

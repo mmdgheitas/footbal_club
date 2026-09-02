@@ -33,6 +33,11 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
       password: process.env.DB_PASSWORD ?? '',
       database: process.env.DB_NAME ?? 'football_club',
       charset: 'utf8mb4',
+      // PDO returns DATE/DATETIME/TIMESTAMP columns as strings; mysql2 would
+      // hand back JS Date objects instead. Every view formats these with the
+      // string helpers (toJalali, the per-view dt()), and the legacy code
+      // does too, so keep them as strings for parity.
+      dateStrings: true,
       entities: ALL_ENTITIES,
       autoLoadEntities: true,
       // Schema is owned by database/schema.sql; never let the ORM mutate it.

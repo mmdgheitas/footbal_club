@@ -137,7 +137,26 @@ export class JalaliHelper {
    * Convert standard YYYY-MM-DD Gregorian string to YYYY/MM/DD Jalali string.
    * Mirrors JalaliHelper::toJalaliString()
    */
-  static toJalaliString(gregorianDateString: string | null | undefined): string {
+  /**
+   * Coerce a column value to the `YYYY-MM-DD ...` shape the helpers expect.
+   *
+   * PDO hands back DATE/DATETIME/TIMESTAMP as strings and the driver is now
+   * configured with dateStrings to match, but a Date can still arrive from a
+   * hand-built object or a caller that bypasses the driver. Calling .trim() on
+   * one throws, which is what took down players/view, so normalise here.
+   */
+  private static datePartOf(value: unknown): string {
+    if (value instanceof Date) {
+      if (isNaN(value.getTime())) return '';
+      const p = (n: number) => String(n).padStart(2, '0');
+      return `${value.getFullYear()}-${p(value.getMonth() + 1)}-${p(value.getDate())}`;
+    }
+    if (typeof value === 'string') return value;
+    return value == null ? '' : String(value);
+  }
+
+  static toJalaliString(value: string | Date | null | undefined): string {
+    const gregorianDateString = JalaliHelper.datePartOf(value);
     if (!gregorianDateString) {
       return '';
     }
@@ -166,7 +185,8 @@ export class JalaliHelper {
    * Convert standard YYYY-MM-DD Gregorian string to verbose Persian text
    * (e.g. ۳۱ خرداد ۱۴۰۵). Mirrors JalaliHelper::toJalaliText()
    */
-  static toJalaliText(gregorianDateString: string | null | undefined): string {
+  static toJalaliText(value: string | Date | null | undefined): string {
+    const gregorianDateString = JalaliHelper.datePartOf(value);
     if (!gregorianDateString) {
       return '';
     }

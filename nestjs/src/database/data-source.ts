@@ -15,6 +15,8 @@ export const dataSourceOptions: DataSourceOptions = {
   password: process.env.DB_PASSWORD ?? '',
   database: process.env.DB_NAME ?? 'football_club',
   charset: 'utf8mb4',
+  // PDO returns DATE/DATETIME/TIMESTAMP as strings; keep mysql2 aligned.
+  dateStrings: true,
   entities: ALL_ENTITIES,
   migrations: [__dirname + '/migrations/*.{ts,js}'],
   // Schema is owned by database/schema.sql; never let the ORM mutate it.
