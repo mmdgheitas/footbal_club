@@ -50,7 +50,7 @@ const dt = (v) => {
                 <tr>
                     <td><%- esc(user['name']) %></td>
                     <td><%- esc(user['email']) %></td>
-                    <td><%- esc(user['phone'] ?? '-') %></td>
+                    <td><a href="tel:<%- esc(user['phone'] ?? '-') %>"><%- esc(user['phone'] ?? '-') %></a></td>
                     <td><%- esc(constants.ROLES[user['role']] ?? user['role']) %></td>
                     <td>
                         <span class="status-badge <%- user['status'] ? 'status-active' : 'status-inactive' %>">
@@ -67,7 +67,7 @@ const dt = (v) => {
 
 <style>
 .admin-section {
-    background: white;
+    /* background: white; */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -82,7 +82,7 @@ const dt = (v) => {
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    background: white;
+    /* background: white; */
 }
 .status-badge {
     padding: 4px 8px;
