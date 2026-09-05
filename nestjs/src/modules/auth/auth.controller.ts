@@ -37,15 +37,8 @@ export class AuthController extends BaseController {
     super();
   }
 
-  // NOTE: '/' and '/login' must be separate handlers. NestJS keeps only the
-  // last-applied method decorator when two are stacked on one method, which
-  // silently drops the other route.
-  @Get('/')
-  @GuestOnly()
-  root(@Req() req: Request, @Res() res: Response): void {
-    this.login(req, res);
-  }
-
+  // NOTE: '/' is owned by HomeController (the landing page); it redirects
+  // authenticated visitors on to their workspace. '/login' stays here.
   @Get('/login')
   @GuestOnly()
   login(@Req() req: Request, @Res() res: Response): void {

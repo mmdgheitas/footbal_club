@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
 import { ALL_ENTITIES } from './database/entities';
+import { HomeModule } from './modules/home/home.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { PlayersModule } from './modules/players/players.module';
@@ -46,6 +47,7 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
       retryAttempts: 2,
       retryDelay: 1000,
     }),
+    HomeModule,
     AuthModule,
     DashboardModule,
     PlayersModule,

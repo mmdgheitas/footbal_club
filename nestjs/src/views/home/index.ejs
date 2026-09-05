@@ -1,0 +1,39 @@
+<% /* Index / landing page — club-emblem hero with login CTA */ %>
+<main class="landing">
+    <div class="landing-spotlight landing-spotlight-left" aria-hidden="true"></div>
+    <div class="landing-spotlight landing-spotlight-right" aria-hidden="true"></div>
+    <div class="landing-pitch-ring" aria-hidden="true"></div>
+
+    <p class="landing-eyebrow reveal">🏟️ <%- esc(APP_NAME) %></p>
+
+    <figure class="landing-emblem-wrap reveal reveal-delay-1">
+        <span class="landing-ring landing-ring-solid" aria-hidden="true"></span>
+        <span class="landing-ring landing-ring-dashed" aria-hidden="true"></span>
+        <span class="landing-orbit" aria-hidden="true"><span class="landing-orbit-ball">⚽</span></span>
+        <img class="landing-emblem"
+             src="<%- APP_URL %>/assets/img/club-emblem.png?v=<%- locals.assetVer || '' %>"
+             alt="نشان <%- escAttr(APP_NAME) %>"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="landing-emblem-fallback">⚽</div>
+    </figure>
+
+    <h1 class="landing-title reveal reveal-delay-2">به باشگاه خوش آمدید</h1>
+    <p class="landing-tagline reveal reveal-delay-2">مدیریت تیم — سریع، ساده، حرفه‌ای</p>
+
+    <div class="landing-actions reveal reveal-delay-3">
+        <a class="btn btn-primary landing-cta" href="<%- APP_URL %>/login">
+            <span class="landing-cta-shine" aria-hidden="true"></span>
+            ورود به سیستم 🚀
+        </a>
+        <a class="btn btn-secondary landing-secondary" href="<%- APP_URL %>/register">حساب نداری؟ ثبت‌نام کن</a>
+    </div>
+
+    <ul class="landing-features reveal reveal-delay-4">
+        <li>👥 مدیریت بازیکنان</li>
+        <li>📅 حضور و غیاب</li>
+        <li>💰 امور مالی</li>
+        <li>🏆 افتخارات</li>
+    </ul>
+
+    <p class="landing-foot">© <%- toPersian(currentYear) %> — <%- esc(APP_NAME) %> ⚽</p>
+</main>

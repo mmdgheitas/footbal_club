@@ -1199,3 +1199,319 @@ html[dir="rtl"] .stat-card.stat-success {
 .jdp-clear { background: transparent; color: #8a97a5; }
 .jdp-today-btn:hover { background: #dfeaf7; }
 .jdp-clear:hover { color: #ff4757; }
+
+/* ─── Landing / index page ─────────────────────────────────────────────
+ * Club-emblem hero: floodlights, orbiting ball, glowing crest and the
+ * login CTA below it. Uses the same theme variables as the rest of the
+ * app so the index page feels like part of the club.
+ */
+
+.landing {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    padding: 56px 24px 64px;
+    text-align: center;
+    overflow: hidden;
+}
+
+/* Stadium floodlights sweeping from the top corners */
+.landing-spotlight {
+    --sway: 18deg;
+    position: absolute;
+    top: -22%;
+    width: 34vmax;
+    height: 95vmax;
+    pointer-events: none;
+    filter: blur(6px);
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 235, 59, 0.16),
+        rgba(0, 200, 83, 0.08) 45%,
+        transparent 78%
+    );
+    clip-path: polygon(42% 0, 58% 0, 100% 100%, 0 100%);
+    transform-origin: top center;
+    animation: spotlightSway 9s ease-in-out infinite alternate;
+}
+
+.landing-spotlight-left {
+    left: -14vmax;
+    --sway: 16deg;
+}
+
+.landing-spotlight-right {
+    right: -14vmax;
+    --sway: -16deg;
+    animation-delay: -4.5s;
+}
+
+@keyframes spotlightSway {
+    from { transform: rotate(calc(var(--sway) - 4deg)); opacity: 0.35; }
+    to   { transform: rotate(calc(var(--sway) + 4deg)); opacity: 0.65; }
+}
+
+/* Giant slowly-rotating pitch centre circle behind everything */
+.landing-pitch-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(150vmin, 980px);
+    height: min(150vmin, 980px);
+    border: 2px dashed rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: pitchRingSpin 90s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes pitchRingSpin {
+    to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Eyebrow chip above the crest */
+.landing-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border-radius: 999px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    backdrop-filter: blur(10px);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+/* ── The crest ── */
+.landing-emblem-wrap {
+    position: relative;
+    width: clamp(190px, 36vmin, 300px);
+    aspect-ratio: 1;
+    margin: 12px 0 4px;
+    display: grid;
+    place-items: center;
+    animation: emblemFloat 6s ease-in-out infinite;
+    filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.55));
+}
+
+.landing-emblem {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid rgba(105, 240, 174, 0.55);
+    animation: emblemGlow 3.2s ease-in-out infinite;
+}
+
+/* Fallback if the crest image is missing — keeps the page on-theme */
+.landing-emblem-fallback {
+    display: none;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    align-items: center;
+    justify-content: center;
+    font-size: 5rem;
+    background: var(--glass);
+    border: 3px solid var(--grass);
+    box-shadow: 0 0 45px var(--grass-glow);
+}
+
+.landing-ring {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.landing-ring-solid {
+    inset: -14px;
+    border: 1px solid rgba(105, 240, 174, 0.22);
+}
+
+.landing-ring-dashed {
+    inset: -26px;
+    border: 2px dashed rgba(255, 235, 59, 0.32);
+    animation: ringSpin 26s linear infinite;
+}
+
+/* A ball orbiting the crest */
+.landing-orbit {
+    position: absolute;
+    inset: -26px;
+    animation: ringSpin 9s linear infinite;
+    pointer-events: none;
+}
+
+.landing-orbit-ball {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 26px;
+    filter: drop-shadow(0 0 12px var(--grass-glow));
+}
+
+@keyframes ringSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes emblemFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-14px); }
+}
+
+@keyframes emblemGlow {
+    0%, 100% {
+        box-shadow:
+            0 0 0 6px rgba(10, 22, 40, 0.9),
+            0 0 24px var(--grass-glow);
+    }
+    50% {
+        box-shadow:
+            0 0 0 6px rgba(10, 22, 40, 0.9),
+            0 0 60px var(--grass-glow),
+            0 0 22px rgba(255, 235, 59, 0.25);
+    }
+}
+
+/* ── Headline & tagline ── */
+.landing-title {
+    font-size: clamp(2rem, 6vw, 3.4rem);
+    font-weight: 800;
+    line-height: 1.25;
+    background: linear-gradient(
+        120deg,
+        var(--grass-bright),
+        var(--accent) 45%,
+        var(--accent-hot) 70%,
+        var(--grass-bright) 100%
+    );
+    background-size: 220% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: titleShine 7s linear infinite;
+}
+
+@keyframes titleShine {
+    to { background-position: 220% center; }
+}
+
+.landing-tagline {
+    color: var(--text-muted);
+    font-size: clamp(0.95rem, 2.4vw, 1.15rem);
+    margin-top: -8px;
+}
+
+/* ── CTA row ── */
+.landing-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.landing-cta {
+    padding: 16px 48px;
+    font-size: 1.15rem;
+    border-radius: 999px;
+    box-shadow: 0 10px 32px var(--grass-glow);
+}
+
+/* Sweeping shine across the login button */
+.landing-cta-shine {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 38%;
+    left: -60%;
+    background: linear-gradient(
+        100deg,
+        transparent,
+        rgba(255, 255, 255, 0.55),
+        transparent
+    );
+    transform: skewX(-20deg);
+    animation: ctaShine 2.8s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes ctaShine {
+    0%       { left: -60%; }
+    55%, 100% { left: 130%; }
+}
+
+.landing-secondary {
+    border-radius: 999px;
+    padding: 14px 26px;
+}
+
+/* ── Feature chips ── */
+.landing-features {
+    list-style: none;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 4px;
+    padding: 0;
+}
+
+.landing-features li {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    backdrop-filter: blur(8px);
+    transition: var(--transition);
+}
+
+.landing-features li:hover {
+    border-color: var(--grass);
+    color: var(--grass-bright);
+    transform: translateY(-3px);
+}
+
+/* ── Page foot ── */
+.landing-foot {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+/* Responsive tweaks */
+@media (max-width: 560px) {
+    .landing { gap: 18px; padding-top: 44px; }
+    .landing-cta { width: min(100%, 340px); }
+    .landing-secondary { width: min(100%, 340px); }
+    .landing-ring-dashed { inset: -18px; }
+    .landing-orbit { inset: -18px; }
+}
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    .landing,
+    .landing * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
