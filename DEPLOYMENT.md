@@ -202,6 +202,9 @@ sudo nano /var/www/football-club/.env
 APP_ENV=production
 APP_DEBUG=false
 APP_URL=https://football-club.example.com
+# Timezone of the club. Dates are stored as wall clocks in this zone and the
+# application pins both the Node process and the MySQL session to it.
+APP_TIMEZONE=Asia/Tehran
 
 DB_HOST=localhost
 DB_NAME=football_club

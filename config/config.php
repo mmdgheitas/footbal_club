@@ -85,7 +85,12 @@ define('MAIL_FROM_NAME', APP_NAME);
 define('ITEMS_PER_PAGE', 15);
 
 // Date/Time
-date_default_timezone_set('UTC');
+// One timezone for the whole product: PHP, the NestJS port and the MySQL
+// session all use APP_TIMEZONE (default Asia/Tehran). Stored DATE/DATETIME
+// values are wall clocks in this zone; formatting them in another one is what
+// made OTP codes expire on arrival on a UTC+03:30 server.
+define('APP_TIMEZONE', $_ENV['APP_TIMEZONE'] ?? 'Asia/Tehran');
+date_default_timezone_set(APP_TIMEZONE);
 define('DATE_FORMAT', 'Y-m-d');
 define('DATETIME_FORMAT', 'Y-m-d H:i:s');
 define('DISPLAY_DATE_FORMAT', 'd M Y');

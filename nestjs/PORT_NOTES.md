@@ -552,3 +552,33 @@ to `dist/public/assets/js/`; `npx jest` 12 suites / 106 tests passed.
 sandbox, so the popup positioning, focus handling and keyboard navigation are
 unexercised. The arithmetic and the markup wiring are covered by tests; the DOM
 interaction is not.
+
+## 11. Timezone contract (APP_TIMEZONE)
+
+MySQL DATE/DATETIME/TIMESTAMP values are wall clocks without a zone, and three
+different layers decide what zone they belong to: V8 (`new Date(string)` — the
+process zone, which is how TypeORM hydrates `datetime` columns), mysql2 (its
+`timezone` option, for JS `Date` values) and the MySQL session (`NOW()`,
+`CURRENT_TIMESTAMP`, column defaults).
+
+`APP_TIMEZONE` (default `Asia/Tehran`) is the single zone all three are pinned
+to:
+
+- `src/common/helpers/time.helper.ts` — `applyAppTimezone()` sets `process.env.TZ`;
+  `toSqlDateTime()`, `toSqlDate()`, `toYearMonth()` write; `fromSql()` reads;
+  `timezoneOffsetString()` produces `+03:30`. Implemented on `Intl`, so it is
+  correct even before the process is pinned and across DST changes.
+- `src/database/db-options.ts` — passes the offset to mysql2 as `timezone`.
+- `src/database/database-timezone.service.ts` — `SET time_zone` for every
+  pooled connection at boot, plus a startup comparison of `NOW()` against the
+  application clock that warns on more than two minutes of drift.
+- `src/database/sqlite-dev.ts` — the dev fallback binds Dates the same way and
+  rewrites `datetime('now')` to `datetime('now','localtime')`.
+- Legacy PHP: `config/config.php` (`date_default_timezone_set(APP_TIMEZONE)`)
+  and `app/Core/Database.php` (`SET time_zone`), so both applications sharing
+  the database keep the same clock.
+
+Rule: never format a SQL value with `toISOString()` and never parse one with a
+bare `new Date(value)` — `test/timezone.spec.ts` fails the build if a source
+file does. That mistake is what made every OTP code arrive already expired on a
+UTC+03:30 server.

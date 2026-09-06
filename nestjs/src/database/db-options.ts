@@ -1,6 +1,7 @@
 import { DataSourceOptions } from 'typeorm';
 import * as path from 'path';
 import { ALL_ENTITIES } from './entities';
+import { applyAppTimezone, timezoneOffsetString } from '../common/helpers/time.helper';
 
 /**
  * Single place where the database connection is described, shared by the Nest
@@ -15,6 +16,9 @@ export function isSqlite(): boolean {
 }
 
 export function buildDataSourceOptions(): DataSourceOptions {
+  // One clock for the process, the driver and the database session.
+  applyAppTimezone();
+
   if (isSqlite()) {
     // Loaded lazily so production (MySQL) never touches the dev shim.
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -49,6 +53,11 @@ export function buildDataSourceOptions(): DataSourceOptions {
     // back JS Date objects instead. Every view formats these with the string
     // helpers, so keep them as strings for parity with the legacy app.
     dateStrings: true,
+    // Wall-clock values are written and read in the application timezone
+    // (see common/helpers/time.helper.ts). Without this, mysql2 would use the
+    // machine's timezone for JS Date values while the app formatted strings in
+    // another one, and every stored instant would drift by the offset.
+    timezone: timezoneOffsetString(),
     entities: ALL_ENTITIES,
     // Schema is owned by database/schema.sql; never let the ORM mutate it.
     synchronize: false,

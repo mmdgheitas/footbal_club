@@ -9,6 +9,7 @@ import {
 } from '../../database/entities';
 import { MEMBERSHIP_CARD_PREFIX } from '../../config/constants';
 import { JalaliHelper } from '../../common/helpers/jalali.helper';
+import { toSqlDate, toSqlDateTime } from '../../common/helpers/time.helper';
 
 /**
  * کارت عضویت دیجیتال.
@@ -61,7 +62,7 @@ export class MembershipCardService {
 
     const cardNumber = await this.nextCardNumber();
     const now = new Date();
-    const issuedAt = now.toISOString().slice(0, 19).replace('T', ' ');
+    const issuedAt = toSqlDateTime(now);
 
     const card = await this.cards.save(
       this.cards.create({
@@ -76,7 +77,7 @@ export class MembershipCardService {
 
     // Membership date is part of the printed card; set it on first issue.
     if (!player.membershipDate) {
-      player.membershipDate = now.toISOString().slice(0, 10);
+      player.membershipDate = toSqlDate(now);
       await this.players.save(player);
     }
 

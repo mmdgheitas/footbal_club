@@ -1,4 +1,5 @@
 import { isSqlite } from './db-options';
+import { firstDayOfMonthsAgo, toSqlDate } from '../common/helpers/time.helper';
 
 /**
  * Small dialect helpers.
@@ -23,15 +24,12 @@ export function dateOnly(column: string): string {
   return isSqlite() ? `date(${column})` : `DATE(${column})`;
 }
 
-/** Today, as YYYY-MM-DD. */
+/** Today in the application timezone, as YYYY-MM-DD. */
 export function today(): string {
-  return new Date().toISOString().slice(0, 10);
+  return toSqlDate();
 }
 
 /** N months back from today, as YYYY-MM-DD (first day of that month). */
 export function monthsAgo(months: number): string {
-  const d = new Date();
-  d.setDate(1);
-  d.setMonth(d.getMonth() - months);
-  return d.toISOString().slice(0, 10);
+  return firstDayOfMonthsAgo(months);
 }

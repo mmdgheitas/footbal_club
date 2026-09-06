@@ -4,6 +4,13 @@ import { v4 as uuidv4 } from 'uuid';
 import { DataSource, DeepPartial, ObjectLiteral, Repository } from 'typeorm';
 import { buildDataSourceOptions, isSqlite } from '../src/database/db-options';
 import {
+  addDays,
+  applyAppTimezone,
+  toSqlDate,
+  toSqlDateTime,
+} from '../src/common/helpers/time.helper';
+import { syncDatabaseTimezone } from '../src/database/database-timezone.service';
+import {
   Attendance,
   Classroom,
   Expense,
@@ -55,19 +62,18 @@ async function saveOne<T extends ObjectLiteral>(
   return repo.save(entity as DeepPartial<T> as T);
 }
 
-/** MySQL DATETIME literal (the entities keep dates as strings). */
-const nowSql = (): string => new Date().toISOString().slice(0, 19).replace('T', ' ');
+/** MySQL DATETIME literal in the application timezone. */
+const nowSql = (): string => toSqlDateTime();
 
-const daysAgo = (n: number): string => {
-  const d = new Date();
-  d.setDate(d.getDate() - n);
-  return d.toISOString().slice(0, 10);
-};
+const daysAgo = (n: number): string => toSqlDate(addDays(new Date(), -n));
 const daysAhead = (n: number): string => daysAgo(-n);
 
 async function main(): Promise<void> {
+  applyAppTimezone();
   const ds = new DataSource(buildDataSourceOptions());
   await ds.initialize();
+  // Same clock as the running application (MySQL session timezone).
+  await syncDatabaseTimezone(ds);
 
   if (!isSqlite()) {
     // eslint-disable-next-line no-console

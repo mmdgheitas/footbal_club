@@ -26,6 +26,7 @@ import { PlayerAppModule } from './modules/player-app/player-app.module';
 import { CardsModule } from './modules/cards/cards.module';
 import { CoachModule } from './modules/coach/coach.module';
 import { ClubAdminModule } from './modules/club-admin/club-admin.module';
+import { DatabaseTimezoneService } from './database/database-timezone.service';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -66,6 +67,9 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     ClubAdminModule,
   ],
   providers: [
+    // Keeps the MySQL session clock on the application timezone and warns when
+    // the two clocks drift apart.
+    DatabaseTimezoneService,
     {
       provide: APP_GUARD,
       useClass: AuthenticatedGuard,

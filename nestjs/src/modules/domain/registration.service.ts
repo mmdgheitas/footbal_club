@@ -15,6 +15,7 @@ import { MembershipCardService } from './membership-card.service';
 import { NotificationService } from './notification.service';
 import { GuardianService } from './guardian.service';
 import { REGISTRATION_STATUSES } from '../../config/constants';
+import { toSqlDate } from '../../common/helpers/time.helper';
 
 export interface RegistrationRow {
   player: Player;
@@ -106,7 +107,7 @@ export class RegistrationService {
     player.registrationStatus = RegistrationStatus.APPROVED;
     player.status = 1;
     if (!player.membershipDate) {
-      player.membershipDate = new Date().toISOString().slice(0, 10);
+      player.membershipDate = toSqlDate();
     }
     await this.players.save(player);
 

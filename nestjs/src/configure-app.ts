@@ -7,6 +7,7 @@ import { viewHelpers } from './common/views/view.helpers';
 import { APP_DEBUG } from './config/constants';
 import { getSessionUserRole } from './common/session/session.types';
 import { RbacService } from './common/rbac/rbac.service';
+import { applyAppTimezone } from './common/helpers/time.helper';
 
 /**
  * Shared application configuration, used by both bootstrap() and the e2e tests
@@ -16,6 +17,10 @@ import { RbacService } from './common/rbac/rbac.service';
  * Replaces the bootstrap responsibilities of public/index.php.
  */
 export function configureApp(app: NestExpressApplication): void {
+  // Also applied in main.ts; repeated here so tests and any other embedder run
+  // on the same clock as production (see common/helpers/time.helper.ts).
+  applyAppTimezone();
+
   const basePath = process.env.APP_BASE_PATH ?? '';
   if (basePath) {
     app.setGlobalPrefix(basePath.replace(/^\/|\/$/g, ''));

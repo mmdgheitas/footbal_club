@@ -178,7 +178,45 @@ Demo logins (any of these numbers; the code is printed on the page):
 | 09120000011 | بازیکن (علی رضایی) |
 | 09120000012 | بازیکن (محمد کریمی) |
 
-## 12. تم و رابط کاربری
+## 12. زمان و منطقه زمانی
+
+MySQL DATE/DATETIME/TIMESTAMP values are wall clocks with no timezone attached,
+so every layer has to agree on which zone they belong to:
+
+* TypeORM hydrates a `datetime` column with `new Date(string)` — parsed in the
+  **process** timezone;
+* mysql2 converts JS `Date` values with its **connection** timezone;
+* `NOW()`, `CURRENT_TIMESTAMP` and column defaults use the **MySQL session**
+  timezone.
+
+`APP_TIMEZONE` (default `Asia/Tehran`) is that single zone, and
+`src/common/helpers/time.helper.ts` is the only place allowed to format or parse
+a SQL date:
+
+| Helper | Use |
+| --- | --- |
+| `applyAppTimezone()` | pins the Node process (called from main.ts, configure-app.ts, db-options.ts, the CLI data source and the seeder) |
+| `toSqlDateTime()` / `toSqlDate()` / `toYearMonth()` | write a DATETIME / DATE / month bucket |
+| `fromSql()` | read a value back, whatever the driver hands over (string or Date) |
+| `timezoneOffsetString()` | `+03:30` for mysql2 and `SET time_zone` |
+
+`db-options.ts` passes that offset to mysql2 and `DatabaseTimezoneService` runs
+`SET time_zone` on every pooled connection at boot, then compares `NOW()` with
+the application clock and logs a warning if they differ by more than two
+minutes. The legacy PHP app was aligned as well (`config/config.php` and
+`app/Core/Database.php`), so both applications on the same database keep the
+same clock.
+
+Why it matters: `expires_at` used to be written with `toISOString()` (UTC) and
+read back as a local wall clock. On a UTC+03:30 server every OTP code was
+therefore already three and a half hours expired when it arrived, and only a
+manual edit of the row could make a login work. `test/timezone.spec.ts` locks
+the whole contract down — round trips in four zones, the TypeORM hydration
+invariant, the OTP flow at +03:30 and at a negative offset, and a guard that
+fails the build if any source file goes back to formatting SQL values with
+`toISOString()`.
+
+## 13. تم و رابط کاربری
 
 `style.css` `:root` retheme to the club identity — red `#C8102E` + black +
 white — and a new `panels.css` with the tiles, cards, FIFA card, membership
@@ -186,15 +224,16 @@ card, player tab bar, notification list and badge grid. Large, energetic
 sport-app icons; mobile-first player panel; everything Persian/RTL and built on
 plain HTML/CSS (no new runtime dependency).
 
-## 13. تست‌ها
+## 14. تست‌ها
 
-`npx jest` — 12 suites, 144 tests, all green:
+`npx jest` — 13 suites, 157 tests, all green:
 
 * `route-parity` — 78/78 legacy routes plus the 59 expansion routes, asserted
   in both directions (nothing missing, nothing stray);
 * `view-wiring` — 81 templates, every one reachable from a route-decorated
   handler, and the legacy subset still matches the PHP controllers exactly;
 * `views-render` — all 75 page templates render with representative data;
+* `timezone` — the clock contract described in §12;
 * `views-compile`, `view-loop-scope`, `date-fields`, `jalali*`, `http-stack`,
   `sessionless`, `views`, `dashboard-view` — unchanged guarantees.
 

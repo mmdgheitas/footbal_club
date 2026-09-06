@@ -3,6 +3,7 @@ import { NotificationAudience, NotificationType } from '../../database/entities'
 import { LedgerService } from './ledger.service';
 import { NotificationService } from './notification.service';
 import { GuardianService } from './guardian.service';
+import { toYearMonth } from '../../common/helpers/time.helper';
 
 /**
  * اعلان درون‌پنلی هوشمند بدهی.
@@ -22,7 +23,7 @@ export class DebtNotifierService {
   ) {}
 
   private static month(): string {
-    return new Date().toISOString().slice(0, 7);
+    return toYearMonth();
   }
 
   private static format(amount: number): string {

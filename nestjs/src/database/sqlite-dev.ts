@@ -20,6 +20,7 @@
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatabaseSync } from 'node:sqlite';
+import { fromSql, toSqlDate, toSqlDateTime } from '../common/helpers/time.helper';
 
 type Callback = (this: any, err: Error | null, rows?: any[]) => void;
 
@@ -53,17 +54,18 @@ class Database {
    */
   private static registerMysqlFunctions(db: DatabaseSync): void {
     const part = (value: unknown, format: string): number | null => {
-      if (value === null || value === undefined) return null;
-      const text = String(value).replace(' ', 'T');
-      const date = new Date(text.length <= 10 ? `${text}T00:00:00Z` : `${text}Z`);
-      if (Number.isNaN(date.getTime())) return null;
+      // Stored values are wall clocks in the application timezone, so they are
+      // read back with the same helper the rest of the application uses.
+      const date = fromSql(value as string | Date | null | undefined);
+      if (!date) return null;
+      const stamp = toSqlDateTime(date);
       switch (format) {
         case 'Y':
-          return date.getUTCFullYear();
+          return Number(stamp.slice(0, 4));
         case 'm':
-          return date.getUTCMonth() + 1;
+          return Number(stamp.slice(5, 7));
         case 'd':
-          return date.getUTCDate();
+          return Number(stamp.slice(8, 10));
         default:
           return null;
       }
@@ -81,15 +83,28 @@ class Database {
     define('YEAR', (v: unknown) => part(v, 'Y'));
     define('MONTH', (v: unknown) => part(v, 'm'));
     define('DAY', (v: unknown) => part(v, 'd'));
-    define('CURDATE', () => new Date().toISOString().slice(0, 10));
-    define('NOW', () => new Date().toISOString().slice(0, 19).replace('T', ' '));
+    define('CURDATE', () => toSqlDate());
+    define('NOW', () => toSqlDateTime());
+  }
+
+  /**
+   * SQLite's `datetime('now')` — which TypeORM emits for CreateDateColumn /
+   * UpdateDateColumn defaults — is always UTC, while everything else in the
+   * application works in the application timezone. Rewriting it to
+   * `datetime('now', 'localtime')` keeps the dev fallback on the same clock as
+   * MySQL (the process timezone is pinned by applyAppTimezone()).
+   */
+  private static localiseClock(sql: string): string {
+    return sql.replace(/datetime\(\s*'now'\s*\)/gi, "datetime('now', 'localtime')");
   }
 
   private static bind(parameters: any[] | undefined): any[] {
     return (parameters ?? []).map((p) => {
       if (p === undefined || p === null) return null;
       if (typeof p === 'boolean') return p ? 1 : 0;
-      if (p instanceof Date) return p.toISOString().slice(0, 19).replace('T', ' ');
+      // Wall clock in the application timezone, exactly like mysql2 does with
+      // its `timezone` option (see common/helpers/time.helper.ts).
+      if (p instanceof Date) return toSqlDateTime(p);
       if (Buffer.isBuffer(p)) return new Uint8Array(p);
       if (typeof p === 'object') return JSON.stringify(p);
       return p;
@@ -101,7 +116,7 @@ class Database {
       typeof paramsOrCb === 'function' ? paramsOrCb : maybeCb;
     const params = typeof paramsOrCb === 'function' ? [] : paramsOrCb;
     try {
-      const stmt = this.db.prepare(sql);
+      const stmt = this.db.prepare(Database.localiseClock(sql));
       const result = stmt.run(...Database.bind(params));
       cb?.call(
         { lastID: Number(result.lastInsertRowid ?? 0), changes: Number(result.changes ?? 0) },
@@ -117,7 +132,7 @@ class Database {
       typeof paramsOrCb === 'function' ? paramsOrCb : maybeCb;
     const params = typeof paramsOrCb === 'function' ? [] : paramsOrCb;
     try {
-      const stmt = this.db.prepare(sql);
+      const stmt = this.db.prepare(Database.localiseClock(sql));
       let rows: any[] = [];
       try {
         rows = stmt.all(...Database.bind(params)) as any[];
@@ -141,7 +156,7 @@ class Database {
 
   exec(sql: string, cb?: (err: Error | null) => void): void {
     try {
-      this.db.exec(sql);
+      this.db.exec(Database.localiseClock(sql));
       cb?.(null);
     } catch (err) {
       cb?.(err as Error);

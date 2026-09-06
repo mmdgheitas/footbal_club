@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { buildDataSourceOptions } from './db-options';
+import { applyAppTimezone } from '../common/helpers/time.helper';
 
 /**
  * TypeORM CLI data source (schema:log, query, entity metadata checks…).
@@ -15,6 +16,8 @@ import { buildDataSourceOptions } from './db-options';
  * database/migrations/*.sql, which are applied with the MySQL client rather
  * than by the ORM.
  */
+applyAppTimezone();
+
 export const dataSourceOptions: DataSourceOptions = buildDataSourceOptions();
 
 const dataSource = new DataSource(dataSourceOptions);

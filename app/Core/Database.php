@@ -79,6 +79,14 @@ class Database
                         PDO::ATTR_PERSISTENT => false,
                     ]
                 );
+
+                // The session clock must match the application clock, or
+                // NOW()/CURRENT_TIMESTAMP write wall clocks from a different
+                // timezone than the ones PHP formats. See config/config.php.
+                $offset = (new \DateTime('now', new \DateTimeZone(
+                    defined('APP_TIMEZONE') ? APP_TIMEZONE : date_default_timezone_get()
+                )))->format('P');
+                $this->connection->exec("SET time_zone = '{$offset}'");
             }
 
             // Set additional options

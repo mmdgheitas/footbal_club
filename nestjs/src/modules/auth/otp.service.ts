@@ -14,6 +14,12 @@ import {
 } from '../../config/constants';
 import { SmsService } from '../sms/sms.service';
 import { normalizePhone } from '../../common/helpers/phone.helper';
+import {
+  addSeconds,
+  fromSql,
+  now as clockNow,
+  toSqlDateTime,
+} from '../../common/helpers/time.helper';
 
 export interface OtpRequestResult {
   ok: boolean;
@@ -53,21 +59,15 @@ export class OtpService {
     return crypto.createHash('sha256').update(`${phone}:${code}`).digest('hex');
   }
 
-  private static now(): Date {
-    return new Date();
-  }
-
-  private static toSqlDateTime(date: Date): string {
-    return date.toISOString().slice(0, 19).replace('T', ' ');
-  }
-
   /**
-   * DATETIME columns come back as `YYYY-MM-DD HH:MM:SS` strings under mysql2
-   * (dateStrings: true), but as Date objects under other drivers. Accept both.
+   * Clock and SQL formatting go through common/helpers/time.helper.ts, so the
+   * value written to `expires_at` is a wall clock in the application timezone —
+   * the very same one TypeORM and MySQL use when reading it back. Formatting it
+   * in UTC on a UTC+03:30 server is what used to make every code look expired
+   * three and a half hours before it was issued.
    */
-  private static parseSqlDateTime(value: string | Date): Date {
-    if (value instanceof Date) return value;
-    return new Date(String(value).replace(' ', 'T') + 'Z');
+  private static now(): Date {
+    return clockNow();
   }
 
   private generateCode(): string {
@@ -85,7 +85,7 @@ export class OtpService {
       .createQueryBuilder('o')
       .where('o.phone = :phone', { phone })
       .andWhere('o.createdAt >= :windowStart', {
-        windowStart: OtpService.toSqlDateTime(windowStart),
+        windowStart: toSqlDateTime(windowStart),
       })
       .orderBy('o.id', 'DESC')
       .getMany();
@@ -100,7 +100,8 @@ export class OtpService {
 
     const last = recent[0];
     if (last) {
-      const elapsed = (now.getTime() - new Date(last.createdAt).getTime()) / 1000;
+      const issuedAt = fromSql(last.createdAt) ?? now;
+      const elapsed = (now.getTime() - issuedAt.getTime()) / 1000;
       if (elapsed < OTP_RESEND_COOLDOWN_SECONDS) {
         return {
           ok: false,
@@ -114,16 +115,20 @@ export class OtpService {
     await this.codes.update({ phone, used: 0 }, { used: 1 });
 
     const code = this.generateCode();
-    const expiresAt = new Date(now.getTime() + OTP_TTL_SECONDS * 1000);
+    const expiresAt = addSeconds(now, OTP_TTL_SECONDS);
 
     await this.codes.save(
       this.codes.create({
         phone,
         code: OtpService.hash(phone, code),
-        expiresAt: OtpService.toSqlDateTime(expiresAt),
+        expiresAt: toSqlDateTime(expiresAt),
         used: 0,
         attempts: 0,
         ipAddress: ip,
+        // Written by the application rather than left to the database DEFAULT,
+        // so the rate limit and the resend cooldown never depend on the
+        // database server's own clock.
+        createdAt: now,
       }),
     );
 
@@ -157,7 +162,8 @@ export class OtpService {
       return { ok: false, error: 'کدی برای این شماره صادر نشده است. دوباره درخواست دهید.' };
     }
 
-    if (OtpService.parseSqlDateTime(record.expiresAt) < OtpService.now()) {
+    const expiresAt = fromSql(record.expiresAt);
+    if (expiresAt && expiresAt.getTime() < OtpService.now().getTime()) {
       await this.codes.update({ id: record.id }, { used: 1 });
       return { ok: false, error: 'کد منقضی شده است. لطفاً کد جدید بگیرید.' };
     }
@@ -181,8 +187,8 @@ export class OtpService {
 
   /** Housekeeping — drops codes that expired more than a day ago. */
   async purgeExpired(): Promise<void> {
-    const cutoff = new Date(Date.now() - 24 * 3600 * 1000);
-    await this.codes.delete({ expiresAt: LessThan(OtpService.toSqlDateTime(cutoff)) });
+    const cutoff = addSeconds(OtpService.now(), -24 * 3600);
+    await this.codes.delete({ expiresAt: LessThan(toSqlDateTime(cutoff)) });
   }
 
   private async send(phone: string, message: string): Promise<{ mocked: boolean }> {
