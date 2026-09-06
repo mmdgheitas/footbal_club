@@ -1,0 +1,63 @@
+<%
+/**
+ * Reusable FIFA-style card (partial).
+ * Included by cards/fifa.ejs and by the player app profile tab.
+ * Pure HTML + CSS — the styling lives in panels.css (.fifa-card).
+ */
+const p = locals.player || {};
+const a = locals.attributes || {};
+const overall = locals.overall || 0;
+const badges = locals.badges || [];
+const positions = locals.positions || {};
+const feet = locals.feet || {};
+const posShort = { goalkeeper: 'GK', defender: 'DF', midfielder: 'MF', forward: 'FW', striker: 'ST' };
+const dash = '—';
+%>
+<div class="fifa-card red-edition">
+    <div class="fifa-top">
+        <div class="fifa-rating">
+            <div class="ovr"><%- toPersian(overall) %></div>
+            <div class="pos"><%- posShort[p.position] || 'FW' %></div>
+            <div class="club"><%- esc(locals.club_name || 'باشگاه نواب') %></div>
+        </div>
+        <div class="fifa-photo">
+            <% if (p.photo_path) { %>
+                <img src="<%- APP_URL %><%- escAttr(p.photo_path) %>" alt="">
+            <% } else { %>⚽<% } %>
+        </div>
+    </div>
+
+    <div class="fifa-name"><%- esc(p.name || dash) %></div>
+
+    <div class="fifa-stats">
+        <div><span>PAC سرعت</span><span><%- toPersian(a.PAC || 0) %></span></div>
+        <div><span>DRI دریبل</span><span><%- toPersian(a.DRI || 0) %></span></div>
+        <div><span>SHO شوت</span><span><%- toPersian(a.SHO || 0) %></span></div>
+        <div><span>DEF دفاع</span><span><%- toPersian(a.DEF || 0) %></span></div>
+        <div><span>PAS پاس</span><span><%- toPersian(a.PAS || 0) %></span></div>
+        <div><span>PHY قدرت</span><span><%- toPersian(a.PHY || 0) %></span></div>
+    </div>
+
+    <div class="fifa-meta">
+        <span>پست: <%- esc(positions[p.position] || dash) %></span>
+        <span>پای برتر: <%- esc(feet[p.preferred_foot] || dash) %></span>
+    </div>
+    <div class="fifa-meta">
+        <span>قد: <%- p.height_cm ? toPersian(p.height_cm) + ' سانتی‌متر' : dash %></span>
+        <span>وزن: <%- p.weight_kg ? toPersian(p.weight_kg) + ' کیلوگرم' : dash %></span>
+    </div>
+    <div class="fifa-meta">
+        <span>امتیاز کل: <%- toPersian(p.total_score || 0) %></span>
+        <span>عضویت: <%- p.membership_date ? toPersian(toJalali(p.membership_date)) : dash %></span>
+    </div>
+    <div class="fifa-meta">
+        <span>نام پدر: <%- esc(p.father_name || dash) %></span>
+        <span class="ltr"><%- toPersian(p.national_id || dash) %></span>
+    </div>
+
+    <% if (badges.length > 0) { %>
+    <div class="fifa-badges">
+        <% for (const badge of badges) { %><span title="<%- escAttr(badge.badgeTitle) %>"><%- badge.icon %></span><% } %>
+    </div>
+    <% } %>
+</div>

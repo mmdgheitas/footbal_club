@@ -4,21 +4,29 @@
  */
 
 :root {
-    --pitch-dark: #0a1628;
-    --pitch-mid: #0f2847;
-    --pitch-light: #1a3d2e;
-    --grass: #00c853;
-    --grass-bright: #69f0ae;
-    --grass-glow: rgba(0, 200, 83, 0.35);
-    --accent: #ffeb3b;
+    /* --------------------------------------------------------------------
+       تم رنگی باشگاه: قرمز + مشکی + سفید (هماهنگ با لوگو)
+       The variable names are kept from the previous pitch theme so every
+       existing rule keeps working; only the values changed.
+       -------------------------------------------------------------------- */
+    --club-red: #C8102E;
+    --club-red-bright: #ff2d4d;
+    --club-red-deep: #8e0b20;
+    --pitch-dark: #0b0c10;      /* مشکی اصلی */
+    --pitch-mid: #15171c;       /* مشکی روشن‌تر (کارت‌ها) */
+    --pitch-light: #1f2229;
+    --grass: #C8102E;           /* رنگ اصلی (قرمز) */
+    --grass-bright: #ff3b57;
+    --grass-glow: rgba(200, 16, 46, 0.38);
+    --accent: #ffd166;          /* طلایی برای نشان‌ها و جام‌ها */
     --accent-hot: #ff6d00;
     --white: #ffffff;
-    --text: #e8f5e9;
-    --text-muted: #a5d6a7;
-    --card-bg: rgba(255, 255, 255, 0.06);
+    --text: #f5f5f7;
+    --text-muted: #b9bcc4;
+    --card-bg: rgba(255, 255, 255, 0.05);
     --card-border: rgba(255, 255, 255, 0.12);
-    --glass: rgba(15, 40, 71, 0.75);
-    --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+    --glass: rgba(15, 16, 21, 0.85);
+    --shadow: 0 10px 34px rgba(0, 0, 0, 0.55);
     --radius: 16px;
     --radius-sm: 10px;
     --transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -46,7 +54,7 @@ body {
     color: var(--text);
     background: var(--pitch-dark);
     background-image:
-        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0, 200, 83, 0.15), transparent),
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(200, 16, 46, 0.22), transparent),
         repeating-linear-gradient(
             0deg,
             transparent,

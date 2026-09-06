@@ -1,0 +1,52 @@
+<%
+/** بازیکنان کلاس مربی — با امکان فیلتر بین کلاس‌های خودِ مربی */
+const classrooms = locals.classrooms || [];
+const players = locals.players || [];
+const selected = locals.selected_classroom || null;
+const positions = locals.positions || {};
+const feet = locals.feet || {};
+const dash = '—';
+%>
+
+<div class="panel-card">
+    <form method="GET" action="<%- APP_URL %>/coach/players" class="flex-between" style="gap:10px;flex-wrap:wrap;">
+        <div class="form-group" style="margin:0;flex:1;min-width:220px;">
+            <label for="classroom">کلاس</label>
+            <select id="classroom" name="classroom" class="form-control">
+                <option value="">همه کلاس‌های من</option>
+                <% for (const c of classrooms) { %>
+                <option value="<%- c.id %>" <%- String(selected) === String(c.id) ? 'selected' : '' %>><%- esc(c.name) %></option>
+                <% } %>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">فیلتر</button>
+    </form>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⚽</span> بازیکنان تأییدشده (<%- toPersian(players.length) %>)</h3>
+    <% if (players.length === 0) { %>
+        <div class="empty-state"><span class="em">🙋</span> بازیکنی یافت نشد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr><th>نام</th><th>کلاس</th><th>پست</th><th>پای برتر</th><th>قد/وزن</th><th>امتیاز</th><th></th></tr>
+        </thead>
+        <tbody>
+        <% for (const p of players) { %>
+            <tr>
+                <td><%- esc(p.name) %></td>
+                <td class="text-muted"><%- esc(p.classroom ? p.classroom.name : dash) %></td>
+                <td><%- esc(positions[p.position] || dash) %></td>
+                <td><%- esc(feet[p.preferredFoot] || dash) %></td>
+                <td class="text-muted nowrap">
+                    <%- p.heightCm ? toPersian(p.heightCm) : dash %> / <%- p.weightKg ? toPersian(p.weightKg) : dash %>
+                </td>
+                <td><strong><%- toPersian(p.totalScore || 0) %></strong></td>
+                <td><a class="btn btn-secondary" href="<%- APP_URL %>/coach/player/<%- p.id %>">پرونده فنی</a></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

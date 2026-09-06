@@ -1,0 +1,70 @@
+<%
+/** دفترچه مالی شفاف ولی — تمام پرداخت‌ها، بدهی‌ها و تخفیف‌ها */
+const finance = locals.finance || { ledgers: [], totalPaid: 0, totalOutstanding: 0, totalDiscount: 0 };
+const kindIcon = { payment: '✅', debt: '⚠️', discount: '🎁' };
+%>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">✅</span>
+        <span class="tile-value"><%- __num(finance.totalPaid) %></span>
+        <span class="tile-label">مجموع پرداختی (تومان)</span>
+    </div>
+    <div class="tile <%- finance.totalOutstanding > 0 ? 'is-danger' : '' %>">
+        <span class="tile-icon">⚠️</span>
+        <span class="tile-value"><%- __num(finance.totalOutstanding) %></span>
+        <span class="tile-label">مجموع بدهی (تومان)</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">🎁</span>
+        <span class="tile-value"><%- __num(finance.totalDiscount) %></span>
+        <span class="tile-label">تخفیف‌ها (تومان)</span>
+    </div>
+</div>
+
+<% if (finance.totalOutstanding > 0) { %>
+<div class="alert alert-error">
+    ⚠️ بدهی پرداخت‌نشده دارید. لطفاً جهت تسویه با واحد مالی باشگاه هماهنگ کنید.
+</div>
+<% } %>
+
+<% for (const ledger of finance.ledgers || []) { %>
+<div class="panel-card">
+    <h3><span class="em">👦</span> <%- esc(ledger.playerName) %></h3>
+
+    <div class="flex-between mb-3">
+        <span class="chip ok">پرداختی: <%- __num(ledger.totalPaid) %></span>
+        <span class="chip <%- ledger.hasDebt ? 'danger' : 'neutral' %>">بدهی: <%- __num(ledger.totalOutstanding) %></span>
+        <span class="chip warn">تخفیف: <%- __num(ledger.totalDiscount) %></span>
+    </div>
+
+    <% if ((ledger.entries || []).length === 0) { %>
+        <div class="empty-state"><span class="em">🧾</span> تراکنشی ثبت نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr><th>تاریخ</th><th>شرح</th><th>مبلغ (تومان)</th><th>وضعیت</th><th>روش / مرجع</th></tr>
+        </thead>
+        <tbody>
+        <% for (const e of ledger.entries) { %>
+            <tr>
+                <td class="nowrap"><%- e.date ? toPersian(toJalali(e.date)) : '—' %></td>
+                <td><%- kindIcon[e.kind] || '•' %> <%- esc(e.title) %></td>
+                <td><strong><%- __num(e.amount) %></strong></td>
+                <td>
+                    <span class="chip <%- e.kind === 'payment' ? 'ok' : (e.kind === 'debt' ? 'danger' : 'warn') %>">
+                        <%- esc(e.statusLabel) %>
+                    </span>
+                </td>
+                <td class="text-muted"><%- esc(e.method || e.reference || '—') %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+<% } %>
+
+<% if ((finance.ledgers || []).length === 0) { %>
+    <div class="empty-state"><span class="em">💳</span> اطلاعات مالی‌ای برای نمایش وجود ندارد.</div>
+<% } %>

@@ -11,6 +11,18 @@ import {
   PERMISSIONS,
   PLAYER_POSITIONS,
   ROLES,
+  // --- feature expansion ---
+  BADGES,
+  CLUB_DISPLAY_NAME,
+  EXPENSE_CATEGORIES,
+  EXPENSE_CATEGORY_ICONS,
+  MATCH_TYPES,
+  MEMBERSHIP_CARD_SIZE,
+  NOTIFICATION_ICONS,
+  NOTIFICATION_TYPES,
+  PERFORMANCE_TYPES,
+  PREFERRED_FEET,
+  REGISTRATION_STATUSES,
 } from '../../config/constants';
 
 /**
@@ -78,6 +90,18 @@ export function viewHelpers(appUrl: string) {
       PLAYER_POSITIONS,
       ROLES,
       SMS_PROVIDER,
+      // --- feature expansion ---
+      BADGES,
+      CLUB_NAME: CLUB_DISPLAY_NAME,
+      EXPENSE_CATEGORIES,
+      EXPENSE_CATEGORY_ICONS,
+      MATCH_TYPES,
+      MEMBERSHIP_CARD_SIZE,
+      NOTIFICATION_ICONS,
+      NOTIFICATION_TYPES,
+      PERFORMANCE_TYPES,
+      PREFERRED_FEET,
+      REGISTRATION_STATUSES,
     },
   };
 }

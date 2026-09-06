@@ -1,0 +1,157 @@
+<%
+/** گزارش مالی جامع — درآمد + هزینه‌های دستی + بدهکاران + سود/زیان تقریبی */
+const monthly = locals.monthly || [];
+const quarterly = locals.quarterly || [];
+const profit = locals.profit || { income: 0, expenses: 0, profit: 0, margin: 0, byMonth: [] };
+const debtors = locals.debtors || [];
+const expenseTotals = locals.expense_totals || { total: 0, byCategory: [], byMonth: [] };
+const outstanding = locals.outstanding || 0;
+const categories = locals.categories || {};
+const icons = locals.category_icons || {};
+const filters = locals.filters || { from: '', to: '' };
+const maxIncome = Math.max(1, ...monthly.map((m) => m.total));
+const maxRow = Math.max(1, ...profit.byMonth.map((m) => Math.max(m.income, m.expense)));
+%>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">💰</span>
+        <span class="tile-value"><%- __num(profit.income) %></span>
+        <span class="tile-label">درآمد وصول‌شده (تومان)</span>
+    </div>
+    <div class="tile is-danger">
+        <span class="tile-icon">🧾</span>
+        <span class="tile-value"><%- __num(profit.expenses) %></span>
+        <span class="tile-label">هزینه‌های ثبت‌شده</span>
+    </div>
+    <div class="tile <%- profit.profit >= 0 ? 'is-gold' : 'is-danger' %>">
+        <span class="tile-icon"><%- profit.profit >= 0 ? '📈' : '📉' %></span>
+        <span class="tile-value"><%- __num(profit.profit) %></span>
+        <span class="tile-label">سود / زیان تقریبی</span>
+    </div>
+    <div class="tile is-danger">
+        <span class="tile-icon">⚠️</span>
+        <span class="tile-value"><%- __num(outstanding) %></span>
+        <span class="tile-label">مطالبات وصول‌نشده</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">📊</span>
+        <span class="tile-value"><%- toPersian(profit.margin) %>٪</span>
+        <span class="tile-label">حاشیه سود</span>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🔍</span> بازه گزارش</h3>
+    <form method="GET" action="<%- APP_URL %>/admin/reports/financial" class="grid-2">
+        <div class="form-group">
+            <label for="report_from">از تاریخ (شمسی)</label>
+            <input type="hidden" class="jalali-date-value" id="report_from" name="from"
+                   data-format="gregorian" value="<%- escAttr(filters.from) %>">
+            <input type="text" class="jalali-date-input" id="report_from_display" data-for="report_from" readonly>
+        </div>
+        <div class="form-group">
+            <label for="report_to">تا تاریخ (شمسی)</label>
+            <input type="hidden" class="jalali-date-value" id="report_to" name="to"
+                   data-format="gregorian" value="<%- escAttr(filters.to) %>">
+            <input type="text" class="jalali-date-input" id="report_to_display" data-for="report_to" readonly>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;gap:8px;">
+            <button class="btn btn-primary" type="submit">اعمال</button>
+            <a class="btn btn-secondary" href="<%- APP_URL %>/admin/reports/financial">کل دوره</a>
+        </div>
+    </form>
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">📅</span> درآمد ماهانه</h3>
+        <% if (monthly.length === 0) { %>
+            <div class="empty-state"><span class="em">📉</span> درآمدی ثبت نشده است.</div>
+        <% } else { %>
+            <% for (const m of monthly) { %>
+            <div style="margin-bottom:10px;">
+                <div class="flex-between" style="margin-bottom:4px;">
+                    <span class="ltr text-muted"><%- toPersian(m.month) %></span>
+                    <strong><%- __num(m.total) %></strong>
+                </div>
+                <div class="bar-track"><div class="bar-fill green" style="width:<%- Math.round((m.total / maxIncome) * 100) %>%"></div></div>
+            </div>
+            <% } %>
+        <% } %>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🗂️</span> درآمد سه‌ماهه</h3>
+        <table class="mini-table">
+            <thead><tr><th>سه‌ماهه</th><th>درآمد (تومان)</th></tr></thead>
+            <tbody>
+            <% for (const q of quarterly) { %>
+                <tr><td class="ltr"><%- toPersian(q.quarter) %></td><td><%- __num(q.total) %></td></tr>
+            <% } %>
+            </tbody>
+        </table>
+
+        <h4 class="mt-3">هزینه به تفکیک دسته</h4>
+        <table class="mini-table">
+            <thead><tr><th>دسته</th><th>مبلغ</th></tr></thead>
+            <tbody>
+            <% for (const c of expenseTotals.byCategory || []) { %>
+                <tr><td><%- icons[c.category] || '💸' %> <%- esc(categories[c.category] || c.label) %></td><td><%- __num(c.total) %></td></tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⚖️</span> درآمد در برابر هزینه (ماه به ماه)</h3>
+    <% if ((profit.byMonth || []).length === 0) { %>
+        <div class="empty-state"><span class="em">📉</span> داده‌ای برای مقایسه نیست.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>ماه</th><th>درآمد</th><th>هزینه</th><th>سود/زیان</th><th style="width:30%;">نمودار</th></tr></thead>
+        <tbody>
+        <% for (const m of profit.byMonth) { %>
+            <tr>
+                <td class="ltr nowrap"><%- toPersian(m.month) %></td>
+                <td><%- __num(m.income) %></td>
+                <td><%- __num(m.expense) %></td>
+                <td class="<%- m.profit >= 0 ? 'text-gold' : 'text-danger' %>"><strong><%- __num(m.profit) %></strong></td>
+                <td>
+                    <div class="bar-track" style="margin-bottom:4px;">
+                        <div class="bar-fill green" style="width:<%- Math.round((m.income / maxRow) * 100) %>%"></div>
+                    </div>
+                    <div class="bar-track">
+                        <div class="bar-fill" style="width:<%- Math.round((m.expense / maxRow) * 100) %>%"></div>
+                    </div>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⚠️</span> بدهکاران (<%- toPersian(debtors.length) %>)</h3>
+    <% if (debtors.length === 0) { %>
+        <div class="empty-state"><span class="em">👌</span> هیچ بدهی معوقی وجود ندارد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>بازیکن</th><th>کلاس</th><th>ولی</th><th>تعداد اقلام</th><th>مبلغ بدهی</th></tr></thead>
+        <tbody>
+        <% for (const d of debtors.slice(0, 20)) { %>
+            <tr>
+                <td><%- esc(d.player_name) %></td>
+                <td class="text-muted"><%- esc(d.classroom_name || '—') %></td>
+                <td class="text-muted"><%- esc(d.guardian_name || '—') %></td>
+                <td><%- toPersian(d.items) %></td>
+                <td class="text-danger"><strong><%- __num(d.total_debt) %></strong></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <a class="btn btn-secondary mt-3" href="<%- APP_URL %>/admin/reports/debtors">گزارش کامل بدهکاران</a>
+    <% } %>
+</div>

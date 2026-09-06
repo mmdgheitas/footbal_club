@@ -1,0 +1,81 @@
+<%
+/** جلسات تمرین باشگاه — همه کلاس‌ها */
+const sessions = locals.sessions || [];
+const classrooms = locals.classrooms || [];
+%>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">➕</span> ثبت جلسه تمرین</h3>
+        <form method="POST" action="<%- APP_URL %>/admin/trainings">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+            <div class="form-group">
+                <label for="title">عنوان جلسه *</label>
+                <input type="text" id="title" name="title" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="classroom_id">کلاس</label>
+                <select id="classroom_id" name="classroom_id" class="form-control">
+                    <option value="">همه کلاس‌ها</option>
+                    <% for (const c of classrooms) { %>
+                    <option value="<%- c.id %>"><%- esc(c.name) %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="admin_session_date">تاریخ جلسه (شمسی) *</label>
+                <input type="hidden" class="jalali-date-value" id="admin_session_date" name="session_date"
+                       data-format="gregorian" value="">
+                <input type="text" class="jalali-date-input" id="admin_session_date_display"
+                       data-for="admin_session_date" readonly required>
+            </div>
+
+            <div class="form-group">
+                <label for="start_time">ساعت شروع</label>
+                <input type="time" id="start_time" name="start_time" class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="location">محل برگزاری</label>
+                <input type="text" id="location" name="location" class="form-control" placeholder="سالن / زمین چمن">
+            </div>
+
+            <div class="form-group">
+                <label for="notes">توضیحات</label>
+                <textarea id="notes" name="notes" class="form-control" rows="2"></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit">ثبت و اطلاع‌رسانی به بازیکنان</button>
+        </form>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🗓️</span> جلسات ثبت‌شده (<%- toPersian(sessions.length) %>)</h3>
+        <% if (sessions.length === 0) { %>
+            <div class="empty-state"><span class="em">📅</span> جلسه‌ای ثبت نشده است.</div>
+        <% } else { %>
+        <table class="mini-table">
+            <thead><tr><th>عنوان</th><th>کلاس</th><th>تاریخ</th><th>ساعت</th><th></th></tr></thead>
+            <tbody>
+            <% for (const s of sessions) { %>
+                <tr>
+                    <td><%- esc(s.title) %></td>
+                    <td class="text-muted"><%- esc(s.classroom ? s.classroom.name : 'همه کلاس‌ها') %></td>
+                    <td class="nowrap"><%- toPersian(toJalali(s.sessionDate)) %></td>
+                    <td class="text-muted"><%- s.startTime ? toPersian(s.startTime) : '—' %></td>
+                    <td>
+                        <form method="POST" action="<%- APP_URL %>/admin/trainings/<%- s.id %>/delete">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <button class="btn btn-danger" type="submit">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+</div>

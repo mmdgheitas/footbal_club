@@ -1,0 +1,100 @@
+<%
+/** تب افتخارات — نشان‌ها، رتبه‌بندی، امتیاز و تمام اطلاعات فنی */
+const badges = locals.badges || [];
+const rank = locals.rank || { rank: 0, outOf: 0 };
+const leaderboard = locals.leaderboard || [];
+const scores = locals.scores || [];
+const p = locals.player || {};
+const positions = locals.positions || {};
+const feet = locals.feet || {};
+const dash = '—';
+%>
+
+<div class="tile-grid">
+    <div class="tile is-gold">
+        <span class="tile-icon">⭐</span>
+        <span class="tile-value"><%- toPersian(p.total_score || 0) %></span>
+        <span class="tile-label">امتیاز کل</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">🥇</span>
+        <span class="tile-value"><%- toPersian(rank.rank) %></span>
+        <span class="tile-label">رتبه از <%- toPersian(rank.outOf) %> بازیکن</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">🏅</span>
+        <span class="tile-value"><%- toPersian(badges.length) %></span>
+        <span class="tile-label">نشان کسب‌شده</span>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🏅</span> نشان‌های من</h3>
+    <% if (badges.length === 0) { %>
+        <div class="empty-state"><span class="em">🎖️</span> هنوز نشانی دریافت نکرده‌ای — ادامه بده!</div>
+    <% } else { %>
+    <div class="badge-grid">
+        <% for (const b of badges) { %>
+        <div class="badge-item">
+            <span class="em"><%- b.icon %></span>
+            <div class="t"><%- esc(b.badgeTitle) %></div>
+            <div class="d"><%- esc(b.note || b.description || '') %></div>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🧬</span> اطلاعات فنی</h3>
+    <table class="mini-table">
+        <tr><th>پست تخصصی</th><td><%- esc(positions[p.position] || dash) %></td></tr>
+        <tr><th>پای تخصصی</th><td><%- esc(feet[p.preferred_foot] || dash) %></td></tr>
+        <tr><th>قد</th><td><%- p.height_cm ? toPersian(p.height_cm) + ' سانتی‌متر' : dash %></td></tr>
+        <tr><th>وزن</th><td><%- p.weight_kg ? toPersian(p.weight_kg) + ' کیلوگرم' : dash %></td></tr>
+        <tr><th>رده سنی</th><td><%- esc((constants.AGE_CATEGORIES[p.age_category] || {}).label || dash) %></td></tr>
+        <tr><th>تاریخ تولد</th><td><%- p.date_of_birth ? toPersian(toJalali(p.date_of_birth)) : dash %></td></tr>
+        <tr><th>تاریخ عضویت</th><td><%- p.membership_date ? toPersian(toJalali(p.membership_date)) : dash %></td></tr>
+        <tr><th>کلاس</th><td><%- esc(p.classroom_name || dash) %></td></tr>
+    </table>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📈</span> جدول رتبه‌بندی باشگاه</h3>
+    <table class="mini-table">
+        <thead><tr><th>#</th><th>بازیکن</th><th>کلاس</th><th>امتیاز</th></tr></thead>
+        <tbody>
+        <% leaderboard.forEach(function (row, i) { %>
+            <tr style="<%- row.id === p.id ? 'background:rgba(200,16,46,.16);' : '' %>">
+                <td><%- toPersian(i + 1) %></td>
+                <td><%- esc(row.name) %></td>
+                <td class="text-muted"><%- esc(row.classroom || dash) %></td>
+                <td><strong><%- toPersian(row.total) %></strong></td>
+            </tr>
+        <% }); %>
+        </tbody>
+    </table>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🧾</span> آخرین امتیازها</h3>
+    <% if (scores.length === 0) { %>
+        <div class="empty-state"><span class="em">⭐</span> هنوز امتیازی ثبت نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>امتیاز</th><th>بابت</th><th>ثبت توسط</th><th>تاریخ</th></tr></thead>
+        <tbody>
+        <% for (const s of scores) { %>
+            <tr>
+                <td class="<%- s.points >= 0 ? 'text-gold' : 'text-danger' %>">
+                    <strong><%- s.points > 0 ? '+' : '' %><%- toPersian(s.points) %></strong>
+                </td>
+                <td><%- esc(s.reason || '—') %></td>
+                <td class="text-muted"><%- esc(s.scorer ? s.scorer.name : '—') %></td>
+                <td class="text-muted"><%- toPersian(toJalali(s.createdAt)) %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

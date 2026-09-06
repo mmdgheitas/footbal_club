@@ -26,8 +26,10 @@ describe('ported EJS views', () => {
 
     expect(html).toContain('<html lang="fa" dir="rtl">');
     expect(html).toContain('ورود به باشگاه');
-    expect(html).toContain('مدیریت تیم — سریع، ساده، حرفه‌ای');
+    // Single OTP login: mobile number first, role detected after verification.
+    expect(html).toContain('شماره موبایل خود را وارد کنید');
     expect(html).toContain('name="_csrf_token" value="TOKEN123"');
+    expect(html).toContain('action="/login/otp/request"');
     expect(html).toContain('action="/login"');
     expect(html).toContain('/assets/css/style.css?v=1');
     expect(html).toContain('/assets/js/main.js?v=1');

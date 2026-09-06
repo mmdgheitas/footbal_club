@@ -1,0 +1,68 @@
+<%
+/** مدیریت کارت‌های عضویت — صدور، مشاهده و ابطال */
+const rows = locals.rows || [];
+const issued = rows.filter((r) => r.card);
+%>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">👥</span>
+        <span class="tile-value"><%- toPersian(rows.length) %></span>
+        <span class="tile-label">بازیکن تأییدشده</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">🪪</span>
+        <span class="tile-value"><%- toPersian(issued.length) %></span>
+        <span class="tile-label">کارت فعال</span>
+    </div>
+    <div class="tile <%- rows.length - issued.length > 0 ? 'is-danger' : '' %>">
+        <span class="tile-icon">⏳</span>
+        <span class="tile-value"><%- toPersian(rows.length - issued.length) %></span>
+        <span class="tile-label">بدون کارت</span>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🪪</span> کارت‌های عضویت (۸ × ۱۱ سانتی‌متر)</h3>
+    <p class="text-muted" style="font-size:.85rem;">
+        کارت هر بازیکن هنگام تأیید ثبت‌نام به‌صورت خودکار صادر می‌شود؛ در صورت نیاز می‌توانید
+        از این صفحه دستی صادر یا باطل کنید.
+    </p>
+
+    <% if (rows.length === 0) { %>
+        <div class="empty-state"><span class="em">📭</span> بازیکن تأییدشده‌ای وجود ندارد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>بازیکن</th><th>شماره کارت</th><th>تاریخ صدور</th><th>وضعیت</th><th>اقدام</th></tr></thead>
+        <tbody>
+        <% for (const row of rows) { %>
+            <tr>
+                <td><%- esc(row.player.name) %></td>
+                <td class="ltr"><%- esc(row.card ? row.card.cardNumber : '—') %></td>
+                <td class="text-muted"><%- row.card ? toPersian(toJalali(row.card.issuedAt)) : '—' %></td>
+                <td>
+                    <span class="chip <%- row.card ? 'ok' : 'warn' %>"><%- row.card ? 'فعال' : 'صادر نشده' %></span>
+                </td>
+                <td>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <% if (row.card) { %>
+                        <a class="btn btn-secondary" href="<%- APP_URL %>/cards/membership/<%- row.player.id %>">مشاهده/چاپ</a>
+                        <form method="POST" action="<%- APP_URL %>/admin/cards/revoke/<%- row.card.id %>">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <button class="btn btn-danger" type="submit">ابطال</button>
+                        </form>
+                        <% } else { %>
+                        <form method="POST" action="<%- APP_URL %>/admin/cards/issue/<%- row.player.id %>">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <button class="btn btn-primary" type="submit">صدور کارت</button>
+                        </form>
+                        <% } %>
+                        <a class="btn btn-secondary" href="<%- APP_URL %>/cards/fifa/<%- row.player.id %>">کارت بازی</a>
+                    </div>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

@@ -1,0 +1,36 @@
+<%
+/** یک شماره، چند نقش — انتخاب پنل پس از تأیید کد */
+const identities = locals.identities || [];
+%>
+<div class="auth-container">
+    <div class="auth-box">
+        <div style="text-align:center;font-size:3rem;margin-bottom:4px;">🚪</div>
+        <h2>کدام پنل؟</h2>
+        <p class="auth-tagline">
+            این شماره موبایل به بیش از یک حساب متصل است. پنل موردنظر خود را انتخاب کنید.
+        </p>
+
+        <form method="POST" action="<%- APP_URL %>/login/choose">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+            <div class="role-grid">
+                <% identities.forEach(function (identity, i) { %>
+                <label class="role-option">
+                    <input type="radio" name="identity"
+                           value="<%- escAttr(identity.kind + ':' + identity.id) %>"
+                           <%- i === 0 ? 'checked' : '' %>>
+                    <span class="em"><%- identity.icon %></span>
+                    <span><%- esc(identity.roleLabel) %></span>
+                    <span class="text-muted" style="font-size:.75rem;"><%- esc(identity.name) %></span>
+                </label>
+                <% }); %>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="margin-top:16px;">ورود به پنل ✅</button>
+        </form>
+
+        <p class="auth-link">
+            <a href="<%- APP_URL %>/login">بازگشت به صفحه ورود</a>
+        </p>
+    </div>
+</div>

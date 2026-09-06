@@ -1,0 +1,90 @@
+<%
+/** پنل مربی — نمای کلی کلاس‌ها و بازیکنان تأییدشدهٔ من */
+const classrooms = locals.classrooms || [];
+const players = locals.players || [];
+const sessions = locals.sessions || [];
+const positions = locals.positions || {};
+const dash = '—';
+%>
+
+<div class="alert alert-info">
+    🔒 دسترسی شما محدود به بازیکنان تأییدشدهٔ کلاس‌های خودتان است. اطلاعات مالی، تأیید ثبت‌نام
+    و تعیین نشان در اختیار مدیر ارشد باشگاه است.
+</div>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">🏫</span>
+        <span class="tile-value"><%- toPersian(classrooms.length) %></span>
+        <span class="tile-label">کلاس من</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">⚽</span>
+        <span class="tile-value"><%- toPersian(players.length) %></span>
+        <span class="tile-label">بازیکن تأییدشده</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">🗓️</span>
+        <span class="tile-value"><%- toPersian(sessions.length) %></span>
+        <span class="tile-label">جلسه ثبت‌شده</span>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">🏫</span> کلاس‌های من</h3>
+        <% if (classrooms.length === 0) { %>
+            <div class="empty-state"><span class="em">🏫</span> هنوز کلاسی به شما اختصاص داده نشده است.</div>
+        <% } else { %>
+        <table class="mini-table">
+            <thead><tr><th>کلاس</th><th>رده سنی</th><th>بازیکنان</th></tr></thead>
+            <tbody>
+            <% for (const c of classrooms) { %>
+                <tr>
+                    <td><a href="<%- APP_URL %>/coach/players?classroom=<%- c.id %>"><%- esc(c.name) %></a></td>
+                    <td class="text-muted"><%- esc((constants.AGE_CATEGORIES[c.ageCategory] || {}).label || dash) %></td>
+                    <td><%- toPersian(players.filter((p) => p.classroomId === c.id).length) %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🗓️</span> جلسات تمرین اخیر</h3>
+        <% if (sessions.length === 0) { %>
+            <div class="empty-state"><span class="em">📅</span> جلسه‌ای ثبت نشده است.</div>
+        <% } else { %>
+            <% for (const s of sessions) { %>
+            <div class="flex-between" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+                <span><%- esc(s.title) %> <span class="text-muted">· <%- esc(s.classroom ? s.classroom.name : 'همه کلاس‌ها') %></span></span>
+                <span class="chip neutral"><%- toPersian(toJalali(s.sessionDate)) %></span>
+            </div>
+            <% } %>
+        <% } %>
+        <a class="btn btn-primary mt-3" href="<%- APP_URL %>/coach/trainings">مدیریت جلسات</a>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⚽</span> بازیکنان من</h3>
+    <% if (players.length === 0) { %>
+        <div class="empty-state"><span class="em">🙋</span> بازیکن تأییدشده‌ای در کلاس‌های شما نیست.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>نام</th><th>کلاس</th><th>پست</th><th>امتیاز کل</th><th></th></tr></thead>
+        <tbody>
+        <% for (const p of players) { %>
+            <tr>
+                <td><%- esc(p.name) %></td>
+                <td class="text-muted"><%- esc(p.classroom ? p.classroom.name : dash) %></td>
+                <td class="text-muted"><%- esc(positions[p.position] || dash) %></td>
+                <td><strong><%- toPersian(p.totalScore || 0) %></strong></td>
+                <td><a class="btn btn-secondary" href="<%- APP_URL %>/coach/player/<%- p.id %>">پرونده فنی</a></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

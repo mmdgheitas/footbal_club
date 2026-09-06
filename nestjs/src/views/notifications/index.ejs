@@ -1,0 +1,38 @@
+<%
+/** اعلان‌های کارکنان */
+const notifications = locals.notifications || [];
+const icons = locals.icons || {};
+%>
+
+<div class="flex-between mb-3">
+    <span class="text-muted">اعلان‌های درون‌پنلی شما</span>
+    <% if (notifications.length > 0) { %>
+    <form method="POST" action="<%- APP_URL %>/notifications/read-all">
+        <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+        <button class="btn btn-secondary" type="submit">خواندهٔ همه</button>
+    </form>
+    <% } %>
+</div>
+
+<% if (notifications.length === 0) { %>
+    <div class="empty-state"><span class="em">📭</span> اعلانی وجود ندارد.</div>
+<% } else { %>
+<div class="notif-list">
+    <% for (const n of notifications) { %>
+    <div class="notif <%- Number(n.isRead) === 0 ? 'unread' : '' %>">
+        <span class="notif-icon"><%- icons[n.type] || '🔔' %></span>
+        <div style="flex:1;">
+            <div class="notif-title"><%- esc(n.title) %></div>
+            <div class="notif-msg"><%- esc(n.message) %></div>
+            <div class="notif-time"><%- toPersian(toJalali(n.createdAt)) %></div>
+        </div>
+        <% if (Number(n.isRead) === 0) { %>
+        <form method="POST" action="<%- APP_URL %>/notifications/<%- n.id %>/read">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+            <button class="icon-btn" type="submit" title="خوانده شد">✔️</button>
+        </form>
+        <% } %>
+    </div>
+    <% } %>
+</div>
+<% } %>

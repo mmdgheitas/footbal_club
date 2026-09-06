@@ -1,0 +1,77 @@
+<%
+/** تب گزارش‌ها — بازخوردهای مربی + عملکردهای ثبت‌شده */
+const performance = locals.performance || [];
+const summary = locals.summary || [];
+const feedback = locals.feedback || [];
+const attendance = locals.attendance || { records: [], percentage: 0 };
+const types = locals.performance_types || {};
+const matchTypes = locals.match_types || {};
+const maxTotal = Math.max(1, ...summary.map((s) => s.total));
+%>
+
+<div class="panel-card">
+    <h3><span class="em">📊</span> خلاصه عملکرد</h3>
+    <% if (summary.length === 0) { %>
+        <div class="empty-state"><span class="em">📉</span> هنوز عملکردی ثبت نشده است.</div>
+    <% } else { %>
+        <% for (const row of summary) { %>
+        <div style="margin-bottom:12px;">
+            <div class="flex-between" style="margin-bottom:4px;">
+                <span><%- row.icon %> <%- esc(row.label) %></span>
+                <strong><%- toPersian(row.total) %></strong>
+            </div>
+            <div class="bar-track">
+                <div class="bar-fill" style="width:<%- Math.round((row.total / maxTotal) * 100) %>%"></div>
+            </div>
+        </div>
+        <% } %>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📝</span> بازخورد مربی</h3>
+    <% if (feedback.length === 0) { %>
+        <div class="empty-state"><span class="em">💬</span> بازخوردی ثبت نشده است.</div>
+    <% } else { %>
+        <% for (const f of feedback) { %>
+        <div class="notif">
+            <span class="notif-icon">💬</span>
+            <div>
+                <div class="notif-title"><%- esc(f.recorder ? f.recorder.name : 'مربی') %></div>
+                <div class="notif-msg"><%- esc(f.description || '') %></div>
+                <div class="notif-time"><%- toPersian(toJalali(f.createdAt)) %></div>
+            </div>
+        </div>
+        <% } %>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⚽</span> عملکردهای ثبت‌شده</h3>
+    <% if (performance.length === 0) { %>
+        <div class="empty-state"><span class="em">📋</span> رکوردی وجود ندارد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>نوع</th><th>تعداد</th><th>مسابقه</th><th>تاریخ</th></tr></thead>
+        <tbody>
+        <% for (const row of performance) { %>
+            <tr>
+                <td><%- (types[row.type] || {}).icon || '📊' %> <%- esc((types[row.type] || {}).label || row.type) %></td>
+                <td><strong><%- toPersian(row.value) %></strong></td>
+                <td class="text-muted"><%- esc(matchTypes[row.matchType] || row.matchType) %></td>
+                <td class="text-muted"><%- toPersian(toJalali(row.sessionDate || row.createdAt)) %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">✅</span> حضور در جلسات</h3>
+    <div class="flex-between mb-2">
+        <span class="text-muted">درصد حضور</span>
+        <strong><%- toPersian(attendance.percentage) %>٪</strong>
+    </div>
+    <div class="bar-track"><div class="bar-fill green" style="width:<%- attendance.percentage %>%"></div></div>
+</div>

@@ -26,7 +26,8 @@ export class User extends BaseEntity {
   @Column({ name: 'email', type: 'varchar', length: 255, unique: true })
   email: string;
 
-  @Column({ name: 'phone', type: 'varchar', length: 15, nullable: true })
+  @Index('idx_phone')
+  @Column({ name: 'phone', type: 'varchar', length: 15, nullable: true, unique: true })
   phone: string | null;
 
   @Column({ name: 'password_hash', type: 'varchar', length: 255, select: false })
@@ -74,4 +75,12 @@ export class User extends BaseEntity {
 
   @Column({ name: 'last_login', type: 'timestamp', nullable: true })
   lastLogin: Date | null;
+
+  /**
+   * Optional link to a guardian account (fc_guardians_users.id) for staff who
+   * are also a parent — the single login page then offers both panels.
+   */
+  @Index('idx_guardian_id')
+  @Column({ name: 'guardian_id', type: 'int', nullable: true })
+  guardianId: number | null;
 }

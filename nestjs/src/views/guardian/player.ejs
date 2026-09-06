@@ -1,0 +1,185 @@
+<%
+/** پرونده کامل یک فرزند از دید ولی */
+const p = locals.player || {};
+const ledger = locals.ledger || { entries: [], totalPaid: 0, totalOutstanding: 0 };
+const scores = locals.scores || [];
+const badges = locals.badges || [];
+const performance = locals.performance || [];
+const summary = locals.summary || [];
+const attendance = locals.attendance || { records: [], percentage: 0, present: 0, absent: 0, late: 0, excused: 0 };
+const card = locals.card || null;
+const rank = locals.rank || { rank: 0, outOf: 0 };
+const labels = locals.registration_labels || {};
+const statusChip = { approved: 'ok', pending: 'warn', incomplete: 'danger' };
+const dash = '—';
+%>
+
+<div class="panel-card">
+    <div class="flex-between">
+        <div>
+            <h3 style="margin:0;"><span class="em">⚽</span> <%- esc(p.name || dash) %></h3>
+            <div class="text-muted mt-2">
+                <%- esc(p.classroom_name || 'بدون کلاس') %> ·
+                <span class="chip <%- statusChip[p.registration_status] || 'neutral' %>">
+                    <%- esc(labels[p.registration_status] || p.registration_status) %>
+                </span>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a class="btn btn-primary" href="<%- APP_URL %>/cards/membership/<%- p.id %>">🪪 کارت عضویت</a>
+            <a class="btn btn-secondary" href="<%- APP_URL %>/cards/fifa/<%- p.id %>">🎴 کارت بازی</a>
+        </div>
+    </div>
+</div>
+
+<div class="tile-grid">
+    <div class="tile is-gold">
+        <span class="tile-icon">⭐</span>
+        <span class="tile-value"><%- toPersian(p.total_score || 0) %></span>
+        <span class="tile-label">امتیاز کل</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">🥇</span>
+        <span class="tile-value"><%- toPersian(rank.rank) %></span>
+        <span class="tile-label">رتبه از <%- toPersian(rank.outOf) %></span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">✅</span>
+        <span class="tile-value"><%- toPersian(attendance.percentage) %>٪</span>
+        <span class="tile-label">درصد حضور</span>
+    </div>
+    <div class="tile <%- ledger.totalOutstanding > 0 ? 'is-danger' : '' %>">
+        <span class="tile-icon">💳</span>
+        <span class="tile-value"><%- __num(ledger.totalOutstanding) %></span>
+        <span class="tile-label">بدهی (تومان)</span>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">🧬</span> اطلاعات فنی و شناسنامه‌ای</h3>
+        <table class="mini-table">
+            <tr><th>نام پدر</th><td><%- esc(p.father_name || dash) %></td></tr>
+            <tr><th>کد ملی</th><td class="ltr"><%- toPersian(p.national_id || dash) %></td></tr>
+            <tr><th>تاریخ تولد</th><td><%- p.date_of_birth ? toPersian(toJalali(p.date_of_birth)) : dash %></td></tr>
+            <tr><th>قد / وزن</th><td><%- p.height_cm ? toPersian(p.height_cm) + ' cm' : dash %> · <%- p.weight_kg ? toPersian(p.weight_kg) + ' kg' : dash %></td></tr>
+            <tr><th>پست تخصصی</th><td><%- esc((constants.PLAYER_POSITIONS || {})[p.position] || dash) %></td></tr>
+            <tr><th>پای تخصصی</th><td><%- esc({ left: 'چپ', right: 'راست', both: 'هر دو پا' }[p.preferred_foot] || dash) %></td></tr>
+            <tr><th>تاریخ عضویت</th><td><%- p.membership_date ? toPersian(toJalali(p.membership_date)) : dash %></td></tr>
+            <tr><th>شماره کارت</th><td class="ltr"><%- esc(card ? card.cardNumber : 'صادر نشده') %></td></tr>
+        </table>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🏅</span> نشان‌ها</h3>
+        <% if (badges.length === 0) { %>
+            <div class="empty-state"><span class="em">🎖️</span> هنوز نشانی دریافت نکرده است.</div>
+        <% } else { %>
+        <div class="badge-grid">
+            <% for (const b of badges) { %>
+            <div class="badge-item">
+                <span class="em"><%- b.icon %></span>
+                <div class="t"><%- esc(b.badgeTitle) %></div>
+                <div class="d"><%- toPersian(toJalali(b.assignedAt)) %></div>
+            </div>
+            <% } %>
+        </div>
+        <% } %>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📊</span> گزارش عملکرد</h3>
+    <% if (summary.length === 0) { %>
+        <div class="empty-state"><span class="em">📉</span> عملکردی ثبت نشده است.</div>
+    <% } else { %>
+    <div class="tile-grid" style="margin-bottom:12px;">
+        <% for (const s of summary) { %>
+        <div class="tile">
+            <span class="tile-icon"><%- s.icon %></span>
+            <span class="tile-value"><%- toPersian(s.total) %></span>
+            <span class="tile-label"><%- esc(s.label) %></span>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+
+    <% if (performance.length > 0) { %>
+    <table class="mini-table">
+        <thead><tr><th>نوع</th><th>تعداد</th><th>توضیح</th><th>ثبت توسط</th><th>تاریخ</th></tr></thead>
+        <tbody>
+        <% for (const row of performance) { %>
+            <tr>
+                <td><%- esc((constants.PERFORMANCE_TYPES && constants.PERFORMANCE_TYPES[row.type] ? constants.PERFORMANCE_TYPES[row.type].label : row.type)) %></td>
+                <td><%- toPersian(row.value) %></td>
+                <td class="text-muted"><%- esc(row.description || '—') %></td>
+                <td class="text-muted"><%- esc(row.recorder ? row.recorder.name : '—') %></td>
+                <td class="text-muted"><%- toPersian(toJalali(row.sessionDate || row.createdAt)) %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">⭐</span> امتیازهای ثبت‌شده</h3>
+        <% if (scores.length === 0) { %>
+            <div class="empty-state"><span class="em">⭐</span> امتیازی ثبت نشده است.</div>
+        <% } else { %>
+        <table class="mini-table">
+            <thead><tr><th>امتیاز</th><th>بابت</th><th>ثبت توسط</th><th>تاریخ</th></tr></thead>
+            <tbody>
+            <% for (const s of scores) { %>
+                <tr>
+                    <td class="<%- s.points >= 0 ? 'text-gold' : 'text-danger' %>"><strong><%- s.points > 0 ? '+' : '' %><%- toPersian(s.points) %></strong></td>
+                    <td><%- esc(s.reason || '—') %></td>
+                    <td class="text-muted"><%- esc(s.scorer ? s.scorer.name : '—') %></td>
+                    <td class="text-muted"><%- toPersian(toJalali(s.createdAt)) %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">📋</span> حضور و غیاب</h3>
+        <div class="flex-between mb-2">
+            <span class="chip ok">حاضر: <%- toPersian(attendance.present) %></span>
+            <span class="chip danger">غایب: <%- toPersian(attendance.absent) %></span>
+            <span class="chip warn">تأخیر: <%- toPersian(attendance.late) %></span>
+            <span class="chip neutral">موجه: <%- toPersian(attendance.excused) %></span>
+        </div>
+        <div class="bar-track mb-3"><div class="bar-fill green" style="width:<%- attendance.percentage %>%"></div></div>
+        <table class="mini-table">
+            <thead><tr><th>تاریخ</th><th>وضعیت</th></tr></thead>
+            <tbody>
+            <% for (const r of (attendance.records || []).slice(0, 12)) { %>
+                <tr>
+                    <td><%- toPersian(toJalali(r.session_date)) %></td>
+                    <td><%- esc(r.status_label) %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">💳</span> دفترچه مالی این بازیکن</h3>
+    <table class="mini-table">
+        <thead><tr><th>تاریخ</th><th>شرح</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+        <tbody>
+        <% for (const e of (ledger.entries || []).slice(0, 15)) { %>
+            <tr>
+                <td class="nowrap"><%- e.date ? toPersian(toJalali(e.date)) : '—' %></td>
+                <td><%- esc(e.title) %></td>
+                <td><%- __num(e.amount) %></td>
+                <td><span class="chip <%- e.kind === 'payment' ? 'ok' : (e.kind === 'debt' ? 'danger' : 'warn') %>"><%- esc(e.statusLabel) %></span></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+</div>

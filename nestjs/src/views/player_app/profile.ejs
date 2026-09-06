@@ -1,0 +1,72 @@
+<%
+/** تب پروفایل — کارت بازی FIFA + اطلاعات اولیه + کارت عضویت */
+const p = locals.player || {};
+const card = locals.card || null;
+const ledger = locals.ledger || { totalPaid: 0, totalOutstanding: 0, hasDebt: false };
+const rank = locals.rank || { rank: 0, outOf: 0 };
+const positions = locals.positions || {};
+const feet = locals.feet || {};
+const dash = '—';
+%>
+
+<div class="panel-card" style="background:transparent;border:none;box-shadow:none;padding:0;">
+    <%- include('../cards/_fifa_card', {
+        player: p,
+        attributes: locals.attributes || {},
+        overall: locals.overall || 0,
+        badges: locals.badges || [],
+        club_name: constants && constants.CLUB_NAME ? constants.CLUB_NAME : 'باشگاه نواب',
+        positions,
+        feet
+    }) %>
+</div>
+
+<div class="tile-grid mt-3">
+    <a class="tile is-gold" href="<%- APP_URL %>/cards/membership/<%- p.id %>" style="text-decoration:none;">
+        <span class="tile-icon">🪪</span>
+        <span class="tile-value" style="font-size:1.05rem;">کارت عضویت</span>
+        <span class="tile-label">مشاهده و چاپ (۸×۱۱)</span>
+    </a>
+    <a class="tile" href="<%- APP_URL %>/cards/fifa/<%- p.id %>" style="text-decoration:none;">
+        <span class="tile-icon">🎴</span>
+        <span class="tile-value" style="font-size:1.05rem;">کارت بازی</span>
+        <span class="tile-label">نسخه بزرگ و قابل چاپ</span>
+    </a>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🧾</span> اطلاعات اولیه</h3>
+    <table class="mini-table">
+        <tr><th>نام و نام خانوادگی</th><td><%- esc(p.name || dash) %></td></tr>
+        <tr><th>نام پدر</th><td><%- esc(p.father_name || dash) %></td></tr>
+        <tr><th>کد ملی</th><td class="ltr"><%- toPersian(p.national_id || dash) %></td></tr>
+        <tr><th>تاریخ تولد</th><td><%- p.date_of_birth ? toPersian(toJalali(p.date_of_birth)) : dash %></td></tr>
+        <tr><th>شماره تماس</th><td class="ltr"><%- toPersian(p.phone || dash) %></td></tr>
+        <tr><th>کلاس</th><td><%- esc(p.classroom_name || dash) %></td></tr>
+        <tr><th>پست / پای تخصصی</th><td><%- esc(positions[p.position] || dash) %> · <%- esc(feet[p.preferred_foot] || dash) %></td></tr>
+        <tr><th>تاریخ عضویت</th><td><%- p.membership_date ? toPersian(toJalali(p.membership_date)) : dash %></td></tr>
+        <tr><th>شماره کارت عضویت</th><td class="ltr"><%- esc(card ? card.cardNumber : 'در حال صدور') %></td></tr>
+        <tr><th>رتبه در باشگاه</th><td><%- toPersian(rank.rank) %> از <%- toPersian(rank.outOf) %></td></tr>
+    </table>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">💳</span> وضعیت مالی</h3>
+    <div class="tile-grid" style="margin-bottom:0;">
+        <div class="tile">
+            <span class="tile-icon">✅</span>
+            <span class="tile-value"><%- __num(ledger.totalPaid) %></span>
+            <span class="tile-label">پرداخت‌شده (تومان)</span>
+        </div>
+        <div class="tile <%- ledger.hasDebt ? 'is-danger' : '' %>">
+            <span class="tile-icon"><%- ledger.hasDebt ? '⚠️' : '👌' %></span>
+            <span class="tile-value"><%- __num(ledger.totalOutstanding) %></span>
+            <span class="tile-label">بدهی (تومان)</span>
+        </div>
+    </div>
+    <% if (ledger.hasDebt) { %>
+    <p class="text-danger mt-3" style="font-size:.86rem;">
+        ⚠️ بدهی پرداخت‌نشده دارید؛ اعلان آن برای ولی شما نیز ارسال شده است.
+    </p>
+    <% } %>
+</div>

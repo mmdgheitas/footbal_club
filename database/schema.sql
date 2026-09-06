@@ -23,14 +23,22 @@ CREATE TABLE IF NOT EXISTS fc_players (
     uuid CHAR(36) NOT NULL UNIQUE,
     classroom_id INT NULL,
     name VARCHAR(255) NOT NULL,
+    father_name VARCHAR(255) NULL,
     date_of_birth DATE NOT NULL,
     national_id VARCHAR(50) UNIQUE NOT NULL,
     position ENUM('goalkeeper', 'defender', 'midfielder', 'forward', 'striker') NOT NULL,
+    height_cm INT NULL,
+    weight_kg INT NULL,
+    preferred_foot ENUM('left', 'right', 'both') NULL,
+    photo_path VARCHAR(500) NULL,
+    membership_date DATE NULL,
     age_category ENUM('u8', 'u10', 'u12', 'u14', 'u16', 'u18', 'senior') NOT NULL DEFAULT 'senior',
     phone VARCHAR(15),
     email VARCHAR(255),
     medical_clearance TINYINT(1) DEFAULT 0,
     status TINYINT(1) DEFAULT 1,
+    registration_status ENUM('pending', 'approved', 'incomplete') NOT NULL DEFAULT 'pending',
+    total_score INT NOT NULL DEFAULT 0,
     notes LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -40,6 +48,7 @@ CREATE TABLE IF NOT EXISTS fc_players (
     INDEX idx_position (position),
     INDEX idx_age_category (age_category),
     INDEX idx_status (status),
+    INDEX idx_registration_status (registration_status),
     INDEX idx_created_at (created_at),
     FOREIGN KEY (classroom_id) REFERENCES fc_classrooms(id)
         ON DELETE SET NULL ON UPDATE CASCADE
@@ -55,6 +64,7 @@ CREATE TABLE IF NOT EXISTS fc_users (
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('super_admin', 'coach', 'accountant', 'secretary', 'player') NOT NULL DEFAULT 'coach',
     player_id INT NULL,
+    guardian_id INT NULL,
     status TINYINT(1) NOT NULL DEFAULT 1,
     document_status ENUM('pending', 'approved', 'rejected') NULL DEFAULT NULL,
     rejection_reason TEXT NULL,
@@ -65,8 +75,10 @@ CREATE TABLE IF NOT EXISTS fc_users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
     INDEX idx_email (email),
+    UNIQUE INDEX idx_phone_unique (phone),
     INDEX idx_role (role),
     INDEX idx_player_id (player_id),
+    INDEX idx_guardian_id (guardian_id),
     INDEX idx_status (status),
     INDEX idx_document_status (document_status),
     INDEX idx_created_at (created_at),
@@ -455,3 +467,194 @@ CREATE TABLE IF NOT EXISTS fc_case_notes (
     INDEX idx_note_type (note_type),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- =============================================================================
+-- FEATURE EXPANSION
+-- ولی به‌عنوان نقش مستقل، کارت عضویت، امتیاز و نشان، عملکرد، هزینه‌ها،
+-- اعلان درون‌پنلی، ورود با کد یک‌بارمصرف و جلسات تمرین.
+--
+-- برای پایگاه‌داده‌های موجود، همین تغییرات به‌صورت افزایشی در
+-- database/migrations/006_feature_expansion.sql آمده است.
+-- =============================================================================
+
+-- حساب کاربری ولی (ورود با موبایل + کد یک‌بارمصرف)
+CREATE TABLE IF NOT EXISTS fc_guardians_users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    name VARCHAR(255) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    national_id VARCHAR(50) NULL,
+    password_hash VARCHAR(255) NULL,
+    status TINYINT(1) NOT NULL DEFAULT 1,
+    last_login TIMESTAMP NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    UNIQUE INDEX idx_phone (phone),
+    INDEX idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- یک ولی → چند بازیکن، هر بازیکن دقیقاً یک ولی
+CREATE TABLE IF NOT EXISTS fc_player_guardians (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    guardian_id INT NOT NULL,
+    player_id INT NOT NULL,
+    relationship VARCHAR(50) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE INDEX idx_player_unique (player_id),
+    INDEX idx_guardian_id (guardian_id),
+    FOREIGN KEY (guardian_id) REFERENCES fc_guardians_users(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (player_id) REFERENCES fc_players(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- کارت عضویت دیجیتال ۸×۱۱ سانتی‌متر
+CREATE TABLE IF NOT EXISTS fc_membership_cards (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    player_id INT NOT NULL,
+    card_number VARCHAR(50) NOT NULL,
+    issued_at DATETIME NOT NULL,
+    pdf_path VARCHAR(500) NULL,
+    status ENUM('active', 'revoked', 'expired') NOT NULL DEFAULT 'active',
+    issued_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE INDEX idx_card_number (card_number),
+    INDEX idx_player_id (player_id),
+    INDEX idx_status (status),
+    FOREIGN KEY (player_id) REFERENCES fc_players(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (issued_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- امتیاز بازیکن — امتیاز کل جمع سادهٔ همین رکوردهاست
+CREATE TABLE IF NOT EXISTS fc_player_scores (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    player_id INT NOT NULL,
+    scored_by INT NULL,
+    points INT NOT NULL DEFAULT 0,
+    reason VARCHAR(255) NULL,
+    session_date DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_player_id (player_id),
+    INDEX idx_scored_by (scored_by),
+    INDEX idx_session_date (session_date),
+    FOREIGN KEY (player_id) REFERENCES fc_players(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (scored_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- نشان‌ها — فقط مدیر ارشد اهدا می‌کند
+CREATE TABLE IF NOT EXISTS fc_player_badges (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    player_id INT NOT NULL,
+    badge_key VARCHAR(60) NOT NULL,
+    badge_title VARCHAR(120) NOT NULL,
+    assigned_by INT NULL,
+    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    note VARCHAR(255) NULL,
+    INDEX idx_player_id (player_id),
+    INDEX idx_badge_key (badge_key),
+    FOREIGN KEY (player_id) REFERENCES fc_players(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (assigned_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- عملکرد ثبت‌شده توسط مربی / مدیر (گل، پاس گل، دریبل، مسابقه و ...)
+CREATE TABLE IF NOT EXISTS fc_player_performances (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    player_id INT NOT NULL,
+    recorded_by INT NULL,
+    type VARCHAR(50) NOT NULL,
+    value INT NOT NULL DEFAULT 1,
+    description TEXT NULL,
+    match_type ENUM('training', 'friendly', 'official') NOT NULL DEFAULT 'training',
+    session_date DATE NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_player_id (player_id),
+    INDEX idx_recorded_by (recorded_by),
+    INDEX idx_type (type),
+    INDEX idx_session_date (session_date),
+    FOREIGN KEY (player_id) REFERENCES fc_players(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (recorded_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- هزینه‌های دستی باشگاه (سالن، چمن، اجاره دفتر، حقوق و ...)
+CREATE TABLE IF NOT EXISTS fc_expenses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(255) NOT NULL,
+    amount DECIMAL(15,2) NOT NULL,
+    category ENUM('hall', 'grass', 'office_rent', 'salary', 'equipment', 'transport', 'other') NOT NULL DEFAULT 'other',
+    expense_date DATE NOT NULL,
+    recorded_by INT NULL,
+    note TEXT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    INDEX idx_category (category),
+    INDEX idx_expense_date (expense_date),
+    FOREIGN KEY (recorded_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- اعلان‌های درون‌پنلی (بدون پوش نوتیفیکیشن)
+CREATE TABLE IF NOT EXISTS fc_notifications (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_type ENUM('player', 'guardian', 'coach', 'admin') NOT NULL,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT NOT NULL,
+    type ENUM('debt', 'performance', 'score', 'badge', 'registration', 'card', 'attendance', 'training', 'system') NOT NULL DEFAULT 'system',
+    link VARCHAR(255) NULL,
+    is_read TINYINT(1) NOT NULL DEFAULT 0,
+    dedupe_key VARCHAR(120) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_user_type (user_type),
+    INDEX idx_user_id (user_id),
+    INDEX idx_type (type),
+    INDEX idx_is_read (is_read),
+    INDEX idx_dedupe_key (dedupe_key)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- کدهای یک‌بارمصرف ورود
+CREATE TABLE IF NOT EXISTS fc_otp_codes (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    phone VARCHAR(15) NOT NULL,
+    code VARCHAR(128) NOT NULL,
+    expires_at DATETIME NOT NULL,
+    used TINYINT(1) NOT NULL DEFAULT 0,
+    attempts INT NOT NULL DEFAULT 0,
+    ip_address VARCHAR(45) NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_phone (phone),
+    INDEX idx_expires_at (expires_at)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- جلسات تمرین (تب «تمرینات» اپ بازیکن و برنامه‌ریز مربی)
+CREATE TABLE IF NOT EXISTS fc_training_sessions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    classroom_id INT NULL,
+    title VARCHAR(255) NOT NULL,
+    session_date DATE NOT NULL,
+    start_time VARCHAR(10) NULL,
+    location VARCHAR(255) NULL,
+    notes TEXT NULL,
+    created_by INT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL,
+    INDEX idx_classroom_id (classroom_id),
+    INDEX idx_session_date (session_date),
+    FOREIGN KEY (classroom_id) REFERENCES fc_classrooms(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES fc_users(id)
+        ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ارتباط حساب کاربری با ولی (پس از ساخت جدول fc_guardians_users)
+ALTER TABLE fc_users
+    ADD CONSTRAINT fk_users_guardian FOREIGN KEY (guardian_id)
+        REFERENCES fc_guardians_users(id) ON DELETE SET NULL ON UPDATE CASCADE;

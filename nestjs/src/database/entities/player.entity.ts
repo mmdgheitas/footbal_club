@@ -23,6 +23,20 @@ export enum AgeCategory {
   SENIOR = 'senior',
 }
 
+/** پای تخصصی */
+export enum PreferredFoot {
+  LEFT = 'left',
+  RIGHT = 'right',
+  BOTH = 'both',
+}
+
+/** وضعیت ثبت‌نام */
+export enum RegistrationStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  INCOMPLETE = 'incomplete',
+}
+
 /** fc_players */
 @Entity('fc_players')
 export class Player extends BaseEntity {
@@ -76,6 +90,49 @@ export class Player extends BaseEntity {
 
   @Column({ name: 'notes', type: 'longtext', nullable: true })
   notes: string | null;
+
+  // ---------------------------------------------------------------------
+  // Feature expansion — technical file, registration workflow, scoring.
+  // Added by database/migrations/006_feature_expansion.sql; every column is
+  // nullable or defaulted so existing rows keep working untouched.
+  // ---------------------------------------------------------------------
+
+  @Column({ name: 'father_name', type: 'varchar', length: 255, nullable: true })
+  fatherName: string | null;
+
+  @Column({ name: 'height_cm', type: 'int', nullable: true })
+  heightCm: number | null;
+
+  @Column({ name: 'weight_kg', type: 'int', nullable: true })
+  weightKg: number | null;
+
+  @Column({
+    name: 'preferred_foot',
+    type: 'enum',
+    enum: PreferredFoot,
+    nullable: true,
+  })
+  preferredFoot: PreferredFoot | null;
+
+  /** 3×4 photo used by the membership card and the FIFA card. */
+  @Column({ name: 'photo_path', type: 'varchar', length: 500, nullable: true })
+  photoPath: string | null;
+
+  @Column({ name: 'membership_date', type: 'date', nullable: true })
+  membershipDate: string | null;
+
+  @Index('idx_registration_status')
+  @Column({
+    name: 'registration_status',
+    type: 'enum',
+    enum: RegistrationStatus,
+    default: RegistrationStatus.PENDING,
+  })
+  registrationStatus: RegistrationStatus;
+
+  /** Cached sum of fc_player_scores.points — recomputed on every write. */
+  @Column({ name: 'total_score', type: 'int', default: 0 })
+  totalScore: number;
 
   @OneToMany(() => Guardian, (g) => g.player)
   guardians: Guardian[];

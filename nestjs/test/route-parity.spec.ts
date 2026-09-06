@@ -62,15 +62,97 @@ function registeredRoutes(app: NestExpressApplication): Set<string> {
   return out;
 }
 
+/**
+ * Routes added by the feature expansion — they have no legacy counterpart, so
+ * they are listed here explicitly. The list is asserted in both directions:
+ * every entry must be registered, and nothing outside legacy + this list may
+ * appear (a stray or silently-dropped route still fails the suite).
+ */
+const EXPANSION_ROUTES = [
+  'POST /login/otp/request',
+  'GET /login/otp',
+  'POST /login/otp/verify',
+  'GET /login/choose',
+  'POST /login/choose',
+  'POST /login/otp/resend',
+  'GET /guardian',
+  'GET /guardian/player/:id',
+  'GET /guardian/financial',
+  'GET /guardian/attendance',
+  'GET /guardian/cards',
+  'GET /guardian/notifications',
+  'POST /guardian/notifications/:id/read',
+  'POST /guardian/notifications/read-all',
+  'GET /app',
+  'GET /app/trainings',
+  'GET /app/trophies',
+  'GET /app/reports',
+  'GET /app/profile',
+  'GET /app/notifications',
+  'POST /app/notifications/:id/read',
+  'POST /app/notifications/read-all',
+  'GET /cards/membership/:playerId',
+  'GET /cards/fifa/:playerId',
+  'GET /coach',
+  'GET /coach/players',
+  'GET /coach/player/:id',
+  'POST /coach/player/:id/performance',
+  'POST /coach/player/:id/score',
+  'GET /coach/trainings',
+  'POST /coach/trainings',
+  'GET /admin/registrations',
+  'POST /admin/registrations/:id/approve',
+  'POST /admin/registrations/:id/incomplete',
+  'GET /admin/cards',
+  'POST /admin/cards/issue/:playerId',
+  'POST /admin/cards/revoke/:id',
+  'GET /admin/badges',
+  'POST /admin/badges/assign',
+  'POST /admin/badges/remove/:id',
+  'GET /admin/scores',
+  'POST /admin/scores',
+  'GET /admin/guardians',
+  'POST /admin/guardians',
+  'POST /admin/guardians/link',
+  'POST /admin/guardians/unlink/:playerId',
+  'GET /admin/trainings',
+  'POST /admin/trainings',
+  'POST /admin/trainings/:id/delete',
+  'GET /admin/reports/performance',
+  'GET /admin/expenses',
+  'POST /admin/expenses',
+  'POST /admin/expenses/:id/delete',
+  'GET /admin/reports/financial',
+  'GET /admin/reports/debtors',
+  'POST /admin/reports/debtors/notify',
+  'GET /notifications',
+  'POST /notifications/:id/read',
+  'POST /notifications/read-all',
+];
+
 describe('route parity with the legacy PHP application', () => {
   let app: NestExpressApplication;
   let registered: Set<string>;
   const legacy = parseLegacyRoutes();
 
   beforeAll(async () => {
+    /**
+     * Enough of a DataSource for @nestjs/typeorm to build the repository
+     * providers of every TypeOrmModule.forFeature() in the app (it reads
+     * entityMetadatas/options and then calls getRepository). No handler runs,
+     * so nothing ever queries.
+     */
+    const dataSourceStub = {
+      entityMetadatas: [] as unknown[],
+      options: { type: 'mysql' },
+      getRepository: () => ({}),
+      getTreeRepository: () => ({}),
+      query: async () => [],
+    };
+
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(getDataSourceToken())
-      .useValue({})
+      .useValue(dataSourceStub)
       .overrideProvider(getRepositoryToken(User))
       .useValue({})
       .overrideProvider(getRepositoryToken(Player))
@@ -127,9 +209,17 @@ describe('route parity with the legacy PHP application', () => {
   });
 
   it('registers no unexpected extra routes', () => {
-    const expected = new Set(legacy.map((r) => `${r.method} ${r.path}`));
+    const expected = new Set([
+      ...legacy.map((r) => `${r.method} ${r.path}`),
+      ...EXPANSION_ROUTES,
+    ]);
     const extra = [...registered].filter((r) => !expected.has(r));
     expect(extra).toEqual([]);
+  });
+
+  it('registers every route added by the feature expansion', () => {
+    const missing = EXPANSION_ROUTES.filter((r) => !registered.has(r));
+    expect(missing).toEqual([]);
   });
 
   it('reports remaining routes to port', () => {

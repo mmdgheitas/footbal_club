@@ -1,0 +1,33 @@
+<%
+/** کارت عضویت هنوز صادر نشده — registration must be approved first. */
+const p = locals.player || {};
+const labels = { pending: 'در انتظار بررسی', incomplete: 'ناقص', approved: 'تأییدشده' };
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- esc(locals.title || 'کارت عضویت') %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body>
+<div class="print-page">
+    <div class="panel-card" style="max-width:420px;text-align:center;">
+        <div style="font-size:3.5rem;">🪪</div>
+        <h3 style="justify-content:center;">کارت عضویت هنوز صادر نشده است</h3>
+        <p class="text-muted">
+            وضعیت ثبت‌نام <strong><%- esc(p.name || '') %></strong>:
+            <span class="chip warn"><%- esc(labels[p.registrationStatus] || 'نامشخص') %></span>
+        </p>
+        <p class="text-muted mt-2">
+            کارت عضویت بلافاصله پس از تأیید نهایی ثبت‌نام توسط مدیریت باشگاه، به‌صورت خودکار صادر
+            و در همین صفحه قابل دانلود و چاپ خواهد بود.
+        </p>
+        <a class="btn btn-secondary mt-3" href="javascript:history.back()">بازگشت</a>
+    </div>
+</div>
+</body>
+</html>

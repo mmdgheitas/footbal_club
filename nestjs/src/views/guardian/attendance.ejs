@@ -1,0 +1,58 @@
+<%
+/** حضور و غیاب فرزندان + جلسات پیش‌رو */
+const records = locals.records || [];
+%>
+
+<% if (records.length === 0) { %>
+    <div class="empty-state"><span class="em">📋</span> بازیکنی به حساب شما متصل نیست.</div>
+<% } %>
+
+<% for (const row of records) { %>
+<% const a = row.attendance || {}; %>
+<div class="panel-card">
+    <div class="flex-between mb-3">
+        <h3 style="margin:0;"><span class="em">👦</span> <%- esc(row.player.name) %></h3>
+        <span class="chip <%- (a.percentage || 0) >= 75 ? 'ok' : 'danger' %>">
+            درصد حضور: <%- toPersian(a.percentage || 0) %>٪
+        </span>
+    </div>
+
+    <div class="tile-grid">
+        <div class="tile"><span class="tile-icon">✅</span><span class="tile-value"><%- toPersian(a.present || 0) %></span><span class="tile-label">حاضر</span></div>
+        <div class="tile is-danger"><span class="tile-icon">❌</span><span class="tile-value"><%- toPersian(a.absent || 0) %></span><span class="tile-label">غایب</span></div>
+        <div class="tile"><span class="tile-icon">⏰</span><span class="tile-value"><%- toPersian(a.late || 0) %></span><span class="tile-label">تأخیر</span></div>
+        <div class="tile"><span class="tile-icon">📄</span><span class="tile-value"><%- toPersian(a.excused || 0) %></span><span class="tile-label">موجه</span></div>
+    </div>
+
+    <% if ((row.upcoming || []).length > 0) { %>
+    <h4 class="mt-3">⏭️ جلسات بعدی</h4>
+    <% for (const s of row.upcoming) { %>
+        <div class="flex-between" style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+            <span><%- esc(s.title) %> <span class="text-muted">· <%- esc(s.location || '—') %></span></span>
+            <span class="chip ok"><%- toPersian(toJalali(s.sessionDate)) %></span>
+        </div>
+    <% } %>
+    <% } %>
+
+    <h4 class="mt-3">🗓️ تاریخچه</h4>
+    <% if ((a.records || []).length === 0) { %>
+        <div class="empty-state"><span class="em">📭</span> حضور و غیابی ثبت نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>تاریخ جلسه</th><th>وضعیت</th></tr></thead>
+        <tbody>
+        <% for (const r of a.records.slice(0, 20)) { %>
+            <tr>
+                <td><%- toPersian(toJalali(r.session_date)) %></td>
+                <td>
+                    <span class="chip <%- Number(r.status) === 1 ? 'ok' : (Number(r.status) === 2 ? 'danger' : 'warn') %>">
+                        <%- esc(r.status_label) %>
+                    </span>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+<% } %>

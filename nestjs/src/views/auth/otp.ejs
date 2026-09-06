@@ -1,0 +1,71 @@
+<%
+/** وارد کردن کد یک‌بارمصرف */
+const otpLength = locals.otp_length || 6;
+const ttlMinutes = Math.round((locals.ttl_seconds || 300) / 60);
+%>
+<div class="auth-container">
+    <div class="auth-box">
+        <div style="text-align:center;font-size:3rem;margin-bottom:4px;">🔐</div>
+        <h2>کد ورود را وارد کنید</h2>
+        <p class="auth-tagline">
+            کد <%- toPersian(otpLength) %> رقمی به شماره
+            <span class="ltr"><%- toPersian(locals.masked_phone || '') %></span>
+            ارسال شد.
+        </p>
+
+        <form method="POST" action="<%- APP_URL %>/login/otp/verify">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+            <div class="form-group otp-inputs">
+                <label for="code" class="sr-only">کد ورود</label>
+                <input type="text" id="code" name="code" class="otp-code-input"
+                       inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*"
+                       maxlength="<%- otpLength %>" placeholder="------" required autofocus>
+            </div>
+
+            <button type="submit" class="btn btn-primary">تأیید و ورود ✅</button>
+        </form>
+
+        <p class="login-hint">
+            اعتبار کد <%- toPersian(ttlMinutes) %> دقیقه است. اگر کد را دریافت نکردید،
+            پس از یک دقیقه می‌توانید درخواست ارسال مجدد بدهید.
+        </p>
+
+        <% if (locals.dev_code) { %>
+        <div class="alert alert-info ltr" style="text-align:center;">
+            کد تست (حالت توسعه): <strong><%- esc(locals.dev_code) %></strong>
+        </div>
+        <% } %>
+
+        <div style="display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap;">
+            <form method="POST" action="<%- APP_URL %>/login/otp/resend">
+                <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                <button type="submit" class="btn btn-secondary">ارسال مجدد کد 🔄</button>
+            </form>
+            <a class="btn btn-secondary" href="<%- APP_URL %>/login">تغییر شماره</a>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    var input = document.getElementById('code');
+    if (!input) return;
+    // فقط رقم انگلیسی؛ ارقام فارسی/عربی هم پذیرفته و تبدیل می‌شوند.
+    var fa = '۰۱۲۳۴۵۶۷۸۹', ar = '٠١٢٣٤٥٦٧٨٩';
+    input.addEventListener('input', function () {
+        var out = '';
+        for (var i = 0; i < input.value.length; i++) {
+            var ch = input.value[i];
+            var f = fa.indexOf(ch), a = ar.indexOf(ch);
+            if (f > -1) ch = String(f);
+            else if (a > -1) ch = String(a);
+            if (ch >= '0' && ch <= '9') out += ch;
+        }
+        input.value = out.slice(0, <%- otpLength %>);
+        if (input.value.length === <%- otpLength %>) {
+            input.form.requestSubmit ? input.form.requestSubmit() : input.form.submit();
+        }
+    });
+})();
+</script>

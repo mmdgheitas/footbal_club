@@ -1,0 +1,63 @@
+<%
+/** گزارش بدهکاران + ارسال اعلان درون‌پنلی بدهی */
+const debtors = locals.debtors || [];
+const total = locals.total || 0;
+%>
+
+<div class="tile-grid">
+    <div class="tile is-danger">
+        <span class="tile-icon">⚠️</span>
+        <span class="tile-value"><%- __num(total) %></span>
+        <span class="tile-label">جمع بدهی (تومان)</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">👥</span>
+        <span class="tile-value"><%- toPersian(debtors.length) %></span>
+        <span class="tile-label">پرونده بدهکار</span>
+    </div>
+</div>
+
+<div class="panel-card">
+    <div class="flex-between">
+        <div>
+            <h3 style="margin:0;"><span class="em">🔔</span> اعلان هوشمند بدهی</h3>
+            <p class="text-muted" style="font-size:.85rem;margin:6px 0 0;">
+                با این دکمه برای همه بدهکاران، اعلان درون‌پنلی بدهی برای بازیکن و ولی او ثبت می‌شود
+                (بدون پیامک و بدون پوش نوتیفیکیشن).
+            </p>
+        </div>
+        <form method="POST" action="<%- APP_URL %>/admin/reports/debtors/notify">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+            <button class="btn btn-primary" type="submit">ارسال اعلان بدهی</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📋</span> فهرست بدهکاران</h3>
+    <% if (debtors.length === 0) { %>
+        <div class="empty-state"><span class="em">👌</span> هیچ بدهی معوقی وجود ندارد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr><th>بازیکن</th><th>کلاس</th><th>ولی</th><th>موبایل ولی</th><th>اقلام</th><th>بدهی (تومان)</th><th></th></tr>
+        </thead>
+        <tbody>
+        <% for (const d of debtors) { %>
+            <tr>
+                <td><strong><%- esc(d.player_name) %></strong></td>
+                <td class="text-muted"><%- esc(d.classroom_name || '—') %></td>
+                <td><%- esc(d.guardian_name || '—') %></td>
+                <td class="ltr text-muted"><%- toPersian(d.guardian_phone || '—') %></td>
+                <td><%- toPersian(d.items) %></td>
+                <td class="text-danger"><strong><%- __num(d.total_debt) %></strong></td>
+                <td><a class="btn btn-secondary" href="<%- APP_URL %>/players/<%- d.player_id %>">پرونده</a></td>
+            </tr>
+        <% } %>
+        </tbody>
+        <tfoot>
+            <tr><th colspan="5">جمع کل</th><th class="text-danger"><%- __num(total) %></th><th></th></tr>
+        </tfoot>
+    </table>
+    <% } %>
+</div>

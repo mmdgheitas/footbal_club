@@ -1,0 +1,38 @@
+<%
+/** اعلان‌های درون‌پنلی بازیکن */
+const notifications = locals.notifications || [];
+const icons = { debt: '💳', performance: '📊', score: '⭐', badge: '🏅', registration: '📝', card: '🪪', attendance: '📋', training: '⚽', system: '🔔' };
+%>
+
+<div class="flex-between mb-3">
+    <h3 style="color:var(--white);">🔔 اعلان‌های من</h3>
+    <% if (notifications.length > 0) { %>
+    <form method="POST" action="<%- APP_URL %>/app/notifications/read-all">
+        <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+        <button class="btn btn-secondary" type="submit">خواندهٔ همه</button>
+    </form>
+    <% } %>
+</div>
+
+<% if (notifications.length === 0) { %>
+    <div class="empty-state"><span class="em">📭</span> اعلانی وجود ندارد.</div>
+<% } else { %>
+<div class="notif-list">
+    <% for (const n of notifications) { %>
+    <div class="notif <%- Number(n.isRead) === 0 ? 'unread' : '' %>">
+        <span class="notif-icon"><%- icons[n.type] || '🔔' %></span>
+        <div style="flex:1;">
+            <div class="notif-title"><%- esc(n.title) %></div>
+            <div class="notif-msg"><%- esc(n.message) %></div>
+            <div class="notif-time"><%- toPersian(toJalali(n.createdAt)) %></div>
+        </div>
+        <% if (Number(n.isRead) === 0) { %>
+        <form method="POST" action="<%- APP_URL %>/app/notifications/<%- n.id %>/read">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+            <button class="icon-btn" type="submit" title="خوانده شد">✔️</button>
+        </form>
+        <% } %>
+    </div>
+    <% } %>
+</div>
+<% } %>

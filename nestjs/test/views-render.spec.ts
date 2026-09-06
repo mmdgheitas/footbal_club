@@ -16,11 +16,30 @@ import { RbacService } from '../src/common/rbac/rbac.service';
  */
 const VIEWS = path.join(__dirname, '..', 'src', 'views');
 
-/** Views rendered without the layout — ErrorResponse::render() requires them directly. */
-const STANDALONE = new Set(['errors/403.ejs', 'errors/404.ejs']);
+/**
+ * Views rendered without the layout — ErrorResponse::render() requires them
+ * directly, and the card pages are standalone print documents rendered through
+ * BaseController.renderStandalone().
+ */
+const STANDALONE = new Set([
+  'errors/403.ejs',
+  'errors/404.ejs',
+  'cards/membership.ejs',
+  'cards/fifa.ejs',
+  'cards/not_ready.ejs',
+]);
 
 /** Layouts are composed into pages by BaseController, never rendered as pages. */
-const LAYOUTS = new Set(['layouts/main.ejs', 'layouts/auth.ejs']);
+const LAYOUTS = new Set([
+  'layouts/main.ejs',
+  'layouts/auth.ejs',
+  'layouts/guardian.ejs',
+  'layouts/player.ejs',
+  'layouts/print.ejs',
+]);
+
+/** Partials (leading underscore) are included by other views, never rendered alone. */
+const PARTIALS = new Set(['cards/_fifa_card.ejs']);
 
 function walk(dir: string, base = ''): string[] {
   const out: string[] = [];
@@ -151,6 +170,158 @@ const DATA: Record<string, unknown> = {
   requiredTypes: ['national_id', 'medical_clearance', 'birth_certificate'],
   rejection_reason: 'کیفیت نامناسب',
   content: '',
+
+  // ------------------------------------------------------------------
+  // Feature expansion: guardian panel, player app, cards, coach panel,
+  // club admin reports and the OTP login. These keys are additive; the
+  // legacy views above never read them.
+  // ------------------------------------------------------------------
+  masked_phone: '0912***4567',
+  otp_length: 6,
+  ttl_seconds: 300,
+  dev_code: '123456',
+  identities: [
+    { kind: 'guardian', id: 4, role: 'guardian', name: 'حسن رضایی', roleLabel: 'ولی', icon: '👨‍👩‍👦' },
+    { kind: 'staff', id: 7, role: 'coach', name: 'حسن رضایی', roleLabel: 'مربی', icon: '📋' },
+  ],
+  unread_count: 3,
+  active_tab: 'trainings',
+  registration_labels: { pending: 'در انتظار بررسی', approved: 'تأییدشده', incomplete: 'ناقص' },
+  statuses: { pending: 'در انتظار بررسی', approved: 'تأییدشده', incomplete: 'ناقص' },
+  selected_status: 'pending',
+  counts: [{ status: 'pending', label: 'در انتظار بررسی', count: 3 }],
+  feet: { left: 'چپ', right: 'راست', both: 'هر دو پا' },
+  club_name: 'باشگاه فوتبال نواب',
+  card: { id: 1, playerId: 1, cardNumber: 'NVB-1405-000123', issuedAt: '2026-08-01', status: 1 },
+  cards: [{ player: { id: 1, name: 'علی رضایی' }, card: { id: 1, cardNumber: 'NVB-1405-000123', issuedAt: '2026-08-01' } }],
+  attributes: { PAC: 78, SHO: 71, PAS: 66, DRI: 80, DEF: 55, PHY: 62 },
+  overall: 72,
+  rank: { rank: 2, outOf: 24 },
+  leaderboard: [{ id: 1, name: 'علی رضایی', total: 120, classroom: 'کلاس الف' }],
+  badges: [
+    { id: 1, badgeKey: 'top_scorer', badgeTitle: 'آقای گل', icon: '🥇', note: 'هفته سوم', assignedAt: '2026-08-10' },
+  ],
+  catalog: { top_scorer: { title: 'آقای گل', icon: '🥇', description: 'بیشترین گل' } },
+  scores: [
+    { id: 1, points: 5, reason: 'گل زیبا', createdAt: '2026-08-11', scorer: { name: 'مربی یک' } },
+  ],
+  performance: [
+    { id: 1, type: 'goal', value: 2, description: 'دو گل', matchType: 'friendly', sessionDate: '2026-08-11', createdAt: '2026-08-11', recorder: { name: 'مربی یک' } },
+  ],
+  summary: [{ type: 'goal', label: 'گل', icon: '⚽', total: 6, events: 3 }],
+  feedback: [
+    { id: 2, type: 'feedback', description: 'پیشرفت خوبی داشته', createdAt: '2026-08-12', recorder: { name: 'مربی یک' } },
+  ],
+  performance_types: {
+    goal: { label: 'گل', icon: '⚽', points: 5 },
+    assist: { label: 'پاس گل', icon: '🅰️', points: 3 },
+  },
+  match_types: { training: 'تمرین', friendly: 'دوستانه' },
+  upcoming: [{ id: 1, title: 'تمرین هفتگی', sessionDate: '2026-09-20', startTime: '17:00', location: 'زمین چمن', classroom: { name: 'کلاس الف' } }],
+  past: [{ id: 2, title: 'تمرین گذشته', sessionDate: '2026-08-20', startTime: '17:00', location: 'سالن', classroom: { name: 'کلاس الف' } }],
+  sessions: [{ id: 1, title: 'تمرین هفتگی', sessionDate: '2026-09-20', startTime: '17:00', location: 'زمین چمن', classroom: { name: 'کلاس الف' } }],
+  children: [
+    { id: 1, name: 'علی رضایی', registrationStatus: 'approved', classroom: { name: 'کلاس الف' }, classroom_id: 3 },
+  ],
+  summaries: { 1: { attendance_percentage: 88, total_score: 120, badges: 2, debt: 1500000 } },
+  finance: {
+    ledgers: [
+      {
+        playerId: 1,
+        playerName: 'علی رضایی',
+        entries: [
+          { date: '2026-08-01', kind: 'payment', title: 'شهریه مرداد', amount: 500000, status: 'completed', statusLabel: 'پرداخت‌شده', reference: 'REF-1', method: 'کارت' },
+          { date: '2026-09-01', kind: 'debt', title: 'شهریه شهریور', amount: 500000, status: 'pending', statusLabel: 'پرداخت‌نشده', reference: null, method: null },
+        ],
+        totalPaid: 500000,
+        totalOutstanding: 500000,
+        totalDiscount: 100000,
+        balance: 0,
+        hasDebt: true,
+      },
+    ],
+    totalPaid: 500000,
+    totalOutstanding: 500000,
+    totalDiscount: 100000,
+  },
+  ledger: {
+    playerId: 1,
+    playerName: 'علی رضایی',
+    entries: [
+      { date: '2026-08-01', kind: 'payment', title: 'شهریه مرداد', amount: 500000, status: 'completed', statusLabel: 'پرداخت‌شده', reference: 'REF-1', method: 'کارت' },
+    ],
+    totalPaid: 500000,
+    totalOutstanding: 0,
+    totalDiscount: 0,
+    balance: 0,
+    hasDebt: false,
+  },
+  records: [
+    {
+      player: { id: 1, name: 'علی رضایی', classroom_id: 3 },
+      attendance: { records: [{ session_date: '2026-09-01', status: 1, status_label: 'حاضر' }], present: 8, absent: 1, late: 0, excused: 1, total: 10, percentage: 80 },
+      upcoming: [{ id: 1, title: 'تمرین هفتگی', sessionDate: '2026-09-20', location: 'سالن' }],
+    },
+  ],
+  notifications: [
+    { id: 1, type: 'debt', title: 'بدهی', message: 'شهریه شهریور پرداخت نشده است.', isRead: 0, link: '/guardian/financial', createdAt: '2026-09-02' },
+  ],
+  icons: { debt: '💳', score: '⭐', badge: '🏅' },
+  types: { debt: 'بدهی', score: 'امتیاز' },
+  categories: { hall: 'سالن', grass: 'چمن', rent: 'اجاره دفتر', salary: 'حقوق', other: 'سایر' },
+  category_icons: { hall: '🏟️', grass: '🌱', rent: '🏢', salary: '💼', other: '💸' },
+  totals: {
+    total: 8000000,
+    byCategory: [{ category: 'hall', label: 'سالن', total: 5000000, count: 2 }],
+    byMonth: [{ month: '2026-08', total: 5000000 }],
+  },
+  expense_totals: {
+    total: 8000000,
+    byCategory: [{ category: 'hall', label: 'سالن', total: 5000000, count: 2 }],
+    byMonth: [{ month: '2026-08', total: 5000000 }],
+  },
+  monthly: [{ month: '2026-08', total: 12000000 }],
+  quarterly: [{ quarter: '2026-Q3', total: 30000000 }],
+  profit: {
+    income: 12000000,
+    expenses: 8000000,
+    profit: 4000000,
+    margin: 33,
+    byMonth: [{ month: '2026-08', income: 12000000, expense: 8000000, profit: 4000000 }],
+  },
+  debtors: [
+    { player_id: 1, player_name: 'علی رضایی', classroom_name: 'کلاس الف', guardian_name: 'حسن رضایی', guardian_phone: '09121111111', guardian_id: 4, total_debt: 1500000, items: 2 },
+  ],
+  total: 1500000,
+  filters: { from: '', to: '', category: '' },
+  /**
+   * One row object shaped for every admin table at once (registrations, cards,
+   * guardians, performance report) — each view reads only its own keys.
+   */
+  rows: [
+    {
+      player: { id: 1, name: 'علی رضایی', nationalId: '0012345678', registrationStatus: 'pending', classroom: { name: 'کلاس الف' } },
+      user: { id: 9, phone: '09120000000' },
+      guardianName: 'حسن رضایی',
+      guardianPhone: '09121111111',
+      documents: 2,
+      card: { id: 1, cardNumber: 'NVB-1405-000123', issuedAt: '2026-08-01' },
+      guardian: { id: 4, name: 'حسن رضایی', phone: '09121111111', nationalId: '0011111111' },
+      players: [{ id: 1, name: 'علی رضایی' }],
+      id: 1,
+      name: 'علی رضایی',
+      classroom: 'کلاس الف',
+      total: 120,
+      summary: [{ type: 'goal', label: 'گل', icon: '⚽', total: 6, events: 3 }],
+      badges: [{ id: 1, badgeKey: 'top_scorer', badgeTitle: 'آقای گل', icon: '🥇' }],
+      expenseDate: '2026-08-01',
+      title: 'اجاره سالن',
+      amount: '5000000',
+      category: 'hall',
+      note: 'مردادماه',
+      recorder: { name: 'مدیر' },
+    },
+  ],
 };
 
 describe('every EJS view renders', () => {
@@ -182,11 +353,12 @@ describe('every EJS view renders', () => {
 
   const base = { ...APP_LOCALS, ...DATA };
 
-  const views = walk(VIEWS).filter((v) => !LAYOUTS.has(v)).sort();
+  const views = walk(VIEWS).filter((v) => !LAYOUTS.has(v) && !PARTIALS.has(v)).sort();
 
-  it('renders all 44 templates without throwing', () => {
-    // 44 legacy views, minus the 2 layouts, which are not standalone pages.
-    expect(views).toHaveLength(42);
+  it('renders every page template without throwing', () => {
+    // 81 templates on disk, minus the 5 layouts and the FIFA-card partial,
+    // which are composed into pages rather than rendered as pages themselves.
+    expect(views).toHaveLength(75);
 
     const failures: string[] = [];
     for (const view of views) {

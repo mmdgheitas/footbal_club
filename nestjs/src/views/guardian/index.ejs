@@ -1,0 +1,105 @@
+<%
+/** داشبورد ولی — وضعیت ثبت‌نام فرزندان، بدهی، اعلان‌ها */
+const children = locals.children || [];
+const summaries = locals.summaries || {};
+const finance = locals.finance || { totalPaid: 0, totalOutstanding: 0, ledgers: [] };
+const notifications = locals.notifications || [];
+const labels = locals.registration_labels || {};
+const statusChip = { approved: 'ok', pending: 'warn', incomplete: 'danger' };
+%>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">👦</span>
+        <span class="tile-value"><%- toPersian(children.length) %></span>
+        <span class="tile-label">فرزند ثبت‌شده</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">✅</span>
+        <span class="tile-value"><%- __num(finance.totalPaid) %></span>
+        <span class="tile-label">پرداخت‌شده (تومان)</span>
+    </div>
+    <div class="tile <%- finance.totalOutstanding > 0 ? 'is-danger' : '' %>">
+        <span class="tile-icon"><%- finance.totalOutstanding > 0 ? '⚠️' : '👌' %></span>
+        <span class="tile-value"><%- __num(finance.totalOutstanding) %></span>
+        <span class="tile-label">بدهی (تومان)</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">🔔</span>
+        <span class="tile-value"><%- toPersian(locals.unread_count || 0) %></span>
+        <span class="tile-label">اعلان خوانده‌نشده</span>
+    </div>
+</div>
+
+<h3 style="color:var(--white);margin-bottom:12px;">👨‍👩‍👦 فرزندان من</h3>
+<% if (children.length === 0) { %>
+    <div class="empty-state"><span class="em">🙋</span> هنوز بازیکنی به حساب شما متصل نشده است. با دفتر باشگاه تماس بگیرید.</div>
+<% } else { %>
+<div class="child-grid mb-3">
+    <% for (const child of children) { %>
+    <% const s = summaries[child.id] || {}; %>
+    <a class="child-card" href="<%- APP_URL %>/guardian/player/<%- child.id %>">
+        <div class="child-head">
+            <div class="child-avatar">⚽</div>
+            <div>
+                <div class="child-name"><%- esc(child.name) %></div>
+                <div class="child-meta"><%- esc(child.classroom ? child.classroom.name : 'بدون کلاس') %></div>
+                <div class="mt-2">
+                    <span class="chip <%- statusChip[child.registrationStatus] || 'neutral' %>">
+                        <%- esc(labels[child.registrationStatus] || child.registrationStatus) %>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="child-stats">
+            <div><span class="n"><%- toPersian(s.total_score || 0) %></span><span class="l">امتیاز</span></div>
+            <div><span class="n"><%- toPersian(s.attendance_percentage || 0) %>٪</span><span class="l">حضور</span></div>
+            <div><span class="n"><%- toPersian(s.badges || 0) %></span><span class="l">نشان</span></div>
+        </div>
+        <% if ((s.debt || 0) > 0) { %>
+        <div class="chip danger mt-2">بدهی: <%- __num(s.debt) %> تومان</div>
+        <% } %>
+    </a>
+    <% } %>
+</div>
+<% } %>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">🔔</span> آخرین اعلان‌ها</h3>
+        <% if (notifications.length === 0) { %>
+            <div class="empty-state"><span class="em">📭</span> اعلانی وجود ندارد.</div>
+        <% } else { %>
+        <div class="notif-list">
+            <% for (const n of notifications) { %>
+            <div class="notif <%- Number(n.isRead) === 0 ? 'unread' : '' %>">
+                <span class="notif-icon"><%- n.type === 'debt' ? '💳' : (n.type === 'badge' ? '🏅' : '🔔') %></span>
+                <div>
+                    <div class="notif-title"><%- esc(n.title) %></div>
+                    <div class="notif-msg"><%- esc(n.message) %></div>
+                    <div class="notif-time"><%- toPersian(toJalali(n.createdAt)) %></div>
+                </div>
+            </div>
+            <% } %>
+        </div>
+        <a class="btn btn-secondary mt-3" href="<%- APP_URL %>/guardian/notifications">همه اعلان‌ها</a>
+        <% } %>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">💳</span> خلاصه دفترچه مالی</h3>
+        <table class="mini-table">
+            <thead><tr><th>بازیکن</th><th>پرداختی</th><th>بدهی</th></tr></thead>
+            <tbody>
+            <% for (const l of finance.ledgers || []) { %>
+                <tr>
+                    <td><%- esc(l.playerName) %></td>
+                    <td><%- __num(l.totalPaid) %></td>
+                    <td class="<%- l.hasDebt ? 'text-danger' : '' %>"><%- __num(l.totalOutstanding) %></td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <a class="btn btn-primary mt-3" href="<%- APP_URL %>/guardian/financial">مشاهده دفترچه کامل</a>
+    </div>
+</div>

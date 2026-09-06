@@ -1,0 +1,94 @@
+<%
+/** نشان‌ها — اهدای نشان فقط توسط مدیر ارشد امکان‌پذیر است */
+const players = locals.players || [];
+const selected = locals.selected_player || 0;
+const badges = locals.badges || [];
+const catalog = locals.catalog || {};
+const owned = new Set(badges.map((b) => b.badgeKey));
+%>
+
+<div class="alert alert-info">
+    🏅 اهدای نشان فقط در اختیار مدیر ارشد باشگاه است؛ مربی‌ها به این صفحه دسترسی ندارند.
+</div>
+
+<div class="panel-card">
+    <form method="GET" action="<%- APP_URL %>/admin/badges" class="flex-between" style="gap:10px;flex-wrap:wrap;">
+        <div class="form-group" style="margin:0;flex:1;min-width:240px;">
+            <label for="player">بازیکن</label>
+            <select id="player" name="player" class="form-control" onchange="this.form.submit()">
+                <% for (const p of players) { %>
+                <option value="<%- p.id %>" <%- String(selected) === String(p.id) ? 'selected' : '' %>><%- esc(p.name) %></option>
+                <% } %>
+            </select>
+        </div>
+        <button class="btn btn-secondary" type="submit">نمایش</button>
+    </form>
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">➕</span> اهدای نشان</h3>
+        <form method="POST" action="<%- APP_URL %>/admin/badges/assign">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+            <input type="hidden" name="player_id" value="<%- selected %>">
+
+            <div class="form-group">
+                <label for="badge_key">نشان *</label>
+                <select id="badge_key" name="badge_key" class="form-control" required>
+                    <% for (const key of Object.keys(catalog)) { %>
+                    <option value="<%- escAttr(key) %>" <%- owned.has(key) ? 'disabled' : '' %>>
+                        <%- catalog[key].icon %> <%- esc(catalog[key].title) %><%- owned.has(key) ? ' (قبلاً اهدا شده)' : '' %>
+                    </option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="note">یادداشت</label>
+                <input type="text" id="note" name="note" class="form-control" placeholder="دلیل اهدای نشان">
+            </div>
+
+            <button class="btn btn-primary" type="submit">اهدای نشان</button>
+        </form>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🏅</span> نشان‌های بازیکن</h3>
+        <% if (badges.length === 0) { %>
+            <div class="empty-state"><span class="em">🎖️</span> این بازیکن هنوز نشانی ندارد.</div>
+        <% } else { %>
+        <table class="mini-table">
+            <thead><tr><th>نشان</th><th>یادداشت</th><th>تاریخ</th><th></th></tr></thead>
+            <tbody>
+            <% for (const b of badges) { %>
+                <tr>
+                    <td><%- b.icon %> <%- esc(b.badgeTitle) %></td>
+                    <td class="text-muted"><%- esc(b.note || '—') %></td>
+                    <td class="text-muted"><%- toPersian(toJalali(b.assignedAt)) %></td>
+                    <td>
+                        <form method="POST" action="<%- APP_URL %>/admin/badges/remove/<%- b.id %>">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <input type="hidden" name="player_id" value="<%- selected %>">
+                            <button class="btn btn-danger" type="submit">حذف</button>
+                        </form>
+                    </td>
+                </tr>
+            <% } %>
+            </tbody>
+        </table>
+        <% } %>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📚</span> فهرست نشان‌های باشگاه</h3>
+    <div class="badge-grid">
+        <% for (const key of Object.keys(catalog)) { %>
+        <div class="badge-item <%- owned.has(key) ? '' : 'locked' %>">
+            <span class="em"><%- catalog[key].icon %></span>
+            <div class="t"><%- esc(catalog[key].title) %></div>
+            <div class="d"><%- esc(catalog[key].description || '') %></div>
+        </div>
+        <% } %>
+    </div>
+</div>

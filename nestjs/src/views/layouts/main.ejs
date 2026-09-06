@@ -28,6 +28,17 @@ if (locals.userRole === 'player') {
     ['/player-panel/case-notes', { label: 'یادداشت‌ها', icon: '📝' }],
     ['/player-panel/alerts', { label: 'اعلانات', icon: '📢' }],
   ];
+} else if (locals.userRole === 'coach') {
+  // مربی: دسترسی محدود — فقط کلاس و بازیکنان خودش، بدون هیچ داده مالی.
+  navItems = [
+    ['/coach', { label: 'پنل مربی', icon: '🏠' }],
+    ['/coach/players', { label: 'بازیکنان من', icon: '⚽' }],
+    ['/coach/trainings', { label: 'جلسات تمرین', icon: '🗓️' }],
+    ['/attendance', { label: 'حضور', icon: '📋' }],
+  ];
+  moreNavItems = [
+    ['/notifications', { label: 'اعلان‌ها', icon: '🔔' }],
+  ];
 } else {
   navItems = [
     ['/dashboard', { label: 'داشبورد', icon: '🏠' }],
@@ -37,6 +48,15 @@ if (locals.userRole === 'player') {
     ['/attendance', { label: 'حضور', icon: '📋' }],
   ];
   moreNavItems = [
+    ['/admin/registrations', { label: 'ثبت‌نام‌ها', icon: '📝' }],
+    ['/admin/expenses', { label: 'هزینه‌ها', icon: '🧾' }],
+    ['/admin/reports/financial', { label: 'گزارش مالی', icon: '📊' }],
+    ['/admin/cards', { label: 'کارت عضویت', icon: '🪪' }],
+    ['/admin/badges', { label: 'نشان‌ها', icon: '🏅' }],
+    ['/admin/scores', { label: 'امتیازها', icon: '⭐' }],
+    ['/admin/guardians', { label: 'اولیا', icon: '👨‍👩‍👦' }],
+    ['/admin/trainings', { label: 'جلسات تمرین', icon: '🗓️' }],
+    ['/notifications', { label: 'اعلان‌ها', icon: '🔔' }],
     ['/medical', { label: 'پزشکی', icon: '🏥' }],
     ['/sms/send', { label: 'پیامک', icon: '📱' }],
     ['/admin/alerts', { label: 'اعلانات', icon: '📢' }],
@@ -52,7 +72,7 @@ if (locals.userRole === 'player') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0a1628">
+    <meta name="theme-color" content="#0b0c10">
     <meta name="app-url" content="<%- escAttr(APP_URL) %>">
     <meta name="csrf-token" content="<%- escAttr(locals.csrf_token || '') %>">
     <title><%- esc(pageTitle) %></title>
@@ -61,6 +81,7 @@ if (locals.userRole === 'player') {
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
     <link rel="stylesheet" href="<%- APP_URL %>/assets/css/animations.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
 </head>
 <body class="has-bottom-nav">
     <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>

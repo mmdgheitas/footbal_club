@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { APP_GUARD } from '@nestjs/core';
-import { ALL_ENTITIES } from './database/entities';
+import { buildDataSourceOptions } from './database/db-options';
 import { HomeModule } from './modules/home/home.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -20,6 +20,12 @@ import { AchievementsModule } from './modules/achievements/achievement.module';
 import { CaseNotesModule } from './modules/case-notes/case-note.module';
 import { DocumentsModule } from './modules/documents/document.module';
 import { HomeworkModule } from './modules/homework/homework.module';
+import { DomainModule } from './modules/domain/domain.module';
+import { GuardianPanelModule } from './modules/guardian/guardian-panel.module';
+import { PlayerAppModule } from './modules/player-app/player-app.module';
+import { CardsModule } from './modules/cards/cards.module';
+import { CoachModule } from './modules/coach/coach.module';
+import { ClubAdminModule } from './modules/club-admin/club-admin.module';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
 
@@ -27,23 +33,10 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
   imports: [
     ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../.env'] }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST ?? 'localhost',
-      port: parseInt(process.env.DB_PORT ?? '3306', 10),
-      username: process.env.DB_USER ?? 'root',
-      password: process.env.DB_PASSWORD ?? '',
-      database: process.env.DB_NAME ?? 'football_club',
-      charset: 'utf8mb4',
-      // PDO returns DATE/DATETIME/TIMESTAMP columns as strings; mysql2 would
-      // hand back JS Date objects instead. Every view formats these with the
-      // string helpers (toJalali, the per-view dt()), and the legacy code
-      // does too, so keep them as strings for parity.
-      dateStrings: true,
-      entities: ALL_ENTITIES,
+      // MySQL in production; DB_CONNECTION=sqlite swaps in a file database for
+      // local development and demos. See database/db-options.ts.
+      ...buildDataSourceOptions(),
       autoLoadEntities: true,
-      // Schema is owned by database/schema.sql; never let the ORM mutate it.
-      synchronize: false,
-      logging: process.env.DB_LOGGING === 'true',
       retryAttempts: 2,
       retryDelay: 1000,
     }),
@@ -64,6 +57,13 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     CaseNotesModule,
     DocumentsModule,
     HomeworkModule,
+    // --- feature expansion -------------------------------------------------
+    DomainModule,
+    GuardianPanelModule,
+    PlayerAppModule,
+    CardsModule,
+    CoachModule,
+    ClubAdminModule,
   ],
   providers: [
     {

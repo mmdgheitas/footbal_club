@@ -1,0 +1,91 @@
+<%
+/** مدیریت ثبت‌نام‌ها — تأیید / ناقص اعلام کردن + صدور خودکار کارت عضویت */
+const rows = locals.rows || [];
+const counts = locals.counts || [];
+const statuses = locals.statuses || {};
+const selected = locals.selected_status || '';
+const chip = { approved: 'ok', pending: 'warn', incomplete: 'danger' };
+const dash = '—';
+%>
+
+<div class="tile-grid">
+    <% for (const c of counts) { %>
+    <div class="tile <%- c.status === 'incomplete' ? 'is-danger' : (c.status === 'approved' ? '' : 'is-gold') %>">
+        <span class="tile-icon"><%- c.status === 'approved' ? '✅' : (c.status === 'pending' ? '⏳' : '⚠️') %></span>
+        <span class="tile-value"><%- toPersian(c.count) %></span>
+        <span class="tile-label"><%- esc(c.label) %></span>
+    </div>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <form method="GET" action="<%- APP_URL %>/admin/registrations" class="flex-between" style="gap:10px;flex-wrap:wrap;">
+        <div class="form-group" style="margin:0;flex:1;min-width:220px;">
+            <label for="status">وضعیت ثبت‌نام</label>
+            <select id="status" name="status" class="form-control">
+                <option value="">همه</option>
+                <% for (const key of Object.keys(statuses)) { %>
+                <option value="<%- escAttr(key) %>" <%- selected === key ? 'selected' : '' %>><%- esc(statuses[key]) %></option>
+                <% } %>
+            </select>
+        </div>
+        <button class="btn btn-primary" type="submit">فیلتر</button>
+    </form>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📝</span> پرونده‌های ثبت‌نام (<%- toPersian(rows.length) %>)</h3>
+    <% if (rows.length === 0) { %>
+        <div class="empty-state"><span class="em">📭</span> پرونده‌ای یافت نشد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr>
+                <th>بازیکن</th><th>کلاس</th><th>ولی</th><th>موبایل ورود</th>
+                <th>وضعیت</th><th>اقدام</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% for (const row of rows) { %>
+            <% const p = row.player; %>
+            <tr>
+                <td>
+                    <strong><%- esc(p.name) %></strong>
+                    <div class="text-muted" style="font-size:.78rem;">
+                        کد ملی: <span class="ltr"><%- toPersian(p.nationalId || dash) %></span>
+                    </div>
+                </td>
+                <td class="text-muted"><%- esc(p.classroom ? p.classroom.name : dash) %></td>
+                <td>
+                    <%- esc(row.guardianName || dash) %>
+                    <div class="text-muted ltr" style="font-size:.78rem;"><%- toPersian(row.guardianPhone || '') %></div>
+                </td>
+                <td class="ltr text-muted"><%- toPersian(row.user ? row.user.phone || dash : dash) %></td>
+                <td>
+                    <span class="chip <%- chip[p.registrationStatus] || 'neutral' %>">
+                        <%- esc(statuses[p.registrationStatus] || p.registrationStatus) %>
+                    </span>
+                </td>
+                <td>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+                        <% if (p.registrationStatus !== 'approved') { %>
+                        <form method="POST" action="<%- APP_URL %>/admin/registrations/<%- p.id %>/approve">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <button class="btn btn-primary" type="submit">✅ تأیید و صدور کارت</button>
+                        </form>
+                        <% } %>
+                        <form method="POST" action="<%- APP_URL %>/admin/registrations/<%- p.id %>/incomplete"
+                              style="display:flex;gap:6px;align-items:center;">
+                            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                            <input type="text" name="reason" class="form-control" placeholder="دلیل نقص" style="width:150px;">
+                            <button class="btn btn-secondary" type="submit">⚠️ ناقص</button>
+                        </form>
+                        <a class="btn btn-secondary" href="<%- APP_URL %>/players/<%- p.id %>">پرونده</a>
+                    </div>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

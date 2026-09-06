@@ -1,0 +1,105 @@
+<%
+/** مدیریت ولی‌ها — هر ولی چند بازیکن، هر بازیکن دقیقاً یک ولی */
+const rows = locals.rows || [];
+const players = locals.players || [];
+const linked = new Set();
+for (const row of rows) { for (const p of row.players) { linked.add(p.id); } }
+%>
+
+<div class="alert alert-info">
+    👨‍👩‍👦 هر ولی می‌تواند چند بازیکن داشته باشد، اما هر بازیکن دقیقاً به یک ولی متصل است؛
+    اتصال جدید، اتصال قبلی همان بازیکن را جایگزین می‌کند.
+</div>
+
+<div class="grid-2">
+    <div class="panel-card">
+        <h3><span class="em">➕</span> ایجاد حساب ولی</h3>
+        <form method="POST" action="<%- APP_URL %>/admin/guardians">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+            <div class="form-group">
+                <label for="name">نام و نام خانوادگی *</label>
+                <input type="text" id="name" name="name" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">شماره موبایل * <span class="text-muted">(ورود با همین شماره و کد یک‌بارمصرف)</span></label>
+                <input type="text" id="phone" name="phone" class="form-control ltr" placeholder="09xxxxxxxxx" required>
+            </div>
+
+            <div class="form-group">
+                <label for="national_id">کد ملی</label>
+                <input type="text" id="national_id" name="national_id" class="form-control ltr">
+            </div>
+
+            <button class="btn btn-primary" type="submit">ایجاد حساب ولی</button>
+        </form>
+    </div>
+
+    <div class="panel-card">
+        <h3><span class="em">🔗</span> اتصال بازیکن به ولی</h3>
+        <form method="POST" action="<%- APP_URL %>/admin/guardians/link">
+            <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+            <div class="form-group">
+                <label for="guardian_id">ولی *</label>
+                <select id="guardian_id" name="guardian_id" class="form-control" required>
+                    <% for (const row of rows) { %>
+                    <option value="<%- row.guardian.id %>"><%- esc(row.guardian.name) %> — <span class="ltr"><%- esc(row.guardian.phone) %></span></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="link_player_id">بازیکن *</label>
+                <select id="link_player_id" name="player_id" class="form-control" required>
+                    <% for (const p of players) { %>
+                    <option value="<%- p.id %>"><%- esc(p.name) %><%- linked.has(p.id) ? ' (دارای ولی)' : '' %></option>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="relationship">نسبت</label>
+                <input type="text" id="relationship" name="relationship" class="form-control" placeholder="پدر / مادر / سرپرست">
+            </div>
+
+            <button class="btn btn-primary" type="submit">اتصال</button>
+        </form>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">👨‍👩‍👦</span> ولی‌های ثبت‌شده (<%- toPersian(rows.length) %>)</h3>
+    <% if (rows.length === 0) { %>
+        <div class="empty-state"><span class="em">📭</span> هنوز حساب ولی‌ای ایجاد نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>ولی</th><th>موبایل</th><th>کد ملی</th><th>فرزندان</th></tr></thead>
+        <tbody>
+        <% for (const row of rows) { %>
+            <tr>
+                <td><strong><%- esc(row.guardian.name) %></strong></td>
+                <td class="ltr"><%- toPersian(row.guardian.phone) %></td>
+                <td class="ltr text-muted"><%- toPersian(row.guardian.nationalId || '—') %></td>
+                <td>
+                    <% if (row.players.length === 0) { %>
+                        <span class="text-muted">—</span>
+                    <% } else { %>
+                        <% for (const p of row.players) { %>
+                        <span class="chip neutral" style="margin:2px;">
+                            <%- esc(p.name) %>
+                            <form method="POST" action="<%- APP_URL %>/admin/guardians/unlink/<%- p.id %>" style="display:inline;">
+                                <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+                                <button class="icon-btn" type="submit" title="حذف اتصال" style="width:22px;height:22px;font-size:.75rem;">✖</button>
+                            </form>
+                        </span>
+                        <% } %>
+                    <% } %>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

@@ -1,0 +1,81 @@
+<%
+/** تب تمرینات — لیست جلسات تمرین + تاریخ جلسات بعدی */
+const upcoming = locals.upcoming || [];
+const past = locals.past || [];
+const attendance = locals.attendance || { records: [], percentage: 0, present: 0, absent: 0, total: 0 };
+%>
+
+<div class="tile-grid">
+    <div class="tile">
+        <span class="tile-icon">📅</span>
+        <span class="tile-value"><%- toPersian(upcoming.length) %></span>
+        <span class="tile-label">جلسه پیش‌رو</span>
+    </div>
+    <div class="tile is-gold">
+        <span class="tile-icon">✅</span>
+        <span class="tile-value"><%- toPersian(attendance.percentage) %>٪</span>
+        <span class="tile-label">درصد حضور</span>
+    </div>
+    <div class="tile">
+        <span class="tile-icon">🏃</span>
+        <span class="tile-value"><%- toPersian(attendance.present) %></span>
+        <span class="tile-label">جلسات حاضر</span>
+    </div>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">⏭️</span> جلسات بعدی</h3>
+    <% if (upcoming.length === 0) { %>
+        <div class="empty-state"><span class="em">🗓️</span> فعلاً جلسه‌ای برنامه‌ریزی نشده است.</div>
+    <% } else { %>
+        <% for (const s of upcoming) { %>
+        <div class="flex-between" style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);">
+            <div>
+                <div style="font-weight:800;color:var(--white);"><%- esc(s.title) %></div>
+                <div class="text-muted" style="font-size:.82rem;">
+                    <%- esc(s.location || 'محل تمرین اعلام نشده') %>
+                    <% if (s.startTime) { %> · ساعت <%- toPersian(s.startTime) %><% } %>
+                </div>
+            </div>
+            <span class="chip ok"><%- toPersian(toJalali(s.sessionDate)) %></span>
+        </div>
+        <% } %>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">📋</span> حضور و غیاب اخیر</h3>
+    <% if ((attendance.records || []).length === 0) { %>
+        <div class="empty-state"><span class="em">📭</span> هنوز حضور و غیابی ثبت نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead><tr><th>تاریخ جلسه</th><th>وضعیت</th></tr></thead>
+        <tbody>
+        <% for (const r of attendance.records) { %>
+            <tr>
+                <td><%- toPersian(toJalali(r.session_date)) %></td>
+                <td>
+                    <span class="chip <%- Number(r.status) === 1 ? 'ok' : (Number(r.status) === 2 ? 'danger' : 'warn') %>">
+                        <%- esc(r.status_label) %>
+                    </span>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">🕘</span> جلسات گذشته</h3>
+    <% if (past.length === 0) { %>
+        <div class="empty-state"><span class="em">⚽</span> جلسه‌ای در تاریخچه نیست.</div>
+    <% } else { %>
+        <% for (const s of past) { %>
+        <div class="flex-between" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+            <span><%- esc(s.title) %></span>
+            <span class="chip neutral"><%- toPersian(toJalali(s.sessionDate)) %></span>
+        </div>
+        <% } %>
+    <% } %>
+</div>

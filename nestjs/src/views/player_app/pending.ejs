@@ -1,0 +1,18 @@
+<%
+/** وضعیت ثبت‌نام هنوز تأیید نشده — the app is locked until approval. */
+const p = locals.player || {};
+const labels = { pending: 'در انتظار بررسی', incomplete: 'ناقص', approved: 'تأییدشده' };
+%>
+<div class="panel-card" style="text-align:center;">
+    <div style="font-size:4rem;">⏳</div>
+    <h3 style="justify-content:center;">ثبت‌نام شما هنوز نهایی نشده است</h3>
+    <p class="text-muted">
+        وضعیت فعلی:
+        <span class="chip warn"><%- esc(labels[p.registration_status] || 'نامشخص') %></span>
+    </p>
+    <p class="text-muted mt-3">
+        پس از تأیید مدارک توسط مدیریت باشگاه، کارت عضویت شما به‌صورت خودکار صادر می‌شود و
+        تمام بخش‌های اپ باز خواهد شد.
+    </p>
+    <a class="btn btn-secondary mt-3" href="<%- APP_URL %>/logout">خروج</a>
+</div>

@@ -19,6 +19,16 @@ export * from './document-submission.entity';
 export * from './homework-video.entity';
 export * from './achievement.entity';
 export * from './case-note.entity';
+export * from './guardian-user.entity';
+export * from './player-guardian.entity';
+export * from './membership-card.entity';
+export * from './player-score.entity';
+export * from './player-badge.entity';
+export * from './player-performance.entity';
+export * from './expense.entity';
+export * from './notification.entity';
+export * from './otp-code.entity';
+export * from './training-session.entity';
 
 import { Classroom } from './classroom.entity';
 import { Player } from './player.entity';
@@ -40,8 +50,21 @@ import { DocumentSubmission } from './document-submission.entity';
 import { HomeworkVideo } from './homework-video.entity';
 import { Achievement } from './achievement.entity';
 import { CaseNote } from './case-note.entity';
+import { GuardianUser } from './guardian-user.entity';
+import { PlayerGuardian } from './player-guardian.entity';
+import { MembershipCard } from './membership-card.entity';
+import { PlayerScore } from './player-score.entity';
+import { PlayerBadge } from './player-badge.entity';
+import { PlayerPerformance } from './player-performance.entity';
+import { Expense } from './expense.entity';
+import { Notification } from './notification.entity';
+import { OtpCode } from './otp-code.entity';
+import { TrainingSession } from './training-session.entity';
 
-/** All 20 entities mapped from database/schema.sql */
+/**
+ * All entities: the original 20 mapped from database/schema.sql plus the 10
+ * added by the feature expansion (database/migrations/006_feature_expansion.sql).
+ */
 export const ALL_ENTITIES = [
   Classroom,
   Player,
@@ -63,4 +86,15 @@ export const ALL_ENTITIES = [
   HomeworkVideo,
   Achievement,
   CaseNote,
+  // --- feature expansion -------------------------------------------------
+  GuardianUser,
+  PlayerGuardian,
+  MembershipCard,
+  PlayerScore,
+  PlayerBadge,
+  PlayerPerformance,
+  Expense,
+  Notification,
+  OtpCode,
+  TrainingSession,
 ];

@@ -185,3 +185,187 @@ export const DOCS_UPLOAD_PATH = `${UPLOAD_PATH}/docs`;
 
 // MAX_FILE_SIZE / ALLOWED_UPLOAD_EXTENSIONS / ALLOWED_MIME_TYPES are
 // already declared in the file-upload section above.
+
+// ===========================================================================
+// FEATURE EXPANSION — تنظیمات و برچسب‌های فارسیِ قابلیت‌های جدید
+// ===========================================================================
+
+/**
+ * Guardian (ولی) is a first-class role, but guardians live in
+ * `fc_guardians_users`, not in `fc_users`. It is therefore added to the label
+ * map (used by the UI and the RBAC matrix) without touching the fc_users enum.
+ */
+export const ROLE_GUARDIAN = 'guardian';
+ROLES[ROLE_GUARDIAN] = 'ولی';
+
+/** Landing page for each role after a successful OTP login. */
+export const ROLE_HOME: Record<string, string> = {
+  super_admin: '/dashboard',
+  accountant: '/dashboard',
+  secretary: '/dashboard',
+  coach: '/coach',
+  guardian: '/guardian',
+  player: '/app',
+};
+
+// ---------------------------------------------------------------------------
+// OTP  (authentication.security)
+// ---------------------------------------------------------------------------
+export const OTP_LENGTH = 6;
+export const OTP_TTL_SECONDS = 5 * 60; // ۵ دقیقه اعتبار
+/** Maximum OTP requests allowed per phone number inside OTP_WINDOW_SECONDS. */
+export const OTP_MAX_PER_WINDOW = 5;
+export const OTP_WINDOW_SECONDS = 15 * 60;
+/** Minimum delay between two OTP requests for the same phone. */
+export const OTP_RESEND_COOLDOWN_SECONDS = 60;
+/** Wrong-code attempts allowed before a code is burned. */
+export const OTP_MAX_ATTEMPTS = 5;
+
+// ---------------------------------------------------------------------------
+// وضعیت ثبت‌نام
+// ---------------------------------------------------------------------------
+export const REGISTRATION_STATUSES: Record<string, string> = {
+  pending: 'در انتظار بررسی',
+  approved: 'تأییدشده',
+  incomplete: 'ناقص',
+};
+
+// ---------------------------------------------------------------------------
+// پای تخصصی
+// ---------------------------------------------------------------------------
+export const PREFERRED_FEET: Record<string, string> = {
+  right: 'راست',
+  left: 'چپ',
+  both: 'هر دو پا',
+};
+
+// ---------------------------------------------------------------------------
+// نشان‌ها — فقط مدیر ارشد می‌تواند تعیین کند
+// ---------------------------------------------------------------------------
+export interface BadgeDefinition {
+  title: string;
+  icon: string;
+  description: string;
+}
+
+export const BADGES: Record<string, BadgeDefinition> = {
+  goal_machine: { title: 'گل‌زن برتر', icon: '⚽', description: 'بیشترین گل فصل' },
+  playmaker: { title: 'پاسور طلایی', icon: '🎯', description: 'بیشترین پاس گل' },
+  iron_wall: { title: 'دیوار دفاعی', icon: '🛡️', description: 'بهترین عملکرد دفاعی' },
+  golden_glove: { title: 'دستکش طلایی', icon: '🧤', description: 'بهترین دروازه‌بان' },
+  dribble_king: { title: 'سلطان دریبل', icon: '🌀', description: 'بیشترین دریبل موفق' },
+  team_spirit: { title: 'روحیه تیمی', icon: '🤝', description: 'بهترین بازیکن تیمی' },
+  discipline: { title: 'نظم و انضباط', icon: '🎖️', description: 'حضور کامل و منظم' },
+  captain: { title: 'کاپیتان', icon: '🅲', description: 'رهبری تیم' },
+  most_improved: { title: 'بیشترین پیشرفت', icon: '📈', description: 'رشد چشمگیر فنی' },
+  fair_play: { title: 'بازی جوانمردانه', icon: '🕊️', description: 'اخلاق ورزشی برتر' },
+  mvp: { title: 'ارزشمندترین بازیکن', icon: '🏆', description: 'بهترین بازیکن فصل' },
+};
+
+// ---------------------------------------------------------------------------
+// انواع عملکرد ثبت‌شده توسط مربی
+// ---------------------------------------------------------------------------
+export interface PerformanceTypeDefinition {
+  label: string;
+  icon: string;
+  /** Points automatically suggested when the coach records this event. */
+  suggestedPoints: number;
+}
+
+export const PERFORMANCE_TYPES: Record<string, PerformanceTypeDefinition> = {
+  goal: { label: 'گل', icon: '⚽', suggestedPoints: 5 },
+  assist: { label: 'پاس گل', icon: '🎯', suggestedPoints: 3 },
+  dribble: { label: 'دریبل موفق', icon: '🌀', suggestedPoints: 1 },
+  save: { label: 'مهار دروازه‌بان', icon: '🧤', suggestedPoints: 3 },
+  tackle: { label: 'تکل موفق', icon: '🛡️', suggestedPoints: 2 },
+  pass_accuracy: { label: 'دقت پاس', icon: '🎽', suggestedPoints: 1 },
+  match: { label: 'حضور در مسابقه', icon: '🏟️', suggestedPoints: 2 },
+  clean_sheet: { label: 'کلین‌شیت', icon: '🚫', suggestedPoints: 4 },
+  yellow_card: { label: 'کارت زرد', icon: '🟨', suggestedPoints: -2 },
+  red_card: { label: 'کارت قرمز', icon: '🟥', suggestedPoints: -5 },
+  feedback: { label: 'بازخورد مربی', icon: '📝', suggestedPoints: 0 },
+};
+
+export const MATCH_TYPES: Record<string, string> = {
+  training: 'تمرین',
+  friendly: 'دوستانه',
+  official: 'رسمی',
+};
+
+// ---------------------------------------------------------------------------
+// هزینه‌های باشگاه (ثبت دستی توسط مدیر ارشد)
+// ---------------------------------------------------------------------------
+export const EXPENSE_CATEGORIES: Record<string, string> = {
+  hall: 'اجاره سالن',
+  grass: 'اجاره چمن',
+  office_rent: 'اجاره دفتر',
+  salary: 'حقوق و دستمزد',
+  equipment: 'تجهیزات',
+  transport: 'ایاب و ذهاب',
+  other: 'سایر',
+};
+
+export const EXPENSE_CATEGORY_ICONS: Record<string, string> = {
+  hall: '🏟️',
+  grass: '🌱',
+  office_rent: '🏢',
+  salary: '💼',
+  equipment: '🎽',
+  transport: '🚌',
+  other: '📦',
+};
+
+// ---------------------------------------------------------------------------
+// اعلان‌های درون‌پنلی
+// ---------------------------------------------------------------------------
+export const NOTIFICATION_TYPES: Record<string, string> = {
+  debt: 'بدهی',
+  performance: 'عملکرد',
+  score: 'امتیاز',
+  badge: 'نشان',
+  registration: 'ثبت‌نام',
+  card: 'کارت عضویت',
+  attendance: 'حضور و غیاب',
+  training: 'تمرین',
+  system: 'سیستم',
+};
+
+export const NOTIFICATION_ICONS: Record<string, string> = {
+  debt: '💳',
+  performance: '📊',
+  score: '⭐',
+  badge: '🏅',
+  registration: '📝',
+  card: '🪪',
+  attendance: '📋',
+  training: '⚽',
+  system: '🔔',
+};
+
+// ---------------------------------------------------------------------------
+// کارت عضویت
+// ---------------------------------------------------------------------------
+export const CLUB_DISPLAY_NAME = process.env.CLUB_NAME ?? 'باشگاه فوتبال نواب';
+export const MEMBERSHIP_CARD_PREFIX = process.env.CARD_PREFIX ?? 'NVB';
+/** Physical print size demanded by the brief. */
+export const MEMBERSHIP_CARD_SIZE = { widthCm: 8, heightCm: 11 };
+
+// ---------------------------------------------------------------------------
+// Permissions added by the expansion (labels for the admin UI)
+// ---------------------------------------------------------------------------
+Object.assign(PERMISSIONS, {
+  manage_guardians: 'مدیریت ولی‌ها',
+  view_guardian_panel: 'مشاهده پنل ولی',
+  manage_registrations: 'تأیید و رد ثبت‌نام',
+  manage_membership_cards: 'صدور کارت عضویت',
+  view_membership_card: 'مشاهده کارت عضویت',
+  record_performance: 'ثبت عملکرد بازیکن',
+  view_performance: 'مشاهده عملکرد بازیکن',
+  record_score: 'ثبت امتیاز بازیکن',
+  manage_badges: 'تعیین نشان‌ها',
+  manage_expenses: 'ثبت هزینه‌های باشگاه',
+  view_expenses: 'مشاهده هزینه‌ها',
+  view_financial_reports: 'گزارش‌های مالی',
+  manage_trainings: 'مدیریت جلسات تمرین',
+  view_notifications: 'مشاهده اعلان‌ها',
+});

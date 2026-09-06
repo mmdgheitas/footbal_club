@@ -1,25 +1,59 @@
-<% /* EJS port of app/Views/auth/login.php — markup and Persian strings unchanged */ %>
+<% /* ورود واحد — شماره موبایل + کد یک‌بارمصرف؛ سیستم خودش نقش را تشخیص می‌دهد. */ %>
 <div class="auth-container">
     <div class="auth-box">
-        <div style="text-align:center;font-size:3rem;margin-bottom:8px;">⚽</div>
+        <div style="text-align:center;margin-bottom:6px;">
+            <img src="<%- APP_URL %>/assets/img/club-emblem.png" alt="لوگوی باشگاه"
+                 style="width:84px;height:84px;object-fit:contain;"
+                 onerror="this.replaceWith(document.createTextNode('⚽'))">
+        </div>
         <h2>ورود به باشگاه</h2>
-        <p class="auth-tagline">مدیریت تیم — سریع، ساده، حرفه‌ای</p>
+        <p class="auth-tagline">شماره موبایل خود را وارد کنید؛ کد ورود برایتان پیامک می‌شود.</p>
 
-        <form method="POST" action="<%- APP_URL %>/login">
+        <form method="POST" action="<%- APP_URL %>/login/otp/request">
             <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
 
             <div class="form-group">
-                <label for="email">📧 ایمیل</label>
-                <input type="email" id="email" name="email" placeholder="name@example.com" required autofocus>
+                <label for="phone">📱 شماره موبایل</label>
+                <input type="tel" id="phone" name="phone" class="ltr"
+                       inputmode="numeric" autocomplete="tel" maxlength="15"
+                       placeholder="09121234567" required autofocus>
             </div>
 
-            <div class="form-group">
-                <label for="password">🔒 رمز عبور</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
-
-            <button type="submit" class="btn btn-primary">ورود به سیستم 🚀</button>
+            <button type="submit" class="btn btn-primary">دریافت کد ورود 🚀</button>
         </form>
+
+        <p class="login-hint">
+            یک صفحه ورود برای همه: بازیکن، ولی، مربی، حسابدار، منشی و مدیر باشگاه.
+            پس از تأیید کد، سیستم به‌صورت خودکار شما را به پنل خودتان می‌برد.
+        </p>
+
+        <div class="role-grid">
+            <div class="role-option"><span class="em">⚽</span><span>بازیکن</span></div>
+            <div class="role-option"><span class="em">👨‍👩‍👦</span><span>ولی</span></div>
+            <div class="role-option"><span class="em">📋</span><span>مربی</span></div>
+            <div class="role-option"><span class="em">👑</span><span>مدیریت</span></div>
+        </div>
+
+        <details style="margin-top:18px;">
+            <summary class="text-muted" style="cursor:pointer;font-size:.85rem;">
+                ورود کارکنان با ایمیل و رمز عبور
+            </summary>
+            <form method="POST" action="<%- APP_URL %>/login" style="margin-top:12px;">
+                <input type="hidden" name="_csrf_token" value="<%- escAttr(locals.csrf_token || '') %>">
+
+                <div class="form-group">
+                    <label for="email">📧 ایمیل</label>
+                    <input type="email" id="email" name="email" placeholder="name@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">🔒 رمز عبور</label>
+                    <input type="password" id="password" name="password" placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn btn-secondary">ورود با رمز عبور</button>
+            </form>
+        </details>
 
         <p class="auth-link">
             حساب نداری؟ <a href="<%- APP_URL %>/register">همین الان ثبت‌نام کن</a>

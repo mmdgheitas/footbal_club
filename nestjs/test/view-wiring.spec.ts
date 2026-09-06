@@ -150,16 +150,70 @@ function reachableBodies(): string[] {
   return reachable;
 }
 
+/**
+ * Templates added by the feature expansion (single OTP login, guardian panel,
+ * player app, membership/FIFA cards, coach panel, club-admin screens). They
+ * have no PHP counterpart, so the PHP parity assertion below compares the
+ * legacy subset only — everything else (orphans, dangling names, routed
+ * handlers) still applies to them.
+ */
+const EXPANSION_VIEWS = new Set([
+  'auth/choose_panel',
+  'auth/otp',
+  'admin/badges',
+  'admin/cards',
+  'admin/debtors_report',
+  'admin/expenses',
+  'admin/financial_report',
+  'admin/guardians',
+  'admin/performance_report',
+  'admin/registrations',
+  'admin/scores',
+  'admin/trainings',
+  'cards/_fifa_card',
+  'cards/fifa',
+  'cards/membership',
+  'cards/not_ready',
+  'coach/index',
+  'coach/player',
+  'coach/players',
+  'coach/trainings',
+  'guardian/attendance',
+  'guardian/cards',
+  'guardian/financial',
+  'guardian/index',
+  'guardian/notifications',
+  'guardian/player',
+  'layouts/guardian',
+  'layouts/player',
+  'layouts/print',
+  'notifications/index',
+  'player_app/notifications',
+  'player_app/pending',
+  'player_app/profile',
+  'player_app/reports',
+  'player_app/trainings',
+  'player_app/trophies',
+]);
+
+/** Added by the port itself (club landing page at '/'), with no PHP original. */
+const PORT_ONLY_VIEWS = new Set(['home/index']);
+
+/** Partials are included by other templates (EJS include), not by a controller. */
+const isPartial = (view: string): boolean => view.split('/').pop()!.startsWith('_');
+
 describe('view wiring', () => {
   const views = viewNames().sort();
   const referenced = referencedViews(views);
 
-  it('finds all 44 templates', () => {
-    expect(views).toHaveLength(44);
+  it('finds every template', () => {
+    // 45 ported/legacy templates + 36 added by the feature expansion.
+    expect(views.filter((v) => !EXPANSION_VIEWS.has(v))).toHaveLength(45);
+    expect(views).toHaveLength(81);
   });
 
   it('has a controller or layout reference for every template (no orphans)', () => {
-    const orphans = views.filter((v) => !referenced.has(v));
+    const orphans = views.filter((v) => !referenced.has(v) && !isPartial(v));
     // eslint-disable-next-line no-console
     console.log(
       `view wiring: ${views.length - orphans.length}/${views.length} referenced` +
@@ -187,7 +241,7 @@ describe('view wiring', () => {
 
     // Layouts are selected by `protected layout =` on the controller class,
     // never rendered from inside a handler, so they are out of scope here.
-    const pages = views.filter((v) => !v.startsWith('layouts/'));
+    const pages = views.filter((v) => !v.startsWith('layouts/') && !isPartial(v));
     const unrouted: string[] = [];
     for (const view of pages) {
       const needle = `'${view}'`;
@@ -206,7 +260,13 @@ describe('view wiring', () => {
     // The PHP error pages are built from the status code in
     // ErrorResponse::render() rather than passed to $this->render(), and the
     // layouts are chosen by the controller base class - so they are excluded.
-    const ported = views.filter((v) => !v.startsWith('layouts/') && !v.startsWith('errors/'));
+    const ported = views.filter(
+      (v) =>
+        !v.startsWith('layouts/') &&
+        !v.startsWith('errors/') &&
+        !EXPANSION_VIEWS.has(v) &&
+        !PORT_ONLY_VIEWS.has(v),
+    );
     // eslint-disable-next-line no-console
     console.log(`view wiring: PHP renders ${php.length}, port renders ${ported.length}`);
     expect(php).toHaveLength(40);

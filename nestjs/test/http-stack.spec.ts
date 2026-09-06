@@ -20,9 +20,19 @@ describe('HTTP stack (no database)', () => {
   let app: NestExpressApplication;
 
   beforeAll(async () => {
+    // Enough of a DataSource for @nestjs/typeorm to build the repository
+    // providers of every TypeOrmModule.forFeature() in the graph.
+    const dataSourceStub = {
+      entityMetadatas: [] as unknown[],
+      options: { type: 'mysql' },
+      getRepository: () => ({}),
+      getTreeRepository: () => ({}),
+      query: async () => [],
+    };
+
     const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
       .overrideProvider(getDataSourceToken())
-      .useValue({})
+      .useValue(dataSourceStub)
       .overrideProvider(getRepositoryToken(User))
       .useValue({})
       .overrideProvider(getRepositoryToken(Player))

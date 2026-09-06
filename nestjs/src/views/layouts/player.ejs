@@ -1,0 +1,81 @@
+<%
+/**
+ * اپ بازیکن — mobile-first layout with the four-button bottom tab bar.
+ * Tabs: ⚽ تمرینات | 🏆 افتخارات | 📋 گزارش‌ها | 👤 پروفایل
+ */
+const pageTitle = (locals.title || 'اپ بازیکن') + ' - ' + APP_NAME;
+const player = locals.player || {};
+const activeTab = locals.active_tab || 'trainings';
+const unread = locals.unread_count || 0;
+
+const tabs = [
+  { id: 'trainings', href: '/app/trainings', icon: '⚽', label: 'تمرینات' },
+  { id: 'trophies',  href: '/app/trophies',  icon: '🏆', label: 'افتخارات' },
+  { id: 'reports',   href: '/app/reports',   icon: '📋', label: 'گزارش‌ها' },
+  { id: 'profile',   href: '/app/profile',   icon: '👤', label: 'پروفایل' },
+];
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#C8102E">
+    <meta name="app-url" content="<%- escAttr(APP_URL) %>">
+    <meta name="csrf-token" content="<%- escAttr(locals.csrf_token || '') %>">
+    <title><%- esc(pageTitle) %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/animations.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body class="player-app">
+
+    <header class="app-header">
+        <div class="app-id">
+            <div class="app-avatar">
+                <% if (player.photo_path) { %>
+                    <img src="<%- APP_URL %><%- escAttr(player.photo_path) %>" alt="">
+                <% } else { %>⚽<% } %>
+            </div>
+            <div>
+                <div class="app-name"><%- esc(player.name || 'بازیکن') %></div>
+                <div class="app-sub">
+                    <%- esc(player.classroom_name || 'بدون کلاس') %>
+                    <% if (player.total_score !== undefined) { %>
+                        · <%- toPersian(player.total_score || 0) %> امتیاز
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="app-actions">
+            <a class="icon-btn" href="<%- APP_URL %>/app/notifications" aria-label="اعلان‌ها">
+                🔔<% if (unread > 0) { %><span class="dot"><%- toPersian(unread) %></span><% } %>
+            </a>
+            <a class="icon-btn" href="<%- APP_URL %>/logout" aria-label="خروج">🚪</a>
+        </div>
+    </header>
+
+    <% const flashes = locals.flashes || {}; %>
+    <% for (const type of Object.keys(flashes)) { %>
+      <% for (const message of flashes[type]) { %>
+    <div class="alert alert-<%- esc(type) %>" style="margin:12px 14px;"><%- esc(message) %></div>
+      <% } %>
+    <% } %>
+
+    <main class="app-main">
+        <%- locals.content || '' %>
+    </main>
+
+    <nav class="app-tabbar" aria-label="منوی اصلی اپ بازیکن">
+        <% for (const tab of tabs) { %>
+        <a href="<%- APP_URL %><%- tab.href %>" class="<%- activeTab === tab.id ? 'active' : '' %>">
+            <span class="tab-emoji" aria-hidden="true"><%- tab.icon %></span>
+            <span><%- esc(tab.label) %></span>
+        </a>
+        <% } %>
+    </nav>
+
+    <script src="<%- APP_URL %>/assets/js/main.js?v=<%- locals.assetVer || '' %>"></script>
+</body>
+</html>

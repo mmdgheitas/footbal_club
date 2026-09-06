@@ -1,0 +1,757 @@
+/**
+ * Football Club — panels, cards and the player app.
+ *
+ * Everything the feature expansion adds visually lives here so the original
+ * style.css stays recognisable:
+ *   • نوار پایین ۴ دکمه‌ای اپ بازیکن
+ *   • کارت عضویت ۸×۱۱ سانتی‌متر (چاپ مستقیم از مرورگر)
+ *   • کارت بازی به سبک FIFA (فقط HTML/CSS)
+ *   • پنل ولی، پنل مربی، اعلان‌ها، نشان‌ها، گزارش‌ها
+ *
+ * Theme: قرمز #C8102E + مشکی + سفید, big energetic icons.
+ */
+
+/* ==========================================================================
+   1. Shared building blocks
+   ========================================================================== */
+
+.tile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.tile {
+    position: relative;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    overflow: hidden;
+    transition: transform var(--transition), border-color var(--transition);
+}
+
+.tile:hover {
+    transform: translateY(-4px);
+    border-color: var(--club-red);
+}
+
+.tile .tile-icon {
+    font-size: 2.4rem;
+    line-height: 1;
+    display: block;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+.tile .tile-value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--white);
+}
+
+.tile .tile-label {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.tile.is-danger { border-color: rgba(255, 59, 87, 0.55); }
+.tile.is-danger .tile-value { color: var(--club-red-bright); }
+.tile.is-gold { border-color: rgba(255, 209, 102, 0.5); }
+.tile.is-gold .tile-value { color: var(--accent); }
+
+.panel-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+}
+
+.panel-card > h3,
+.panel-card > h4 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+    color: var(--white);
+    font-size: 1.05rem;
+}
+
+.panel-card > h3 .em,
+.panel-card > h4 .em { font-size: 1.5rem; }
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+}
+
+.chip.ok      { background: rgba(46, 204, 113, 0.16); border-color: rgba(46, 204, 113, 0.5); color: #7ce7a2; }
+.chip.warn    { background: rgba(255, 209, 102, 0.16); border-color: rgba(255, 209, 102, 0.5); color: var(--accent); }
+.chip.danger  { background: rgba(200, 16, 46, 0.22); border-color: rgba(255, 59, 87, 0.6); color: #ff8195; }
+.chip.neutral { color: var(--text-muted); }
+
+.empty-state {
+    text-align: center;
+    padding: 32px 12px;
+    color: var(--text-muted);
+}
+
+.empty-state .em { font-size: 3rem; display: block; margin-bottom: 8px; }
+
+.mini-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.mini-table th,
+.mini-table td {
+    padding: 10px 8px;
+    text-align: right;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    font-size: 0.9rem;
+}
+
+.mini-table th { color: var(--text-muted); font-weight: 600; }
+.mini-table tr:last-child td { border-bottom: none; }
+
+.bar-track {
+    height: 10px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--club-red), var(--club-red-bright));
+}
+
+.bar-fill.gold { background: linear-gradient(90deg, #b8860b, var(--accent)); }
+.bar-fill.green { background: linear-gradient(90deg, #128c4b, #2ecc71); }
+
+/* ==========================================================================
+   2. اپ بازیکن — نوار پایین ۴ دکمه‌ای
+   ========================================================================== */
+
+body.player-app {
+    background: radial-gradient(ellipse 90% 40% at 50% 0%, rgba(200, 16, 46, 0.28), transparent 70%),
+                var(--pitch-dark);
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+}
+
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px calc(14px + 6px);
+    background: linear-gradient(180deg, rgba(200, 16, 46, 0.95), rgba(11, 12, 16, 0.96));
+    border-bottom: 2px solid var(--club-red);
+    backdrop-filter: blur(10px);
+}
+
+.app-header .app-id {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.app-header .app-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--white);
+    color: var(--club-red);
+    display: grid;
+    place-items: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    flex: none;
+    overflow: hidden;
+}
+
+.app-header .app-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+.app-header .app-name {
+    font-weight: 800;
+    color: var(--white);
+    font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.app-header .app-sub { color: rgba(255, 255, 255, 0.8); font-size: 0.75rem; }
+
+.app-header .app-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+.icon-btn {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    font-size: 1.25rem;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.icon-btn .dot {
+    position: absolute;
+    top: -4px;
+    inset-inline-end: -4px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #241a00;
+    font-size: 0.7rem;
+    font-weight: 800;
+    display: grid;
+    place-items: center;
+}
+
+.app-main { padding: 16px 14px 8px; }
+
+.app-tabbar {
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 100;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+    background: linear-gradient(0deg, #000 0%, rgba(15, 16, 21, 0.97) 100%);
+    border-top: 3px solid var(--club-red);
+    box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.6);
+}
+
+.app-tabbar a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 10px 4px;
+    border-radius: 16px;
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    transition: transform var(--transition), background var(--transition), color var(--transition);
+}
+
+.app-tabbar a .tab-emoji {
+    font-size: 1.85rem;
+    line-height: 1;
+    filter: grayscale(0.35);
+    transition: transform var(--transition), filter var(--transition);
+}
+
+.app-tabbar a:active { transform: scale(0.94); }
+
+.app-tabbar a.active {
+    color: var(--white);
+    background: linear-gradient(160deg, var(--club-red), var(--club-red-deep));
+    box-shadow: 0 8px 22px rgba(200, 16, 46, 0.45);
+}
+
+.app-tabbar a.active .tab-emoji {
+    filter: none;
+    transform: translateY(-2px) scale(1.12);
+}
+
+/* ==========================================================================
+   3. کارت بازی FIFA — HTML/CSS خالص
+   ========================================================================== */
+
+.fifa-card {
+    width: 300px;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 18px 16px 16px;
+    border-radius: 22px;
+    color: #1a1206;
+    background:
+        radial-gradient(circle at 50% 0%, #ffe9a8 0%, #f5c451 42%, #d99b28 72%, #a86f17 100%);
+    box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.fifa-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 42%, rgba(255, 255, 255, 0.45) 50%, transparent 58%);
+    pointer-events: none;
+}
+
+.fifa-card.red-edition {
+    color: #fff;
+    background:
+        radial-gradient(circle at 50% 0%, #ff5f77 0%, var(--club-red) 45%, #7d0a1c 100%);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.fifa-top { display: flex; gap: 12px; align-items: flex-start; }
+
+.fifa-rating { text-align: center; line-height: 1; min-width: 74px; }
+.fifa-rating .ovr { font-size: 3.1rem; font-weight: 900; letter-spacing: -2px; }
+.fifa-rating .pos { font-size: 1.05rem; font-weight: 800; margin-top: 2px; }
+.fifa-rating .club { font-size: 0.7rem; margin-top: 6px; opacity: 0.85; }
+
+.fifa-photo {
+    flex: 1;
+    height: 128px;
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.14);
+    display: grid;
+    place-items: center;
+    font-size: 4rem;
+    overflow: hidden;
+}
+
+.fifa-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.fifa-name {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 900;
+    padding: 10px 0 8px;
+    margin-top: 8px;
+    border-top: 2px solid rgba(0, 0, 0, 0.25);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25);
+    text-transform: uppercase;
+}
+
+.fifa-card.red-edition .fifa-name {
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.fifa-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 18px;
+    padding: 10px 6px 4px;
+    position: relative;
+    z-index: 1;
+}
+
+.fifa-stats div {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.fifa-stats span:first-child { opacity: 0.8; }
+
+.fifa-meta {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding-top: 8px;
+    opacity: 0.9;
+}
+
+.fifa-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: center;
+    padding-top: 8px;
+    font-size: 1.15rem;
+}
+
+/* ==========================================================================
+   4. کارت عضویت ۸ × ۱۱ سانتی‌متر
+   ========================================================================== */
+
+.membership-card {
+    width: 8cm;
+    height: 11cm;
+    box-sizing: border-box;
+    padding: 0.45cm;
+    margin: 0 auto;
+    background: #ffffff;
+    color: #111;
+    border-radius: 0.32cm;
+    border: 0.06cm solid var(--club-red, #C8102E);
+    display: flex;
+    flex-direction: column;
+    font-family: 'Vazirmatn', sans-serif;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45);
+    position: relative;
+    overflow: hidden;
+}
+
+.membership-card .mc-header {
+    display: flex;
+    align-items: center;
+    gap: 0.2cm;
+    border-bottom: 0.05cm solid #C8102E;
+    padding-bottom: 0.18cm;
+}
+
+.membership-card .mc-logo {
+    width: 1.15cm;
+    height: 1.15cm;
+    border-radius: 50%;
+    background: #C8102E;
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 0.6cm;
+    flex: none;
+    overflow: hidden;
+}
+
+.membership-card .mc-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+.membership-card .mc-title { font-size: 0.32cm; font-weight: 800; color: #C8102E; }
+.membership-card .mc-subtitle { font-size: 0.2cm; color: #555; }
+
+.membership-card .mc-body {
+    display: flex;
+    gap: 0.25cm;
+    padding-top: 0.25cm;
+    flex: 1;
+}
+
+.membership-card .mc-photo {
+    width: 3cm;      /* عکس ۳×۴ */
+    height: 4cm;
+    border: 0.04cm solid #C8102E;
+    border-radius: 0.12cm;
+    background: #f2f2f4;
+    display: grid;
+    place-items: center;
+    font-size: 1.1cm;
+    flex: none;
+    overflow: hidden;
+}
+
+.membership-card .mc-photo img { width: 100%; height: 100%; object-fit: cover; }
+
+.membership-card .mc-fields { flex: 1; min-width: 0; }
+
+.membership-card .mc-field { margin-bottom: 0.16cm; }
+.membership-card .mc-field .k { font-size: 0.17cm; color: #888; display: block; }
+.membership-card .mc-field .v { font-size: 0.23cm; font-weight: 700; color: #111; }
+
+.membership-card .mc-footer {
+    border-top: 0.05cm dashed #ccc;
+    padding-top: 0.16cm;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-size: 0.19cm;
+    color: #444;
+}
+
+.membership-card .mc-number {
+    font-weight: 800;
+    color: #C8102E;
+    letter-spacing: 0.02cm;
+    direction: ltr;
+}
+
+.membership-card .mc-stripe {
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: 0;
+    width: 100%;
+    height: 0.18cm;
+    background: linear-gradient(90deg, #C8102E, #111);
+}
+
+.print-toolbar {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    padding: 18px;
+    flex-wrap: wrap;
+}
+
+.print-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 24px 12px;
+    background: var(--pitch-dark);
+}
+
+@media print {
+    @page { size: 8cm 11cm; margin: 0; }
+
+    body, .print-page { background: #fff !important; padding: 0; margin: 0; min-height: auto; }
+    .print-toolbar, .no-print { display: none !important; }
+    .membership-card { box-shadow: none; border-radius: 0; margin: 0; }
+}
+
+/* The FIFA card prints on a normal page, not on the 8×11 card stock. */
+@media print {
+    body.print-fifa .fifa-card { box-shadow: none; }
+}
+
+/* ==========================================================================
+   5. پنل ولی / پنل مربی
+   ========================================================================== */
+
+.panel-shell { max-width: 1100px; margin: 0 auto; padding: 0 14px 40px; }
+
+.panel-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    background: linear-gradient(120deg, rgba(200, 16, 46, 0.9), rgba(11, 12, 16, 0.9));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+}
+
+.panel-topbar h1 {
+    font-size: 1.15rem;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.panel-nav {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.panel-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.88rem;
+    transition: var(--transition);
+}
+
+.panel-nav a .em { font-size: 1.3rem; }
+
+.panel-nav a.active,
+.panel-nav a:hover {
+    background: linear-gradient(160deg, var(--club-red), var(--club-red-deep));
+    border-color: var(--club-red-bright);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+.child-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.child-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: linear-gradient(150deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    padding: 16px;
+    transition: var(--transition);
+}
+
+.child-card:hover { transform: translateY(-4px); border-color: var(--club-red); }
+
+.child-card .child-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+.child-card .child-avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(160deg, var(--club-red), #000);
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    flex: none;
+}
+
+.child-card .child-name { font-weight: 800; color: var(--white); }
+.child-card .child-meta { font-size: 0.8rem; color: var(--text-muted); }
+
+.child-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.child-stats div { background: rgba(0, 0, 0, 0.25); border-radius: 12px; padding: 8px 4px; }
+.child-stats .n { font-weight: 800; color: var(--white); display: block; font-size: 1.05rem; }
+.child-stats .l { font-size: 0.68rem; color: var(--text-muted); }
+
+/* ==========================================================================
+   6. اعلان‌ها و نشان‌ها
+   ========================================================================== */
+
+.notif-list { display: flex; flex-direction: column; gap: 10px; }
+
+.notif {
+    display: flex;
+    gap: 12px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-inline-start: 4px solid var(--card-border);
+}
+
+.notif.unread {
+    border-inline-start-color: var(--club-red);
+    background: rgba(200, 16, 46, 0.1);
+}
+
+.notif .notif-icon { font-size: 1.8rem; line-height: 1; }
+.notif .notif-title { font-weight: 800; color: var(--white); }
+.notif .notif-msg { color: var(--text-muted); font-size: 0.88rem; }
+.notif .notif-time { font-size: 0.72rem; color: var(--text-muted); opacity: 0.8; }
+
+.badge-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.badge-item {
+    text-align: center;
+    padding: 14px 8px;
+    border-radius: 16px;
+    background: radial-gradient(circle at 50% 0%, rgba(255, 209, 102, 0.22), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(255, 209, 102, 0.4);
+}
+
+.badge-item .em { font-size: 2.4rem; display: block; }
+.badge-item .t { font-weight: 800; font-size: 0.85rem; color: var(--white); margin-top: 6px; }
+.badge-item .d { font-size: 0.7rem; color: var(--text-muted); }
+
+.badge-item.locked {
+    background: rgba(255, 255, 255, 0.03);
+    border-color: var(--card-border);
+    opacity: 0.55;
+}
+
+/* ==========================================================================
+   7. OTP login
+   ========================================================================== */
+
+.otp-inputs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    direction: ltr;
+    margin: 14px 0;
+}
+
+.otp-code-input {
+    width: 100%;
+    text-align: center;
+    letter-spacing: 12px;
+    font-size: 1.6rem;
+    font-weight: 800;
+    direction: ltr;
+}
+
+.login-hint {
+    background: rgba(255, 209, 102, 0.12);
+    border: 1px dashed rgba(255, 209, 102, 0.55);
+    color: var(--accent);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.role-grid { display: grid; gap: 10px; }
+
+.role-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    border-radius: 16px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.role-option:hover {
+    border-color: var(--club-red);
+    transform: translateY(-2px);
+}
+
+.role-option .em { font-size: 2rem; }
+
+/* ==========================================================================
+   8. Utilities
+   ========================================================================== */
+
+.flex-between { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.text-muted { color: var(--text-muted); }
+.text-danger { color: var(--club-red-bright); }
+.text-gold { color: var(--accent); }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 16px; }
+.mb-2 { margin-bottom: 8px; }
+.mb-3 { margin-bottom: 16px; }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.nowrap { white-space: nowrap; }
+.ltr { direction: ltr; }
+
+@media (max-width: 640px) {
+    .panel-topbar { flex-direction: column; align-items: flex-start; }
+    .fifa-card { width: 100%; }
+}

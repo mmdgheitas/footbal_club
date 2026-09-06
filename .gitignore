@@ -1,2 +1,7 @@
 footbal_club1.zip
 *.zip
+
+# Local SQLite development database (DB_CONNECTION=sqlite) — MySQL is the real target
+database/*.dev.sqlite
+database/*.dev.sqlite-shm
+database/*.dev.sqlite-wal

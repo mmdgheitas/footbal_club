@@ -1,0 +1,44 @@
+<%
+/**
+ * کارت بازی به سبک FIFA — طراحی ساده و فقط با HTML + CSS خالص.
+ * Ratings come from the player's recorded performance (see
+ * PlayerDevelopmentService.fifaAttributes).
+ */
+const p = locals.player || {};
+const attributes = locals.attributes || {};
+const badges = locals.badges || [];
+const positions = locals.positions || {};
+const feet = locals.feet || {};
+const short = (name) => String(name || '').split(' ').slice(-1)[0];
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- esc(locals.title || 'کارت بازی') %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body class="print-fifa">
+<div class="print-page">
+    <%- include('_fifa_card', {
+        player: p,
+        attributes,
+        overall: locals.overall || 0,
+        badges,
+        club_name: locals.club_name,
+        positions,
+        feet,
+        esc, escAttr, toPersian, toJalali, APP_URL
+    }) %>
+
+    <div class="print-toolbar no-print">
+        <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ چاپ کارت</button>
+        <a class="btn btn-secondary" href="<%- APP_URL %>/cards/membership/<%- p.id %>">🪪 کارت عضویت</a>
+        <a class="btn btn-secondary" href="javascript:history.back()">بازگشت</a>
+    </div>
+</div>
+</body>
+</html>

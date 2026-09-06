@@ -1,0 +1,100 @@
+<%
+/**
+ * کارت عضویت دیجیتال — ۸ × ۱۱ سانتی‌متر، فقط HTML + CSS.
+ *
+ * Standalone document (no layout): «چاپ / ذخیره PDF» in the browser uses
+ * `@page { size: 8cm 11cm; margin: 0 }` from panels.css, so what prints is
+ * exactly the physical card.
+ */
+const p = locals.player || {};
+const card = locals.card || null;
+const dash = '—';
+const positions = locals.positions || {};
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%- esc(locals.title || 'کارت عضویت') %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body>
+<div class="print-page">
+
+    <div class="membership-card">
+        <div class="mc-header">
+            <div class="mc-logo">
+                <img src="<%- APP_URL %>/assets/img/club-emblem.png" alt="لوگوی باشگاه"
+                     onerror="this.replaceWith(document.createTextNode('⚽'))">
+            </div>
+            <div>
+                <div class="mc-title"><%- esc(locals.club_name || 'باشگاه فوتبال نواب') %></div>
+                <div class="mc-subtitle">کارت عضویت رسمی — Membership Card</div>
+            </div>
+        </div>
+
+        <div class="mc-body">
+            <div class="mc-photo">
+                <% if (p.photoPath) { %>
+                    <img src="<%- APP_URL %><%- escAttr(p.photoPath) %>" alt="عکس بازیکن">
+                <% } else { %>🧑<% } %>
+            </div>
+
+            <div class="mc-fields">
+                <div class="mc-field">
+                    <span class="k">نام و نام خانوادگی</span>
+                    <span class="v"><%- esc(p.name || dash) %></span>
+                </div>
+                <div class="mc-field">
+                    <span class="k">نام پدر</span>
+                    <span class="v"><%- esc(p.fatherName || dash) %></span>
+                </div>
+                <div class="mc-field">
+                    <span class="k">کد ملی</span>
+                    <span class="v ltr"><%- toPersian(p.nationalId || dash) %></span>
+                </div>
+                <div class="mc-field">
+                    <span class="k">تاریخ تولد</span>
+                    <span class="v"><%- p.dateOfBirth ? toPersian(toJalali(p.dateOfBirth)) : dash %></span>
+                </div>
+                <div class="mc-field">
+                    <span class="k">تاریخ عضویت</span>
+                    <span class="v"><%- p.membershipDate ? toPersian(toJalali(p.membershipDate)) : dash %></span>
+                </div>
+                <div class="mc-field">
+                    <span class="k">پست تخصصی</span>
+                    <span class="v"><%- esc(positions[p.position] || p.position || dash) %></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="mc-footer">
+            <div>
+                <span style="display:block;color:#888;font-size:0.17cm;">شماره کارت</span>
+                <span class="mc-number"><%- esc(card ? card.cardNumber : dash) %></span>
+            </div>
+            <div style="text-align:left;">
+                <span style="display:block;color:#888;font-size:0.17cm;">تاریخ صدور</span>
+                <span><%- card ? toPersian(toJalali(card.issuedAt)) : dash %></span>
+            </div>
+        </div>
+
+        <div class="mc-stripe"></div>
+    </div>
+
+    <div class="print-toolbar no-print">
+        <button type="button" class="btn btn-primary" onclick="window.print()">🖨️ چاپ / ذخیره PDF</button>
+        <a class="btn btn-secondary" href="<%- APP_URL %>/cards/fifa/<%- p.id %>">🎴 کارت بازی FIFA</a>
+        <a class="btn btn-secondary" href="javascript:history.back()">بازگشت</a>
+    </div>
+
+    <p class="no-print text-muted" style="text-align:center;font-size:0.85rem;max-width:420px;">
+        اندازه چاپ کارت دقیقاً ۸×۱۱ سانتی‌متر تنظیم شده است؛ در پنجره چاپ گزینه «حاشیه: بدون حاشیه»
+        و «مقیاس: ۱۰۰٪» را انتخاب کنید.
+    </p>
+</div>
+</body>
+</html>

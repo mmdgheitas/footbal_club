@@ -27,6 +27,20 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     'manage_homework',
     'manage_achievements',
     'manage_case_notes',
+    // --- feature expansion ---------------------------------------------
+    'manage_guardians',
+    'manage_registrations',
+    'manage_membership_cards',
+    'view_membership_card',
+    'record_performance',
+    'view_performance',
+    'record_score',
+    'manage_badges',
+    'manage_expenses',
+    'view_expenses',
+    'view_financial_reports',
+    'manage_trainings',
+    'view_notifications',
   ],
   coach: [
     'view_players',
@@ -37,6 +51,15 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     'send_sms',
     'view_homework',
     'review_homework',
+    // --- feature expansion -----------------------------------------------
+    // The coach is deliberately limited: attendance, performance and points
+    // for the approved players of their OWN classroom, nothing else. No
+    // registration approval, no badges, no financial data, no player edits.
+    'record_performance',
+    'view_performance',
+    'record_score',
+    'view_attendance',
+    'view_notifications',
   ],
   accountant: [
     'view_players',
@@ -45,6 +68,9 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     'generate_reports',
     'view_debts',
     'manage_discounts',
+    'view_expenses',
+    'view_financial_reports',
+    'view_notifications',
   ],
   secretary: [
     'view_players',
@@ -54,6 +80,8 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     'view_attendance',
     'mark_attendance',
     'view_classrooms',
+    'manage_guardians',
+    'view_notifications',
   ],
   player: [
     'view_own_profile',
@@ -66,6 +94,27 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     'view_own_homework',
     'view_own_achievements',
     'view_own_case_notes',
+    'view_membership_card',
+    'view_performance',
+    'view_notifications',
+  ],
+  /**
+   * ولی — own children only. Every guardian route additionally verifies the
+   * fc_player_guardians link, so these permissions can never reach another
+   * family's data.
+   */
+  guardian: [
+    'view_guardian_panel',
+    'view_own_profile',
+    'view_own_financial',
+    'view_own_payments',
+    'view_own_attendance',
+    'view_own_alerts',
+    'view_membership_card',
+    'view_performance',
+    'view_notifications',
+    'upload_documents',
+    'view_own_documents',
   ],
 };
 

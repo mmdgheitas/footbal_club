@@ -1,0 +1,23 @@
+<%
+/**
+ * چیدمان چاپ — بدون منو و بدون نوار ابزار.
+ * Used by the card pages; the card views themselves are standalone documents,
+ * so this layout only wraps anything rendered through `render()` with the
+ * `layouts/print` layout.
+ */
+%>
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b0c10">
+    <title><%- esc((locals.title || 'چاپ') + ' - ' + APP_NAME) %></title>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/style.css?v=<%- locals.assetVer || '' %>">
+    <link rel="stylesheet" href="<%- APP_URL %>/assets/css/panels.css?v=<%- locals.assetVer || '' %>">
+</head>
+<body class="print-page">
+    <%- locals.content || '' %>
+</body>
+</html>

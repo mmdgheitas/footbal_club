@@ -7,6 +7,7 @@ import {
 } from '../decorators/permissions.decorator';
 import { isAuthenticated } from '../session/session.types';
 import { SecurityHelper } from '../helpers/security.helper';
+import { ROLE_HOME } from '../../config/constants';
 
 /**
  * Session gate. Mirrors the legacy behaviour of Controller::checkAuth() and
@@ -34,7 +35,10 @@ export class AuthenticatedGuard implements CanActivate {
     this.invalidateIfStale(req);
 
     if (guestOnly && isAuthenticated(req)) {
-      res.redirect(this.base(req) + '/dashboard');
+      // Send each role to its own workspace, not always to /dashboard —
+      // guardians and players have no access to the staff dashboard.
+      const role = req.session?.user_role ?? '';
+      res.redirect(this.base(req) + (ROLE_HOME[role] ?? '/dashboard'));
       return false;
     }
 

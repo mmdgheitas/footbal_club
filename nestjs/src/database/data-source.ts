@@ -1,31 +1,21 @@
 import 'reflect-metadata';
 import { DataSource, DataSourceOptions } from 'typeorm';
-import { ALL_ENTITIES } from './entities';
+import { buildDataSourceOptions } from './db-options';
 
 /**
- * TypeORM data source targeting MySQL, matching config/database.php of the
- * legacy application (utf8mb4 / utf8mb4_unicode_ci, InnoDB, `fc_` table prefix
- * already baked into each @Entity name).
+ * TypeORM CLI data source (schema:log, query, entity metadata checks…).
+ *
+ * The connection is described once in db-options.ts: MySQL in production
+ * (utf8mb4 / utf8mb4_unicode_ci, InnoDB, `fc_` table prefix baked into each
+ * @Entity name), or a file-backed SQLite database when DB_CONNECTION=sqlite
+ * for local development.
+ *
+ * No `migrations` entry on purpose: the schema is owned by
+ * database/schema.sql plus the hand-written SQL files in
+ * database/migrations/*.sql, which are applied with the MySQL client rather
+ * than by the ORM.
  */
-export const dataSourceOptions: DataSourceOptions = {
-  type: 'mysql',
-  host: process.env.DB_HOST ?? 'localhost',
-  port: parseInt(process.env.DB_PORT ?? '3306', 10),
-  username: process.env.DB_USER ?? 'root',
-  password: process.env.DB_PASSWORD ?? '',
-  database: process.env.DB_NAME ?? 'football_club',
-  charset: 'utf8mb4',
-  // PDO returns DATE/DATETIME/TIMESTAMP as strings; keep mysql2 aligned.
-  dateStrings: true,
-  entities: ALL_ENTITIES,
-  migrations: [__dirname + '/migrations/*.{ts,js}'],
-  // Schema is owned by database/schema.sql; never let the ORM mutate it.
-  synchronize: false,
-  logging: process.env.DB_LOGGING === 'true',
-  extra: {
-    connectionLimit: 10,
-  },
-};
+export const dataSourceOptions: DataSourceOptions = buildDataSourceOptions();
 
 const dataSource = new DataSource(dataSourceOptions);
 export default dataSource;

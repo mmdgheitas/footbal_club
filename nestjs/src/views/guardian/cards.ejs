@@ -1,0 +1,34 @@
+<%
+/** کارت عضویت دیجیتال فرزندان — دانلود و چاپ */
+const cards = locals.cards || [];
+%>
+
+<% if (cards.length === 0) { %>
+    <div class="empty-state"><span class="em">🪪</span> بازیکنی به حساب شما متصل نیست.</div>
+<% } %>
+
+<div class="grid-2">
+<% for (const row of cards) { %>
+<div class="panel-card">
+    <h3><span class="em">🪪</span> <%- esc(row.player.name) %></h3>
+
+    <% if (row.card) { %>
+        <table class="mini-table mb-3">
+            <tr><th>شماره کارت</th><td class="ltr"><%- esc(row.card.cardNumber) %></td></tr>
+            <tr><th>تاریخ صدور</th><td><%- toPersian(toJalali(row.card.issuedAt)) %></td></tr>
+            <tr><th>وضعیت</th><td><span class="chip ok">فعال</span></td></tr>
+            <tr><th>ابعاد کارت</th><td>۸ × ۱۱ سانتی‌متر</td></tr>
+        </table>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <a class="btn btn-primary" href="<%- APP_URL %>/cards/membership/<%- row.player.id %>">مشاهده و چاپ کارت</a>
+            <a class="btn btn-secondary" href="<%- APP_URL %>/cards/fifa/<%- row.player.id %>">🎴 کارت بازی</a>
+        </div>
+    <% } else { %>
+        <p class="text-muted">
+            کارت عضویت پس از تأیید نهایی ثبت‌نام به‌صورت خودکار صادر می‌شود.
+        </p>
+        <span class="chip warn">هنوز صادر نشده</span>
+    <% } %>
+</div>
+<% } %>
+</div>
