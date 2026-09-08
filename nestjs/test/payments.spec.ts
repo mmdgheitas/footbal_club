@@ -10,6 +10,7 @@ import { PaymentService } from '../src/modules/payments/payment.service';
 import { MockPaymentGateway } from '../src/modules/payments/gateways/mock.gateway';
 import { PaymentGatewayFactory } from '../src/modules/payments/gateways/payment-gateway.factory';
 import { ZarinpalGateway } from '../src/modules/payments/gateways/zarinpal.gateway';
+import { BitpayGateway } from '../src/modules/payments/gateways/bitpay.gateway';
 import { NotificationService } from '../src/modules/domain/notification.service';
 import { GuardianService } from '../src/modules/domain/guardian.service';
 
@@ -150,7 +151,7 @@ function makeState() {
   } as unknown as GuardianService;
 
   const mock = new MockPaymentGateway();
-  const factory = new PaymentGatewayFactory(mock, new ZarinpalGateway());
+  const factory = new PaymentGatewayFactory(mock, new BitpayGateway(), new ZarinpalGateway());
   const service = new PaymentService(db, payments, transactionRepo, factory, notifications, guardians);
 
   return { service, mock, invoices, transactions, ledgerRows };
@@ -312,14 +313,23 @@ describe('gateway selection', () => {
   });
 
   it('exposes both drivers and picks them up by key', () => {
-    const factory = new PaymentGatewayFactory(new MockPaymentGateway(), new ZarinpalGateway());
-    expect(factory.available().map((g) => g.key).sort()).toEqual(['mock', 'zarinpal']);
+    const factory = new PaymentGatewayFactory(
+      new MockPaymentGateway(),
+      new BitpayGateway(),
+      new ZarinpalGateway(),
+    );
+    expect(factory.available().map((g) => g.key).sort()).toEqual(['bitpay', 'mock', 'zarinpal']);
+    expect(factory.byKey('bitpay')?.label).toBe('بیت‌پی');
     expect(factory.byKey('zarinpal')?.label).toBe('زرین‌پال');
     expect(factory.byKey('nope')).toBeNull();
   });
 
   it('uses the simulator by default (no merchant account configured)', () => {
-    const factory = new PaymentGatewayFactory(new MockPaymentGateway(), new ZarinpalGateway());
+    const factory = new PaymentGatewayFactory(
+      new MockPaymentGateway(),
+      new BitpayGateway(),
+      new ZarinpalGateway(),
+    );
     expect(factory.current().key).toBe('mock');
     expect(factory.current().isTestMode).toBe(true);
   });
@@ -327,7 +337,11 @@ describe('gateway selection', () => {
   it('never lets a real driver run without a merchant id', () => {
     // constants.ts reads the environment at import time, so the guard is
     // re-created here the same way the factory sees it.
-    const factory = new PaymentGatewayFactory(new MockPaymentGateway(), new ZarinpalGateway());
+    const factory = new PaymentGatewayFactory(
+      new MockPaymentGateway(),
+      new BitpayGateway(),
+      new ZarinpalGateway(),
+    );
     expect(factory.current().key).toBe('mock');
   });
 });

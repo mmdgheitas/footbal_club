@@ -218,9 +218,9 @@ SMS_FROM_NUMBER=+1234567890
 
 # Online payment gateway. Keep PAYMENT_MODE=mock until the merchant account is
 # live: the built-in simulator keeps the whole flow usable and never charges.
-PAYMENT_GATEWAY=zarinpal
+PAYMENT_GATEWAY=bitpay
 PAYMENT_MODE=production
-PAYMENT_MERCHANT_ID=your_merchant_id
+PAYMENT_MERCHANT_ID=your_bitpay_api_key
 PAYMENT_CALLBACK_URL=https://football-club.example.com
 PAYMENT_CURRENCY_MULTIPLIER=10
 ```

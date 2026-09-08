@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PaymentGateway } from './payment-gateway.interface';
 import { MockPaymentGateway } from './mock.gateway';
+import { BitpayGateway } from './bitpay.gateway';
 import { ZarinpalGateway } from './zarinpal.gateway';
-import { PAYMENT_GATEWAY, PAYMENT_MERCHANT_ID, PAYMENT_MODE } from '../../../config/constants';
+import {
+  PAYMENT_API_KEY,
+  PAYMENT_GATEWAY,
+  PAYMENT_MERCHANT_ID,
+  PAYMENT_MODE,
+} from '../../../config/constants';
 
 /**
  * انتخاب درگاه — mirrors the SmsService provider pattern already used for SMS.
@@ -25,10 +31,12 @@ export class PaymentGatewayFactory {
 
   constructor(
     private readonly mock: MockPaymentGateway,
+    private readonly bitpay: BitpayGateway,
     private readonly zarinpal: ZarinpalGateway,
   ) {
     this.drivers = {
       [this.mock.key]: this.mock,
+      [this.bitpay.key]: this.bitpay,
       [this.zarinpal.key]: this.zarinpal,
     };
   }
@@ -54,10 +62,13 @@ export class PaymentGatewayFactory {
       return this.mock;
     }
 
-    if (PAYMENT_MODE === 'production' && driver.key !== 'mock' && !PAYMENT_MERCHANT_ID) {
+    // BitPay calls it «API», ZarinPal «merchant id»; either variable may hold
+    // the secret. Without one, no real driver may run.
+    const secret = PAYMENT_MERCHANT_ID || PAYMENT_API_KEY;
+    if (driver.key !== 'mock' && !secret) {
       this.logger.warn(
-        `PAYMENT_MODE=production but PAYMENT_MERCHANT_ID is empty; refusing to use ` +
-          `${driver.key} and using the simulator instead.`,
+        `PAYMENT_GATEWAY=${driver.key} but neither PAYMENT_MERCHANT_ID nor ` +
+          `PAYMENT_API_KEY is set; using the simulator instead.`,
       );
       return this.mock;
     }

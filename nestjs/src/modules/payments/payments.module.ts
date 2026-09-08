@@ -7,6 +7,7 @@ import { PaymentsController } from './payments.controller';
 import { PaymentAdminController } from './payment-admin.controller';
 import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
 import { MockPaymentGateway } from './gateways/mock.gateway';
+import { BitpayGateway } from './gateways/bitpay.gateway';
 import { ZarinpalGateway } from './gateways/zarinpal.gateway';
 
 /**
@@ -23,6 +24,7 @@ import { ZarinpalGateway } from './gateways/zarinpal.gateway';
     PaymentService,
     PaymentGatewayFactory,
     MockPaymentGateway,
+    BitpayGateway,
     ZarinpalGateway,
   ],
   exports: [PaymentService, PaymentGatewayFactory],

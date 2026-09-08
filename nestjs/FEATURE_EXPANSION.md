@@ -180,13 +180,13 @@ Demo logins (any of these numbers; the code is printed on the page):
 
 ## 12. پرداخت آنلاین
 
-Invoices (`/admin/invoices`) plus a pluggable payment gateway: guardians pay
-from **دفترچه مالی**, players from **پروفایل**, and every attempt is recorded in
-`fc_payment_transactions`. Only a verified callback credits the invoice, exactly
-once. The default `PAYMENT_MODE=mock` is a built-in simulator, so the flow works
-without a merchant account. Full documentation — flow diagram, the money-safety
-rules, how to add a gateway in three steps, configuration — in
-[`PAYMENTS.md`](./PAYMENTS.md).
+Invoices (`/admin/invoices`) plus the **بیت‌پی (bitpay.ir)** gateway behind a
+pluggable driver interface: guardians pay from **دفترچه مالی**, players from
+**پروفایل**, and every attempt is recorded in `fc_payment_transactions`. Only a
+verified callback credits the invoice, exactly once. `PAYMENT_MODE=mock` is a
+built-in simulator, so the flow also works without a merchant account. Full
+documentation — flow diagram, the BitPay protocol mapping, the money-safety
+rules, configuration — in [`PAYMENTS.md`](./PAYMENTS.md).
 
 ## 13. زمان و منطقه زمانی
 
@@ -236,7 +236,7 @@ plain HTML/CSS (no new runtime dependency).
 
 ## 15. تست‌ها
 
-`npx jest` — 14 suites, 175 tests, all green:
+`npx jest` — 15 suites, 189 tests, all green:
 
 * `route-parity` — 78/78 legacy routes plus the 69 added routes, asserted in
   both directions (nothing missing, nothing stray);
@@ -245,6 +245,9 @@ plain HTML/CSS (no new runtime dependency).
 * `views-render` — all 79 page templates render with representative data;
 * `payments` — the money-safety rules of §12 (ownership, amount source,
   single credit, replayed callback, cancel, forged token, driver selection);
+* `bitpay-gateway` — the BitPay wire format: fields sent to `gateway-send`,
+  ریال conversion, `id_get`/`trans_id` handling, `status 1` / `status 11`,
+  amount-mismatch refusal and every documented error code;
 * `timezone` — the clock contract described in §13;
 * `views-compile`, `view-loop-scope`, `date-fields`, `jalali*`, `http-stack`,
   `sessionless`, `views`, `dashboard-view` — unchanged guarantees.

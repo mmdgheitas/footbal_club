@@ -54,14 +54,61 @@ Pay buttons live where the money is already shown: **پنل ولی → دفتر�
 **اپ بازیکن → پروفایل**. Coaches reach none of it (403), unchanged from the
 access rules in `FEATURE_EXPANSION.md` §7.
 
-## 3. افزودن یک درگاه جدید
+## 3. درگاه بیت‌پی (bitpay.ir)
+
+The driver in `src/modules/payments/gateways/bitpay.gateway.ts` implements the
+official protocol exactly:
+
+| Step | Call |
+| --- | --- |
+| ۱. درخواست | `POST https://bitpay.ir/payment/gateway-send` — `api`, `amount` (**ریال**), `redirect`, `factorId`, `name`, `email`, `description` → a bare number: `> 0` is `id_get`, negative is an error (`-1` … `-5`) |
+| ۲. انتقال کاربر | `https://bitpay.ir/payment/gateway-{id_get}-get` |
+| ۳. بازگشت | BitPay returns to `redirect` with `trans_id`, `id_get`, `factorId` |
+| ۴. تأیید | `POST https://bitpay.ir/payment/gateway-result-second` — `api`, `id_get`, `trans_id`, `json=1` → `{status, amount, cardNum, factorId}`; `status = 1` paid, `status = 11` already verified |
+
+Mapping onto this codebase:
+
+* `authority` = **id_get** (the attempt is looked up by it, and it is unique per
+  gateway), `ref_id` on the receipt = **trans_id**, `card_pan` = **cardNum**;
+* `factorId` = the invoice id, so the BitPay panel shows the same number the
+  club sees in `/admin/invoices`;
+* amounts go out in **ریال** (`PAYMENT_CURRENCY_MULTIPLIER=10`), and the amount
+  BitPay reports back on verify is compared with the invoice — a mismatch is
+  refused instead of credited;
+* `status = 11` (already verified) is treated as success without crediting a
+  second time, so a replayed callback is harmless;
+* all documented error codes are translated to Persian for the payer
+  (`-1` API mismatch, `-2` bad amount, `-3` empty redirect, `-4` gateway not
+  approved, `-5` connection error; on verify `-1` … `-4`).
+
+Configuration:
+
+```bash
+PAYMENT_GATEWAY=bitpay
+PAYMENT_MODE=production          # BitPay has no public sandbox
+PAYMENT_MERCHANT_ID=<کلید API>   # پنل بیت‌پی ← مدیریت درگاه ← API
+PAYMENT_CALLBACK_URL=https://your-domain        # must match the approved gateway URL
+PAYMENT_CURRENCY_MULTIPLIER=10   # تومان → ریال
+```
+
+`PAYMENT_API_KEY` is accepted as an alias for the key, since BitPay calls it
+«API» rather than «merchant id». Two things to check in the BitPay panel before
+going live: the gateway must be **approved** (otherwise `gateway-send` answers
+`-4`), and the return address must match `PAYMENT_CALLBACK_URL`
+(`https://your-domain/payments/callback/bitpay`).
+
+BitPay publishes no sandbox, so testing is either `PAYMENT_MODE=mock` (the
+simulator, §6) or a real transaction of the minimum amount. `BITPAY_BASE_URL`
+overrides the host if you ever need to point the driver at a proxy.
+
+## 4. افزودن یک درگاه جدید
 
 Three steps, nothing else in the codebase changes:
 
 1. `src/modules/payments/gateways/<name>.gateway.ts` — implement
-   `PaymentGateway` (`request`, `readCallback`, `verify`).
-   `zarinpal.gateway.ts` is the reference: REST v4, sandbox + production hosts,
-   `code: 100` success, `code: 101` = already verified.
+   `PaymentGateway` (`request`, `readCallback`, `verify`). Two references ship:
+   `bitpay.gateway.ts` (form-encoded, numeric responses) and
+   `zarinpal.gateway.ts` (JSON REST v4).
 2. Add the class to `providers` in `payments.module.ts`.
 3. Add one line to `drivers` in `payment-gateway.factory.ts`.
 
@@ -81,10 +128,10 @@ Amounts: `input.amount` is تومان (what the club stores and displays) and
 `input.gatewayAmount` is already multiplied by `PAYMENT_CURRENCY_MULTIPLIER`
 (10 → ریال). Use whichever the gateway expects.
 
-## 4. تنظیمات
+## 5. تنظیمات
 
 ```bash
-PAYMENT_GATEWAY=mock            # mock | zarinpal | <your driver>
+PAYMENT_GATEWAY=mock            # mock | bitpay | zarinpal | <your driver>
 PAYMENT_MODE=mock               # mock | sandbox | production
 PAYMENT_MERCHANT_ID=            # required for production
 PAYMENT_API_KEY=
@@ -97,15 +144,15 @@ PAYMENT_TIMEOUT=900
 Two guard rails in `PaymentGatewayFactory`:
 
 * an unknown `PAYMENT_GATEWAY` falls back to the simulator and logs a warning;
-* `PAYMENT_MODE=production` with an empty `PAYMENT_MERCHANT_ID` refuses the real
-  driver and falls back to the simulator — a misconfigured deployment cannot
-  silently send payers to a broken gateway.
+* a real driver with no `PAYMENT_MERCHANT_ID` / `PAYMENT_API_KEY` is refused and
+  the simulator is used instead — a misconfigured deployment cannot silently
+  send payers to a broken gateway.
 
 `PAYMENT_MODE=mock` also makes `/payments/mock/*` (the fake bank page) reachable;
 with any real driver active those routes answer 404, so they can never be used
 to fake a payment.
 
-## 5. پایگاه داده
+## 6. پایگاه داده
 
 `fc_payment_transactions` — one row per attempt: gateway, mode, amount +
 `gateway_amount`, `authority`, `ref_id`, `card_pan`, status, payer
@@ -120,7 +167,7 @@ to fake a payment.
 `scripts/check-schema-parity.ts`: **363 / 363** columns matching across 31
 entities.
 
-## 6. آزمایش بدون حساب پذیرنده
+## 7. آزمایش بدون حساب پذیرنده
 
 `PAYMENT_MODE=mock` (the default) gives a real three-step flow with a local bank
 page — pay or cancel — so the callback, the verify guard, the ledger entries and
@@ -136,7 +183,7 @@ DB_CONNECTION=sqlite DB_SQLITE_PATH=../database/football_club.dev.sqlite \
 
 Log in as ولی `09120000021`, open **دفترچه مالی**, press **پرداخت**.
 
-## 7. اعلان‌ها و دفتر مالی
+## 8. اعلان‌ها و دفتر مالی
 
 A verified payment writes in-panel notifications for the player, the guardian
 and the finance staff, retires the debt reminders that are no longer true, and
