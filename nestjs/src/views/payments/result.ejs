@@ -1,0 +1,94 @@
+<%
+/**
+ * نتیجه پرداخت — receipt on success, reason on failure.
+ * Rendered inside the normal layout so the payer can navigate on from here.
+ */
+const tx = locals.transaction || null;
+const payment = locals.payment || null;
+const outcome = locals.outcome || 'failed';
+const statuses = locals.statuses || {};
+const icons = locals.status_icons || {};
+const back = locals.back_url || '/';
+const success = outcome === 'success';
+%>
+
+<div class="panel-card" style="max-width:640px;margin:0 auto;text-align:center;">
+    <div style="font-size:64px;line-height:1;margin-bottom:12px;">
+        <%- success ? '✅' : (outcome === 'canceled' ? '🚫' : '❌') %>
+    </div>
+
+    <h2 style="margin:0 0 6px;">
+        <% if (success) { %>پرداخت با موفقیت انجام شد
+        <% } else if (outcome === 'canceled') { %>پرداخت لغو شد
+        <% } else { %>پرداخت ناموفق بود<% } %>
+    </h2>
+
+    <% if (!success && locals.error) { %>
+        <p class="text-danger"><%- esc(locals.error) %></p>
+    <% } %>
+
+    <% if (locals.test_mode) { %>
+        <div class="chip warn mb-3">حالت آزمایشی — پرداخت واقعی انجام نشده است</div>
+    <% } %>
+
+    <% if (tx) { %>
+    <table class="mini-table mt-3" style="text-align:right;">
+        <tbody>
+            <tr>
+                <th>مبلغ</th>
+                <td><strong><%- __num(tx.amount) %></strong> تومان</td>
+            </tr>
+            <% if (payment) { %>
+            <tr>
+                <th>بابت</th>
+                <td><%- esc(payment.description || tx.description || 'صورتحساب باشگاه') %></td>
+            </tr>
+            <% } %>
+            <% if (tx.refId) { %>
+            <tr>
+                <th>کد پیگیری</th>
+                <td class="ltr"><%- esc(tx.refId) %></td>
+            </tr>
+            <% } %>
+            <% if (tx.cardPan) { %>
+            <tr>
+                <th>کارت</th>
+                <td class="ltr"><%- esc(tx.cardPan) %></td>
+            </tr>
+            <% } %>
+            <tr>
+                <th>درگاه</th>
+                <td><%- esc(locals.gateway_label || tx.gateway) %></td>
+            </tr>
+            <tr>
+                <th>وضعیت تراکنش</th>
+                <td>
+                    <span class="em"><%- icons[tx.status] || '•' %></span>
+                    <%- esc(statuses[tx.status] || tx.status) %>
+                </td>
+            </tr>
+            <tr>
+                <th>تاریخ</th>
+                <td><%- toJalali(tx.verifiedAt || tx.createdAt) %></td>
+            </tr>
+            <tr>
+                <th>شناسه تراکنش</th>
+                <td class="ltr"><%- esc(tx.uuid) %></td>
+            </tr>
+        </tbody>
+    </table>
+    <% } %>
+
+    <div class="mt-3">
+        <a class="btn btn-primary" href="<%- APP_URL %><%- back %>">بازگشت به پنل</a>
+        <% if (!success && payment) { %>
+        <form method="POST" action="<%- APP_URL %>/payments/start/<%- payment.id %>" style="display:inline;">
+            <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+            <button type="submit" class="btn">تلاش دوباره</button>
+        </form>
+        <% } %>
+        <% if (success) { %>
+        <button type="button" class="btn no-print" onclick="window.print()">چاپ رسید</button>
+        <% } %>
+    </div>
+</div>

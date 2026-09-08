@@ -26,6 +26,7 @@ import { PlayerAppModule } from './modules/player-app/player-app.module';
 import { CardsModule } from './modules/cards/cards.module';
 import { CoachModule } from './modules/coach/coach.module';
 import { ClubAdminModule } from './modules/club-admin/club-admin.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 import { DatabaseTimezoneService } from './database/database-timezone.service';
 import { AuthenticatedGuard } from './common/guards/authenticated.guard';
 import { PermissionsGuard } from './common/guards/permissions.guard';
@@ -65,6 +66,7 @@ import { PermissionsGuard } from './common/guards/permissions.guard';
     CardsModule,
     CoachModule,
     ClubAdminModule,
+    PaymentsModule,
   ],
   providers: [
     // Keeps the MySQL session clock on the application timezone and warns when

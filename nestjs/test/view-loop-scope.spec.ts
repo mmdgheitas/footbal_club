@@ -82,8 +82,8 @@ describe('no view reads locals.X where X is a loop variable', () => {
   const views = walk(VIEWS).sort();
 
   it('finds every template', () => {
-    // 45 ported/legacy templates + 36 added by the feature expansion.
-    expect(views).toHaveLength(81);
+    // 45 ported/legacy + 36 feature expansion + 4 payment gateway templates.
+    expect(views).toHaveLength(85);
   });
 
   it('has no shadowed loop variables', () => {

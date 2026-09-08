@@ -178,7 +178,17 @@ Demo logins (any of these numbers; the code is printed on the page):
 | 09120000011 | بازیکن (علی رضایی) |
 | 09120000012 | بازیکن (محمد کریمی) |
 
-## 12. زمان و منطقه زمانی
+## 12. پرداخت آنلاین
+
+Invoices (`/admin/invoices`) plus a pluggable payment gateway: guardians pay
+from **دفترچه مالی**, players from **پروفایل**, and every attempt is recorded in
+`fc_payment_transactions`. Only a verified callback credits the invoice, exactly
+once. The default `PAYMENT_MODE=mock` is a built-in simulator, so the flow works
+without a merchant account. Full documentation — flow diagram, the money-safety
+rules, how to add a gateway in three steps, configuration — in
+[`PAYMENTS.md`](./PAYMENTS.md).
+
+## 13. زمان و منطقه زمانی
 
 MySQL DATE/DATETIME/TIMESTAMP values are wall clocks with no timezone attached,
 so every layer has to agree on which zone they belong to:
@@ -216,7 +226,7 @@ invariant, the OTP flow at +03:30 and at a negative offset, and a guard that
 fails the build if any source file goes back to formatting SQL values with
 `toISOString()`.
 
-## 13. تم و رابط کاربری
+## 14. تم و رابط کاربری
 
 `style.css` `:root` retheme to the club identity — red `#C8102E` + black +
 white — and a new `panels.css` with the tiles, cards, FIFA card, membership
@@ -224,16 +234,18 @@ card, player tab bar, notification list and badge grid. Large, energetic
 sport-app icons; mobile-first player panel; everything Persian/RTL and built on
 plain HTML/CSS (no new runtime dependency).
 
-## 14. تست‌ها
+## 15. تست‌ها
 
-`npx jest` — 13 suites, 157 tests, all green:
+`npx jest` — 14 suites, 175 tests, all green:
 
-* `route-parity` — 78/78 legacy routes plus the 59 expansion routes, asserted
-  in both directions (nothing missing, nothing stray);
-* `view-wiring` — 81 templates, every one reachable from a route-decorated
+* `route-parity` — 78/78 legacy routes plus the 69 added routes, asserted in
+  both directions (nothing missing, nothing stray);
+* `view-wiring` — 85 templates, every one reachable from a route-decorated
   handler, and the legacy subset still matches the PHP controllers exactly;
-* `views-render` — all 75 page templates render with representative data;
-* `timezone` — the clock contract described in §12;
+* `views-render` — all 79 page templates render with representative data;
+* `payments` — the money-safety rules of §12 (ownership, amount source,
+  single credit, replayed callback, cancel, forged token, driver selection);
+* `timezone` — the clock contract described in §13;
 * `views-compile`, `view-loop-scope`, `date-fields`, `jalali*`, `http-stack`,
   `sessionless`, `views`, `dashboard-view` — unchanged guarantees.
 

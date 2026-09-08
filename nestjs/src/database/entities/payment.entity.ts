@@ -27,6 +27,11 @@ export class Payment extends BaseEntity {
   @Column({ name: 'description', type: 'varchar', length: 255, nullable: true })
   description: string | null;
 
+  /** Invoice due date — drives the debt alerts in the guardian panel. */
+  @Index('idx_due_date')
+  @Column({ name: 'due_date', type: 'date', nullable: true })
+  dueDate: string | null;
+
   @Column({ name: 'payment_method', type: 'varchar', length: 50, nullable: true })
   paymentMethod: string | null;
 
@@ -45,6 +50,14 @@ export class Payment extends BaseEntity {
 
   @Column({ name: 'receipt_path', type: 'varchar', length: 500, nullable: true })
   receiptPath: string | null;
+
+  /** Staff member who issued the invoice (null for legacy/imported rows). */
+  @Column({ name: 'created_by', type: 'int', nullable: true })
+  createdBy: number | null;
+
+  /** Set the moment an online payment is verified. */
+  @Column({ name: 'paid_at', type: 'datetime', nullable: true })
+  paidAt: string | null;
 
   @OneToMany(() => TransactionLog, (t) => t.payment)
   transactionLogs: TransactionLog[];

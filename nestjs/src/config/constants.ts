@@ -369,3 +369,65 @@ Object.assign(PERMISSIONS, {
   manage_trainings: 'مدیریت جلسات تمرین',
   view_notifications: 'مشاهده اعلان‌ها',
 });
+
+// ---------------------------------------------------------------------------
+// درگاه پرداخت آنلاین — online payment gateway
+//
+// The gateway itself is pluggable (see modules/payments/gateways): the driver
+// is chosen by PAYMENT_GATEWAY and the environment by PAYMENT_MODE, exactly the
+// way SMS_PROVIDER already works. `mock` needs no network and no merchant
+// account, so the whole pay flow stays clickable in development.
+// ---------------------------------------------------------------------------
+export const PAYMENT_GATEWAY = (process.env.PAYMENT_GATEWAY ?? 'mock').toLowerCase();
+/** mock | sandbox | production */
+export const PAYMENT_MODE = (process.env.PAYMENT_MODE ?? 'mock').toLowerCase();
+export const PAYMENT_MERCHANT_ID = process.env.PAYMENT_MERCHANT_ID ?? '';
+export const PAYMENT_API_KEY = process.env.PAYMENT_API_KEY ?? '';
+export const PAYMENT_CALLBACK_URL = process.env.PAYMENT_CALLBACK_URL ?? '';
+/** Seconds a started transaction may stay unfinished before it is abandoned. */
+export const PAYMENT_TIMEOUT_SECONDS = parseInt(process.env.PAYMENT_TIMEOUT ?? '900', 10);
+
+/**
+ * Amounts are stored and displayed in تومان; Iranian gateways charge in ریال.
+ * PAYMENT_CURRENCY_MULTIPLIER is what the stored amount is multiplied by before
+ * it is handed to the gateway (10 for toman → rial, 1 when the gateway itself
+ * works in toman).
+ */
+export const PAYMENT_CURRENCY_MULTIPLIER = parseInt(
+  process.env.PAYMENT_CURRENCY_MULTIPLIER ?? '10',
+  10,
+);
+
+/** Minimum an online payment may be, in تومان (gateways reject dust amounts). */
+export const PAYMENT_MIN_AMOUNT = parseInt(process.env.PAYMENT_MIN_AMOUNT ?? '1000', 10);
+
+export const PAYMENT_MODES: Record<string, string> = {
+  mock: 'شبیه‌ساز (بدون پرداخت واقعی)',
+  sandbox: 'محیط آزمایشی درگاه',
+  production: 'درگاه واقعی',
+};
+
+/** Lifecycle of one attempt at the gateway (fc_payment_transactions.status). */
+export const PAYMENT_TRANSACTION_STATUSES: Record<string, string> = {
+  initiated: 'در حال انتقال به درگاه',
+  pending: 'در انتظار بازگشت از درگاه',
+  paid: 'پرداخت‌شده (در انتظار تأیید)',
+  verified: 'تأیید نهایی شد',
+  failed: 'ناموفق',
+  canceled: 'لغو توسط کاربر',
+};
+
+export const PAYMENT_TRANSACTION_ICONS: Record<string, string> = {
+  initiated: '🔄',
+  pending: '⏳',
+  paid: '💳',
+  verified: '✅',
+  failed: '❌',
+  canceled: '🚫',
+};
+
+Object.assign(PERMISSIONS, {
+  manage_invoices: 'صدور صورتحساب',
+  pay_online: 'پرداخت آنلاین',
+  view_payment_transactions: 'مشاهده تراکنش‌های درگاه',
+});

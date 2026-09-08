@@ -294,6 +294,60 @@ const DATA: Record<string, unknown> = {
   ],
   total: 1500000,
   filters: { from: '', to: '', category: '' },
+
+  // --- online payment gateway ------------------------------------------
+  payable: [
+    {
+      id: 41,
+      playerId: 1,
+      playerName: 'علی رضایی',
+      amount: 2500000,
+      description: 'شهریه فصل زمستان',
+      dueDate: '2026-10-01',
+      status: 'pending',
+      overdue: false,
+      createdAt: '2026-09-01 10:00:00',
+    },
+  ],
+  gateway_test_mode: true,
+  gateway_label: 'درگاه شبیه‌ساز (تستی)',
+  gateway_key: 'mock',
+  mode_label: 'شبیه‌ساز (بدون پرداخت واقعی)',
+  gateways: [{ key: 'mock', label: 'درگاه شبیه‌ساز (تستی)' }],
+  authority: 'MOCK-4F2A9C1D7B3E',
+  amount: 2500000,
+  callback_url: '/payments/callback/mock?Authority=MOCK-4F2A9C1D7B3E',
+  outcome: 'success',
+  test_mode: true,
+  back_url: '/guardian/financial',
+  transaction: {
+    id: 12,
+    uuid: '2b0d5a1e-9f6c-4c3a-8f4e-2c9b7d1a5e33',
+    paymentId: 41,
+    gateway: 'mock',
+    mode: 'mock',
+    amount: '2500000',
+    gatewayAmount: '25000000',
+    authority: 'MOCK-4F2A9C1D7B3E',
+    refId: '1042993317',
+    cardPan: '6037********1234',
+    status: 'verified',
+    description: 'شهریه فصل زمستان',
+    errorMessage: null,
+    verifiedAt: '2026-09-06 19:12:44',
+    createdAt: '2026-09-06 19:11:52',
+  },
+  payment: {
+    id: 41,
+    playerId: 1,
+    amount: '2500000',
+    description: 'شهریه فصل زمستان',
+    status: 'completed',
+  },
+  status_totals: [
+    { status: 'verified', count: 8, total: 18500000 },
+    { status: 'failed', count: 2, total: 3000000 },
+  ],
   /**
    * One row object shaped for every admin table at once (registrations, cards,
    * guardians, performance report) — each view reads only its own keys.
@@ -356,9 +410,9 @@ describe('every EJS view renders', () => {
   const views = walk(VIEWS).filter((v) => !LAYOUTS.has(v) && !PARTIALS.has(v)).sort();
 
   it('renders every page template without throwing', () => {
-    // 81 templates on disk, minus the 5 layouts and the FIFA-card partial,
+    // 85 templates on disk, minus the 5 layouts and the FIFA-card partial,
     // which are composed into pages rather than rendered as pages themselves.
-    expect(views).toHaveLength(75);
+    expect(views).toHaveLength(79);
 
     const failures: string[] = [];
     for (const view of views) {

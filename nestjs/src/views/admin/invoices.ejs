@@ -1,0 +1,130 @@
+<%
+/**
+ * صورتحساب‌ها — issuing an invoice makes it payable online immediately
+ * (guardian panel and player app both show a «پرداخت آنلاین» button).
+ */
+const rows = locals.rows || [];
+const counts = locals.counts || [];
+const players = locals.players || [];
+const statuses = locals.statuses || {};
+const selected = locals.selected_status || 'pending';
+const statusChip = { pending: 'warn', completed: 'ok', failed: 'danger', refunded: 'neutral' };
+const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, total: 0 });
+%>
+
+<div class="tile-grid">
+    <% for (const key of Object.keys(statuses)) { const c = countOf(key); %>
+    <div class="tile <%- key === 'pending' ? 'is-danger' : (key === 'completed' ? '' : 'is-gold') %>">
+        <span class="tile-icon"><%- key === 'completed' ? '✅' : (key === 'pending' ? '⏳' : '⚠️') %></span>
+        <span class="tile-value"><%- __num(c.total) %></span>
+        <span class="tile-label"><%- esc(statuses[key]) %> (<%- toPersian(c.count) %> فقره)</span>
+    </div>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <div class="flex-between">
+        <h3 style="margin:0;"><span class="em">💳</span> درگاه فعال</h3>
+        <span class="chip <%- locals.gateway_test_mode ? 'warn' : 'ok' %>">
+            <%- esc(locals.gateway_label || '-') %> — <%- esc(locals.mode_label || '-') %>
+        </span>
+    </div>
+    <p class="text-muted mb-2">
+        درگاه با متغیرهای <span class="ltr">PAYMENT_GATEWAY</span> و <span class="ltr">PAYMENT_MODE</span>
+        در فایل <span class="ltr">.env</span> انتخاب می‌شود.
+        <a href="<%- APP_URL %>/admin/payments">مشاهده تراکنش‌های درگاه</a>
+    </p>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">➕</span> صدور صورتحساب جدید</h3>
+    <form method="POST" action="<%- APP_URL %>/admin/invoices" class="grid-2">
+        <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+
+        <div class="form-group">
+            <label for="player_id">بازیکن</label>
+            <select id="player_id" name="player_id" class="form-control" required>
+                <option value="">انتخاب کنید…</option>
+                <% for (const p of players) { %>
+                <option value="<%- escAttr(p.id) %>"><%- esc(p.name) %></option>
+                <% } %>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="amount">مبلغ (تومان)</label>
+            <input type="number" id="amount" name="amount" class="form-control ltr" min="1000" step="1000" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">بابت</label>
+            <input type="text" id="description" name="description" class="form-control"
+                   placeholder="شهریه فصل زمستان" maxlength="200">
+        </div>
+
+        <div class="form-group">
+            <label for="due_date">مهلت پرداخت (شمسی)</label>
+            <input type="hidden" class="jalali-date-value" id="due_date" name="due_date"
+                   data-format="gregorian" value="">
+            <input type="text" class="jalali-date-input" id="due_date_display" data-for="due_date" readonly>
+        </div>
+
+        <div class="form-group" style="display:flex;align-items:flex-end;">
+            <button type="submit" class="btn btn-primary">صدور صورتحساب</button>
+        </div>
+    </form>
+</div>
+
+<div class="panel-card">
+    <div class="flex-between mb-2">
+        <h3 style="margin:0;"><span class="em">🧾</span> فهرست صورتحساب‌ها</h3>
+        <div>
+            <% for (const key of Object.keys(statuses)) { %>
+            <a class="chip <%- selected === key ? statusChip[key] || 'neutral' : 'neutral' %>"
+               href="<%- APP_URL %>/admin/invoices?status=<%- escAttr(key) %>"><%- esc(statuses[key]) %></a>
+            <% } %>
+        </div>
+    </div>
+
+    <% if (rows.length === 0) { %>
+        <div class="empty-state"><span class="em">🧾</span> صورتحسابی با این وضعیت وجود ندارد.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr>
+                <th>#</th><th>بازیکن</th><th>کلاس</th><th>بابت</th><th>مبلغ (تومان)</th>
+                <th>مهلت</th><th>وضعیت</th><th>تلاش‌ها</th><th>عملیات</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% for (const row of rows) { %>
+            <tr>
+                <td class="ltr"><%- toPersian(row.id) %></td>
+                <td><%- esc(row.player_name) %></td>
+                <td><%- esc(row.classroom_name || '—') %></td>
+                <td><%- esc(row.description || '—') %></td>
+                <td><%- __num(row.amount) %></td>
+                <td class="nowrap"><%- row.due_date ? toJalali(row.due_date) : '—' %></td>
+                <td>
+                    <span class="chip <%- statusChip[row.status] || 'neutral' %>">
+                        <%- esc(statuses[row.status] || row.status) %>
+                    </span>
+                </td>
+                <td><%- toPersian(row.attempts || 0) %></td>
+                <td class="nowrap">
+                    <% if (row.status !== 'completed') { %>
+                    <form method="POST" action="<%- APP_URL %>/admin/invoices/<%- row.id %>/cancel"
+                          onsubmit="return confirm('این صورتحساب لغو شود؟');" style="display:inline;">
+                        <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+                        <button type="submit" class="btn btn-sm btn-danger">لغو</button>
+                    </form>
+                    <% } else { %>
+                        <a class="btn btn-sm" href="<%- APP_URL %>/payment/receipt/<%- row.id %>">رسید</a>
+                    <% } %>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

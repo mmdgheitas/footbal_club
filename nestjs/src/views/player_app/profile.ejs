@@ -69,4 +69,31 @@ const dash = '—';
         ⚠️ بدهی پرداخت‌نشده دارید؛ اعلان آن برای ولی شما نیز ارسال شده است.
     </p>
     <% } %>
+
+    <% const payable = locals.payable || []; %>
+    <% if (payable.length > 0) { %>
+    <div class="mt-3">
+        <h4 style="margin:0 0 8px;"><span class="em">💳</span> پرداخت آنلاین</h4>
+        <% if (locals.gateway_test_mode) { %>
+            <div class="chip warn mb-2">درگاه در حالت آزمایشی</div>
+        <% } %>
+        <% for (const invoice of payable) { %>
+        <div class="flex-between" style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,.08);">
+            <div>
+                <div><%- esc(invoice.description || 'صورتحساب باشگاه') %></div>
+                <div class="text-muted" style="font-size:.8rem;">
+                    <%- __num(invoice.amount) %> تومان
+                    <% if (invoice.dueDate) { %>
+                        — مهلت: <span class="<%- invoice.overdue ? 'text-danger' : '' %>"><%- toPersian(toJalali(invoice.dueDate)) %></span>
+                    <% } %>
+                </div>
+            </div>
+            <form method="POST" action="<%- APP_URL %>/payments/start/<%- invoice.id %>">
+                <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+                <button type="submit" class="btn btn-sm btn-primary">پرداخت</button>
+            </form>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
 </div>

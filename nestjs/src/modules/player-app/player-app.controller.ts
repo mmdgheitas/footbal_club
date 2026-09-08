@@ -10,6 +10,8 @@ import { MembershipCardService } from '../domain/membership-card.service';
 import { LedgerService } from '../domain/ledger.service';
 import { DebtNotifierService } from '../domain/debt-notifier.service';
 import { GuardianPanelService } from '../guardian/guardian-panel.service';
+import { PaymentService } from '../payments/payment.service';
+import { PaymentGatewayFactory } from '../payments/gateways/payment-gateway.factory';
 import { NotificationAudience, RegistrationStatus } from '../../database/entities';
 import {
   MATCH_TYPES,
@@ -40,6 +42,8 @@ export class PlayerAppController extends BaseController {
     private readonly ledger: LedgerService,
     private readonly debts: DebtNotifierService,
     private readonly reads: GuardianPanelService,
+    private readonly payments: PaymentService,
+    private readonly gateways: PaymentGatewayFactory,
   ) {
     super();
   }
@@ -179,13 +183,14 @@ export class PlayerAppController extends BaseController {
 
     await this.debts.syncPlayer(ctx.playerId);
 
-    const [card, attributes, overall, badges, ledger, rank] = await Promise.all([
+    const [card, attributes, overall, badges, ledger, rank, payable] = await Promise.all([
       this.cards.findActiveFor(ctx.playerId),
       this.development.fifaAttributes(ctx.playerId),
       this.development.fifaOverall(ctx.playerId),
       this.development.badgesOf(ctx.playerId),
       this.ledger.playerLedger(ctx.playerId),
       this.development.rankOf(ctx.playerId),
+      this.payments.payableForPlayer(ctx.playerId),
     ]);
 
     return this.render(req, res, 'player_app/profile', {
@@ -197,6 +202,10 @@ export class PlayerAppController extends BaseController {
       badges,
       ledger,
       rank,
+      // پرداخت آنلاین از داخل اپ بازیکن
+      payable,
+      gateway_test_mode: this.gateways.current().isTestMode,
+      csrf_token: this.generateCsrf(req),
       positions: PLAYER_POSITIONS,
       feet: PREFERRED_FEET,
     });

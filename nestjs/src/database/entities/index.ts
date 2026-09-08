@@ -7,6 +7,7 @@ export * from './medical-record.entity';
 export * from './injury.entity';
 export * from './attendance.entity';
 export * from './payment.entity';
+export * from './payment-transaction.entity';
 export * from './transaction-log.entity';
 export * from './discount.entity';
 export * from './file-upload.entity';
@@ -38,6 +39,7 @@ import { MedicalRecord } from './medical-record.entity';
 import { Injury } from './injury.entity';
 import { Attendance } from './attendance.entity';
 import { Payment } from './payment.entity';
+import { PaymentTransaction } from './payment-transaction.entity';
 import { TransactionLog } from './transaction-log.entity';
 import { Discount } from './discount.entity';
 import { FileUpload } from './file-upload.entity';
@@ -62,8 +64,9 @@ import { OtpCode } from './otp-code.entity';
 import { TrainingSession } from './training-session.entity';
 
 /**
- * All entities: the original 20 mapped from database/schema.sql plus the 10
- * added by the feature expansion (database/migrations/006_feature_expansion.sql).
+ * All entities: the original 20 mapped from database/schema.sql, the 10 added
+ * by the feature expansion (migrations/006_feature_expansion.sql) and the
+ * payment-gateway transaction log (migrations/007_payment_gateway.sql).
  */
 export const ALL_ENTITIES = [
   Classroom,
@@ -74,6 +77,7 @@ export const ALL_ENTITIES = [
   Injury,
   Attendance,
   Payment,
+  PaymentTransaction,
   TransactionLog,
   Discount,
   FileUpload,

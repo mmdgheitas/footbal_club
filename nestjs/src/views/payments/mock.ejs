@@ -1,0 +1,45 @@
+<%
+/**
+ * درگاه شبیه‌ساز — the local stand-in for the bank page.
+ *
+ * Only served while PAYMENT_GATEWAY/PAYMENT_MODE select the simulator, so the
+ * real deployment can never reach it. It exists so the whole payment path
+ * (callback, verify, ledger, notifications) can be exercised without a merchant
+ * account.
+ */
+const amount = Number(locals.amount || 0);
+%>
+
+<div class="panel-card" style="max-width:520px;margin:0 auto;">
+    <div class="flex-between mb-3">
+        <h2 style="margin:0;"><span class="em">🏦</span> درگاه پرداخت شبیه‌ساز</h2>
+        <span class="chip warn"><%- esc(locals.mode_label || 'تستی') %></span>
+    </div>
+
+    <div class="alert alert-error">
+        این صفحه یک شبیه‌ساز است؛ هیچ مبلغی واقعاً منتقل نمی‌شود.
+    </div>
+
+    <table class="mini-table">
+        <tbody>
+            <tr><th>مبلغ قابل پرداخت</th><td><strong><%- __num(amount) %></strong> تومان</td></tr>
+            <tr><th>شناسه پرداخت</th><td class="ltr"><%- esc(locals.authority) %></td></tr>
+            <tr><th>پذیرنده</th><td><%- esc(constants.CLUB_DISPLAY_NAME) %></td></tr>
+        </tbody>
+    </table>
+
+    <form method="POST" action="<%- APP_URL %>/payments/mock/<%- escAttr(locals.authority) %>" class="mt-3">
+        <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+        <input type="hidden" name="callback_url" value="<%- escAttr(locals.callback_url) %>">
+
+        <div class="form-group">
+            <label for="card">شماره کارت (نمایشی)</label>
+            <input type="text" id="card" class="ltr" value="6037-9911-1234-5678" readonly>
+        </div>
+
+        <div class="flex-between mt-3">
+            <button type="submit" name="action" value="pay" class="btn btn-primary">پرداخت موفق</button>
+            <button type="submit" name="action" value="cancel" class="btn btn-danger">انصراف</button>
+        </div>
+    </form>
+</div>

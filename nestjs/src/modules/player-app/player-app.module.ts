@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { DomainModule } from '../domain/domain.module';
+import { PaymentsModule } from '../payments/payments.module';
 import { PlayerAppController } from './player-app.controller';
 import { GuardianPanelService } from '../guardian/guardian-panel.service';
 
 @Module({
-  imports: [DomainModule],
+  imports: [DomainModule, PaymentsModule],
   controllers: [PlayerAppController],
   // GuardianPanelService holds the shared player read models (attendance
   // summary, player detail); reused here instead of duplicating the SQL.

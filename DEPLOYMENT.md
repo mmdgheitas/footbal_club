@@ -215,6 +215,14 @@ SMS_PROVIDER=twilio
 SMS_API_KEY=your_twilio_sid
 SMS_API_SECRET=your_twilio_token
 SMS_FROM_NUMBER=+1234567890
+
+# Online payment gateway. Keep PAYMENT_MODE=mock until the merchant account is
+# live: the built-in simulator keeps the whole flow usable and never charges.
+PAYMENT_GATEWAY=zarinpal
+PAYMENT_MODE=production
+PAYMENT_MERCHANT_ID=your_merchant_id
+PAYMENT_CALLBACK_URL=https://football-club.example.com
+PAYMENT_CURRENCY_MULTIPLIER=10
 ```
 
 ### 6. Error Logging Setup

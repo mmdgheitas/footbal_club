@@ -1,0 +1,80 @@
+<%
+/** تراکنش‌های درگاه — every attempt, successful or not, with its gateway trace. */
+const rows = locals.rows || [];
+const totals = locals.status_totals || [];
+const statuses = locals.statuses || {};
+const icons = locals.status_icons || {};
+const chip = {
+  verified: 'ok',
+  paid: 'warn',
+  pending: 'warn',
+  initiated: 'neutral',
+  failed: 'danger',
+  canceled: 'neutral',
+};
+%>
+
+<div class="tile-grid">
+    <% for (const t of totals) { %>
+    <div class="tile <%- t.status === 'verified' ? '' : (t.status === 'failed' ? 'is-danger' : 'is-gold') %>">
+        <span class="tile-icon"><%- icons[t.status] || '💳' %></span>
+        <span class="tile-value"><%- __num(t.total) %></span>
+        <span class="tile-label"><%- esc(statuses[t.status] || t.status) %> (<%- toPersian(t.count) %>)</span>
+    </div>
+    <% } %>
+</div>
+
+<div class="panel-card">
+    <div class="flex-between">
+        <h3 style="margin:0;"><span class="em">🔌</span> درگاه فعال</h3>
+        <span class="chip <%- locals.gateway_test_mode ? 'warn' : 'ok' %>">
+            <%- esc(locals.gateway_label || '-') %> — <%- esc(locals.mode_label || '-') %>
+        </span>
+    </div>
+    <p class="text-muted">
+        درگاه‌های نصب‌شده:
+        <% for (const g of (locals.gateways || [])) { %>
+            <span class="chip neutral ltr"><%- esc(g.key) %></span>
+        <% } %>
+    </p>
+</div>
+
+<div class="panel-card">
+    <h3><span class="em">💳</span> آخرین تراکنش‌ها</h3>
+
+    <% if (rows.length === 0) { %>
+        <div class="empty-state"><span class="em">💳</span> هنوز تراکنشی ثبت نشده است.</div>
+    <% } else { %>
+    <table class="mini-table">
+        <thead>
+            <tr>
+                <th>#</th><th>تاریخ</th><th>بازیکن</th><th>بابت</th><th>مبلغ (تومان)</th>
+                <th>درگاه</th><th>وضعیت</th><th>کد پیگیری</th><th>خطا</th>
+            </tr>
+        </thead>
+        <tbody>
+        <% for (const row of rows) { %>
+            <tr>
+                <td class="ltr"><%- toPersian(row.id) %></td>
+                <td class="nowrap"><%- toJalali(row.created_at) %></td>
+                <td><%- esc(row.player_name) %></td>
+                <td><%- esc(row.description || row.invoice_description || '—') %></td>
+                <td><%- __num(row.amount) %></td>
+                <td class="ltr">
+                    <%- esc(row.gateway) %>
+                    <% if (row.mode !== 'production') { %><span class="chip warn">تستی</span><% } %>
+                </td>
+                <td>
+                    <span class="chip <%- chip[row.status] || 'neutral' %>">
+                        <span class="em"><%- icons[row.status] || '•' %></span>
+                        <%- esc(statuses[row.status] || row.status) %>
+                    </span>
+                </td>
+                <td class="ltr"><%- esc(row.ref_id || '—') %></td>
+                <td class="text-danger"><%- esc(row.error_message || '') %></td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
+    <% } %>
+</div>

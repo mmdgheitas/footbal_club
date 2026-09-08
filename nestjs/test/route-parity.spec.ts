@@ -128,6 +128,18 @@ const EXPANSION_ROUTES = [
   'GET /notifications',
   'POST /notifications/:id/read',
   'POST /notifications/read-all',
+
+  // --- online payment gateway ---------------------------------------------
+  'POST /payments/start/:paymentId',
+  'GET /payments/callback/:gateway',
+  'POST /payments/callback/:gateway',
+  'GET /payments/result/:id',
+  'GET /payments/mock/:authority',
+  'POST /payments/mock/:authority',
+  'GET /admin/invoices',
+  'POST /admin/invoices',
+  'POST /admin/invoices/:id/cancel',
+  'GET /admin/payments',
 ];
 
 describe('route parity with the legacy PHP application', () => {

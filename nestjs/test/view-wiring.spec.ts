@@ -159,6 +159,10 @@ function reachableBodies(): string[] {
  */
 const EXPANSION_VIEWS = new Set([
   'auth/choose_panel',
+  'admin/invoices',
+  'admin/payments',
+  'payments/mock',
+  'payments/result',
   'auth/otp',
   'admin/badges',
   'admin/cards',
@@ -207,9 +211,10 @@ describe('view wiring', () => {
   const referenced = referencedViews(views);
 
   it('finds every template', () => {
-    // 45 ported/legacy templates + 36 added by the feature expansion.
+    // 45 ported/legacy templates + 36 from the feature expansion + 4 from the
+    // online payment gateway.
     expect(views.filter((v) => !EXPANSION_VIEWS.has(v))).toHaveLength(45);
-    expect(views).toHaveLength(81);
+    expect(views).toHaveLength(85);
   });
 
   it('has a controller or layout reference for every template (no orphans)', () => {

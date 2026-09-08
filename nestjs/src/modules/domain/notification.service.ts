@@ -120,6 +120,26 @@ export class NotificationService {
     }
   }
 
+  /**
+   * Drops notifications whose dedupe key starts with `prefix` — used to retire
+   * an alert that is no longer true (a debt reminder after the debt is paid).
+   * Scoped to one recipient so nothing else is ever touched.
+   */
+  async deleteByDedupePrefix(
+    userType: NotificationAudience | string,
+    userId: number,
+    prefix: string,
+  ): Promise<number> {
+    const result = await this.repo
+      .createQueryBuilder()
+      .delete()
+      .where('user_type = :userType', { userType })
+      .andWhere('user_id = :userId', { userId })
+      .andWhere('dedupe_key LIKE :prefix', { prefix: `${prefix}%` })
+      .execute();
+    return result.affected ?? 0;
+  }
+
   async deleteFor(
     userType: NotificationAudience | string,
     userIds: number[],

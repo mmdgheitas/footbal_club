@@ -174,10 +174,13 @@ CREATE TABLE IF NOT EXISTS fc_payments (
     player_id INT NOT NULL,
     amount DECIMAL(15, 2) NOT NULL,
     description VARCHAR(255),
+    due_date DATE NULL,
     payment_method VARCHAR(50),
     reference_number VARCHAR(100),
     status ENUM('pending', 'completed', 'failed', 'refunded') DEFAULT 'pending',
     receipt_path VARCHAR(500),
+    created_by INT NULL,
+    paid_at DATETIME NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
@@ -185,6 +188,7 @@ CREATE TABLE IF NOT EXISTS fc_payments (
         ON DELETE CASCADE ON UPDATE CASCADE,
     INDEX idx_player_id (player_id),
     INDEX idx_status (status),
+    INDEX idx_due_date (due_date),
     INDEX idx_created_at (created_at),
     INDEX idx_reference_number (reference_number)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -658,3 +662,36 @@ CREATE TABLE IF NOT EXISTS fc_training_sessions (
 ALTER TABLE fc_users
     ADD CONSTRAINT fk_users_guardian FOREIGN KEY (guardian_id)
         REFERENCES fc_guardians_users(id) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- تراکنش‌های درگاه پرداخت آنلاین (یک ردیف برای هر تلاش پرداخت)
+CREATE TABLE IF NOT EXISTS fc_payment_transactions (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    uuid CHAR(36) NOT NULL UNIQUE,
+    payment_id INT NOT NULL,
+    gateway VARCHAR(30) NOT NULL,
+    mode ENUM('mock', 'sandbox', 'production') NOT NULL DEFAULT 'mock',
+    amount DECIMAL(15, 2) NOT NULL,
+    gateway_amount BIGINT NOT NULL,
+    authority VARCHAR(255) NULL,
+    ref_id VARCHAR(100) NULL,
+    card_pan VARCHAR(30) NULL,
+    status ENUM('initiated', 'pending', 'paid', 'verified', 'failed', 'canceled') NOT NULL DEFAULT 'initiated',
+    payer_type ENUM('guardian', 'player', 'admin', 'system') NOT NULL DEFAULT 'guardian',
+    payer_id INT NULL,
+    description VARCHAR(255) NULL,
+    error_code VARCHAR(50) NULL,
+    error_message VARCHAR(255) NULL,
+    request_payload TEXT NULL,
+    response_payload TEXT NULL,
+    callback_ip VARCHAR(45) NULL,
+    verified_at DATETIME NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX idx_gateway_authority (gateway, authority),
+    INDEX idx_payment_id (payment_id),
+    INDEX idx_status (status),
+    INDEX idx_payer (payer_type, payer_id),
+    INDEX idx_created_at (created_at),
+    FOREIGN KEY (payment_id) REFERENCES fc_payments(id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -2,6 +2,10 @@
 /** دفترچه مالی شفاف ولی — تمام پرداخت‌ها، بدهی‌ها و تخفیف‌ها */
 const finance = locals.finance || { ledgers: [], totalPaid: 0, totalOutstanding: 0, totalDiscount: 0 };
 const kindIcon = { payment: '✅', debt: '⚠️', discount: '🎁' };
+/** صورتحساب‌های قابل پرداخت آنلاین (از PaymentService.payableForGuardian) */
+const payable = locals.payable || [];
+const payableOf = (playerId) => payable.filter((i) => Number(i.playerId) === Number(playerId));
+const gatewayTest = !!locals.gateway_test_mode;
 %>
 
 <div class="tile-grid">
@@ -24,7 +28,44 @@ const kindIcon = { payment: '✅', debt: '⚠️', discount: '🎁' };
 
 <% if (finance.totalOutstanding > 0) { %>
 <div class="alert alert-error">
-    ⚠️ بدهی پرداخت‌نشده دارید. لطفاً جهت تسویه با واحد مالی باشگاه هماهنگ کنید.
+    ⚠️ بدهی پرداخت‌نشده دارید. می‌توانید همین‌جا به‌صورت آنلاین پرداخت کنید یا با واحد مالی باشگاه هماهنگ نمایید.
+</div>
+<% } %>
+
+<% if (payable.length > 0) { %>
+<div class="panel-card">
+    <div class="flex-between mb-2">
+        <h3 style="margin:0;"><span class="em">💳</span> پرداخت آنلاین</h3>
+        <% if (gatewayTest) { %><span class="chip warn">درگاه در حالت آزمایشی</span><% } %>
+    </div>
+
+    <table class="mini-table">
+        <thead>
+            <tr><th>فرزند</th><th>بابت</th><th>مبلغ (تومان)</th><th>مهلت</th><th></th></tr>
+        </thead>
+        <tbody>
+        <% for (const invoice of payable) { %>
+            <tr>
+                <td><%- esc(invoice.playerName) %></td>
+                <td><%- esc(invoice.description || 'صورتحساب باشگاه') %></td>
+                <td><strong><%- __num(invoice.amount) %></strong></td>
+                <td class="nowrap">
+                    <% if (invoice.dueDate) { %>
+                        <span class="<%- invoice.overdue ? 'text-danger' : '' %>">
+                            <%- toPersian(toJalali(invoice.dueDate)) %>
+                        </span>
+                    <% } else { %>—<% } %>
+                </td>
+                <td class="nowrap">
+                    <form method="POST" action="<%- APP_URL %>/payments/start/<%- invoice.id %>">
+                        <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
+                        <button type="submit" class="btn btn-sm btn-primary">پرداخت</button>
+                    </form>
+                </td>
+            </tr>
+        <% } %>
+        </tbody>
+    </table>
 </div>
 <% } %>
 

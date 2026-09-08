@@ -11,6 +11,8 @@ import { MembershipCardService } from '../domain/membership-card.service';
 import { PlayerDevelopmentService } from '../domain/player-development.service';
 import { TrainingService } from '../domain/training.service';
 import { GuardianPanelService } from './guardian-panel.service';
+import { PaymentService } from '../payments/payment.service';
+import { PaymentGatewayFactory } from '../payments/gateways/payment-gateway.factory';
 import { NotificationAudience } from '../../database/entities';
 import { REGISTRATION_STATUSES } from '../../config/constants';
 
@@ -37,6 +39,8 @@ export class GuardianPanelController extends BaseController {
     private readonly development: PlayerDevelopmentService,
     private readonly trainings: TrainingService,
     private readonly panel: GuardianPanelService,
+    private readonly payments: PaymentService,
+    private readonly gateways: PaymentGatewayFactory,
   ) {
     super();
   }
@@ -138,12 +142,19 @@ export class GuardianPanelController extends BaseController {
 
     const chrome = await this.chrome(guardianId);
     const playerIds = (chrome.children as any[]).map((c) => c.id);
-    const finance = await this.ledger.guardianLedger(playerIds);
+    const [finance, payable] = await Promise.all([
+      this.ledger.guardianLedger(playerIds),
+      this.payments.payableForGuardian(guardianId),
+    ]);
 
     return this.render(req, res, 'guardian/financial', {
       ...chrome,
       title: 'دفترچه مالی',
       finance,
+      // پرداخت آنلاین — one button per open invoice.
+      payable,
+      gateway_test_mode: this.gateways.current().isTestMode,
+      csrf_token: this.generateCsrf(req),
     });
   }
 

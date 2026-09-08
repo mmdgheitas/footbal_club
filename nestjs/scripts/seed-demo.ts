@@ -279,6 +279,10 @@ async function main(): Promise<void> {
     paymentMethod: 'cash',
     description,
     referenceNumber: `REF-${Math.floor(Math.random() * 900000 + 100000)}`,
+    // Unpaid invoices get a due date so the online-payment buttons and the
+    // overdue styling have something to show.
+    dueDate: status === 'completed' ? null : daysAhead(12),
+    createdBy: accountant.id,
   });
 
   await payments.save(payments.create([
