@@ -256,18 +256,30 @@ export class ClassroomController extends BaseController {
     const player = await this.classrooms.findPlayer(playerId);
 
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'بازیکن یافت نشد.',
+        redirect: `/classroom/view/${classroomId}`,
+        json: { error: 'Player not found' },
+        status: 404,
+      });
     }
 
     const ok = await this.classrooms.updatePlayer(playerId, {
       classroom_id: classroomId,
     });
     if (!ok) {
-      return this.json(res, { error: 'خطا در افزودن بازیکن به کلاس' }, 500);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'خطا در افزودن بازیکن به کلاس',
+        redirect: `/classroom/view/${classroomId}`,
+        json: { error: 'خطا در افزودن بازیکن به کلاس' },
+        status: 500,
+      });
     }
 
-    return this.json(res, {
-      success: true,
+    return this.respond(req, res, {
+      ok: true,
       message: 'بازیکن با موفقیت به کلاس اضافه شد',
       redirect: `${APP_URL}/classroom/view/${classroomId}`,
     });
@@ -302,17 +314,29 @@ export class ClassroomController extends BaseController {
     const player = await this.classrooms.findPlayer(playerId);
 
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'بازیکن یافت نشد.',
+        redirect: `/classroom/view/${classroomId}`,
+        json: { error: 'Player not found' },
+        status: 404,
+      });
     }
 
     // Set classroom_id to null
     const ok = await this.classrooms.updatePlayer(playerId, { classroom_id: null });
     if (!ok) {
-      return this.json(res, { error: 'خطا در حذف بازیکن از کلاس' }, 500);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'خطا در حذف بازیکن از کلاس',
+        redirect: `/classroom/view/${classroomId}`,
+        json: { error: 'خطا در حذف بازیکن از کلاس' },
+        status: 500,
+      });
     }
 
-    return this.json(res, {
-      success: true,
+    return this.respond(req, res, {
+      ok: true,
       message: 'بازیکن با موفقیت از کلاس حذف شد',
       redirect: `${APP_URL}/classroom/view/${classroomId}`,
     });
@@ -344,11 +368,17 @@ export class ClassroomController extends BaseController {
     }
 
     if (!(await this.classrooms.deleteClassroom(classroomId))) {
-      return this.json(res, { error: 'Failed to delete classroom' }, 500);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'حذف کلاس ناموفق بود.',
+        redirect: '/classrooms',
+        json: { error: 'Failed to delete classroom' },
+        status: 500,
+      });
     }
 
-    return this.json(res, {
-      success: true,
+    return this.respond(req, res, {
+      ok: true,
       message: 'کلاس حذف شد',
       redirect: `${APP_URL}/classrooms`,
     });

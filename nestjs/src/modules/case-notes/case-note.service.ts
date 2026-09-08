@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /** PHP date('Y-m-d H:i:s') in local time. */
 function nowDatetime(): string {
@@ -67,7 +68,7 @@ export class CaseNoteService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** Model::update() on fc_case_notes. */
@@ -78,7 +79,7 @@ export class CaseNoteService {
       `UPDATE fc_case_notes SET ${setClause} WHERE id = ?`,
       [...cols.map((c) => data[c]), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** CaseNote::updateVisibility() */
@@ -87,7 +88,7 @@ export class CaseNoteService {
       'UPDATE fc_case_notes SET is_visible_to_player = ? WHERE id = ?',
       [visible ? 1 : 0, id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** CaseNote::deleteCaseNote() - soft delete. */
@@ -96,7 +97,7 @@ export class CaseNoteService {
       'UPDATE fc_case_notes SET deleted_at = ? WHERE id = ?',
       [nowDatetime(), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   async getActivePlayers(): Promise<any[]> {

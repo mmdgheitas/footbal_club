@@ -92,6 +92,61 @@ export abstract class BaseController {
       .send(JSON.stringify(data));
   }
 
+  /**
+   * Does this caller want a page, or a JSON envelope?
+   *
+   * The legacy screens are a mix: some forms are intercepted by `fetch()` and
+   * expect `{ success, message, redirect }`, others are plain HTML forms that
+   * the browser submits by navigation — and a plain form that receives JSON
+   * simply dumps `{"success":true,…}` on screen, which is exactly how
+   * «حذف بازیکن از کلاس» looked broken.
+   *
+   * A real browser navigation always sends `Accept: text/html…`; `fetch()`
+   * sends `*​/*` (or an explicit JSON accept) and the existing callers add
+   * `X-Requested-With` or `X-CSRF-Token`. Anything that is not clearly a page
+   * navigation keeps getting JSON, so no existing script changes behaviour.
+   */
+  protected expectsHtml(req: Request): boolean {
+    const headers = req.headers ?? {};
+    if (String(headers['x-requested-with'] ?? '').toLowerCase() === 'xmlhttprequest') return false;
+    if (headers['x-csrf-token']) return false;
+
+    const accept = String(headers.accept ?? '');
+    if (accept.includes('application/json')) return false;
+    return accept.includes('text/html');
+  }
+
+  /**
+   * Answer a mutation in the form the caller can actually use: JSON for
+   * `fetch()`, flash + redirect for a plain form submission.
+   */
+  protected respond(
+    req: Request,
+    res: Response,
+    options: {
+      ok: boolean;
+      /** Shown as a flash message on the HTML path. */
+      message: string;
+      /** Where a browser navigation continues. */
+      redirect: string;
+      /** Extra keys merged into the JSON envelope (kept for existing scripts). */
+      json?: Record<string, unknown>;
+      /** HTTP status for the JSON path (the HTML path always redirects). */
+      status?: number;
+    },
+  ): void {
+    if (this.expectsHtml(req)) {
+      this.flash(req, options.ok ? 'success' : 'error', options.message);
+      this.redirect(res, options.redirect);
+      return;
+    }
+
+    const payload = options.ok
+      ? { success: true, message: options.message, redirect: options.redirect }
+      : { error: options.message };
+    this.json(res, { ...payload, ...(options.json ?? {}) }, options.status ?? (options.ok ? 200 : 400));
+  }
+
   /** Controller::redirect() */
   protected redirect(res: Response, url: string): void {
     const base = process.env.APP_BASE_PATH ?? '';

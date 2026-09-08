@@ -51,7 +51,7 @@ const total = locals.total || 0;
                 <td class="ltr text-muted"><%- toPersian(d.guardian_phone || '—') %></td>
                 <td><%- toPersian(d.items) %></td>
                 <td class="text-danger"><strong><%- __num(d.total_debt) %></strong></td>
-                <td><a class="btn btn-secondary" href="<%- APP_URL %>/players/<%- d.player_id %>">پرونده</a></td>
+                <td><a class="btn btn-secondary" href="<%- APP_URL %>/player/view/<%- d.player_id %>">پرونده</a></td>
             </tr>
         <% } %>
         </tbody>

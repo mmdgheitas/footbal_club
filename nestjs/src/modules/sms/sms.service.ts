@@ -9,6 +9,7 @@ import {
   SMS_PROVIDER,
   ITEMS_PER_PAGE,
 } from '../../config/constants';
+import { insertedId } from '../../database/sql.helpers';
 import {
   MockSmsProvider,
   NexmoSmsProvider,
@@ -89,7 +90,7 @@ export class SmsService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** SmsController::logs() filtered, paginated query. */

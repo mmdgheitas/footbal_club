@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /**
  * Port of the Attendance/Player/Classroom reads used by the attendance screens.
@@ -50,7 +51,7 @@ export class AttendanceService {
         'UPDATE fc_attendance SET status = ?, recorded_by = ? WHERE id = ?',
         [status, userId, existing.id],
       );
-      return (affected?.affectedRows ?? 0) > 0;
+      return wasWritten(affected);
     }
 
     const result = await this.db.query(
@@ -58,7 +59,7 @@ export class AttendanceService {
        VALUES (?, ?, ?, ?, ?)`,
       [uuidv4(), playerId, date, status, userId],
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** Attendance::getAttendancePercentage() */

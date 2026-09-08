@@ -58,6 +58,10 @@ export function buildDataSourceOptions(): DataSourceOptions {
     // machine's timezone for JS Date values while the app formatted strings in
     // another one, and every stored instant would drift by the offset.
     timezone: timezoneOffsetString(),
+    // Report rows that MATCHED the WHERE clause rather than rows whose values
+    // changed. Without it, updating a row to the value it already holds looks
+    // like "0 rows affected", i.e. a failure, to every caller.
+    flags: ['+FOUND_ROWS'],
     entities: ALL_ENTITIES,
     // Schema is owned by database/schema.sql; never let the ORM mutate it.
     synchronize: false,

@@ -320,15 +320,31 @@ export class PlayerController extends BaseController {
     const player = await this.players.find(playerId);
 
     if (player === null) {
-      this.json(res, { error: 'Player not found' }, 404);
+      this.respond(req, res, {
+        ok: false,
+        message: 'بازیکن یافت نشد.',
+        redirect: '/players',
+        json: { error: 'Player not found' },
+        status: 404,
+      });
       return;
     }
 
     if (!(await this.players.softDelete(playerId))) {
-      this.json(res, { error: 'Failed to delete player' }, 500);
+      this.respond(req, res, {
+        ok: false,
+        message: 'حذف بازیکن ناموفق بود.',
+        redirect: '/players',
+        json: { error: 'Failed to delete player' },
+        status: 500,
+      });
       return;
     }
 
-    this.json(res, { success: true });
+    this.respond(req, res, {
+      ok: true,
+      message: 'بازیکن حذف شد.',
+      redirect: '/players',
+    });
   }
 }

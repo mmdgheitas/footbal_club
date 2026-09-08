@@ -582,3 +582,48 @@ Rule: never format a SQL value with `toISOString()` and never parse one with a
 bare `new Date(value)` — `test/timezone.spec.ts` fails the build if a source
 file does. That mistake is what made every OTP code arrive already expired on a
 UTC+03:30 server.
+
+## 12. Two contracts every module must keep
+
+Both were found while fixing «افزودن/حذف بازیکن» in the classroom screen, and
+both are now enforced by tests rather than by discipline.
+
+### 12.1 Write results are driver-shaped — never read them directly
+
+`DataSource.query()` answers differently per driver:
+
+| statement | mysql2 | sqlite |
+| --- | --- | --- |
+| INSERT | `OkPacket { insertId, affectedRows }` | a bare number (last row id) |
+| UPDATE / DELETE | `OkPacket { affectedRows, changedRows }` | `undefined` |
+
+The ported services all did `result?.insertId ?? false` and
+`(result?.affectedRows ?? 0) > 0`, so on SQLite **every create and every update
+reported failure**, and on MySQL an update that wrote the value a row already
+held did too (that is why adding a player who was already in the class returned
+500). Use the helpers in `src/database/sql.helpers.ts`:
+
+```ts
+insertedId(result)   // number | null   — handles both shapes
+affectedRows(result) // number | null   — null when the driver stays silent
+wasWritten(result)   // boolean         — false only on an explicit 0 rows
+```
+
+MySQL is additionally connected with `flags: ['+FOUND_ROWS']`, so "matched" is
+counted instead of "changed". `test/db-write-results.spec.ts` fails the build if
+any file outside `sql.helpers.ts` touches `.insertId` / `.affectedRows`.
+
+### 12.2 A form must get an answer its sender can use
+
+Some screens submit with `fetch()` and expect `{ success, message, redirect }`;
+others are plain HTML forms the browser submits by navigation. A plain form that
+receives JSON leaves the user staring at `{"success":true,…}` on a white page —
+that was «حذف بازیکن از کلاس», «حذف کلاس» and «حذف بازیکن».
+
+`BaseController.respond(req, res, { ok, message, redirect, json?, status? })`
+answers both: JSON for fetch/XHR (detected via `X-Requested-With`,
+`X-CSRF-Token` or an `Accept` that is not `text/html`), flash + redirect for a
+browser navigation. `test/form-endpoint-contract.spec.ts` walks every `<form
+method="POST">` in every view, resolves the route and fails when a
+non-intercepted form targets a handler that only answers JSON. The same spec
+also fails on a dead `href` — a link to a GET route that does not exist.

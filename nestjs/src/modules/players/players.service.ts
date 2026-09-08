@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { ITEMS_PER_PAGE } from '../../config/constants';
 import { PlayerHelper } from '../../common/helpers/player.helper';
+import { insertedId } from '../../database/sql.helpers';
 
 export interface Paginated<T> {
   data: T[];
@@ -148,7 +149,7 @@ export class PlayersService {
       `INSERT INTO fc_players (${cols.join(', ')}) VALUES (${placeholders})`,
       cols.map((c) => payload[c]),
     );
-    return Number(result?.insertId ?? 0);
+    return insertedId(result) ?? 0;
   }
 
   async update(id: number, data: Record<string, unknown>): Promise<boolean> {

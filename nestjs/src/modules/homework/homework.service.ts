@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /** PHP date('Y-m-d H:i:s') in local time. */
 function nowDatetime(): string {
@@ -103,7 +104,7 @@ export class HomeworkService {
        WHERE id = ?`,
       [status, feedback, rating, coachId, nowDatetime(), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** HomeworkVideo::createVideo() */
@@ -115,7 +116,7 @@ export class HomeworkService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   async findPlayer(playerId: number): Promise<any | null> {

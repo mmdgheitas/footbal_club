@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /** PHP date('Y-m-d H:i:s') in local time. */
 function nowDatetime(): string {
@@ -118,7 +119,7 @@ export class DocumentService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** DocumentSubmission::approve() */
@@ -128,7 +129,7 @@ export class DocumentService {
        SET status = 'approved', reviewed_by = ?, reviewed_at = ? WHERE id = ?`,
       [reviewerId, nowDatetime(), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** DocumentSubmission::reject() */
@@ -139,7 +140,7 @@ export class DocumentService {
        WHERE id = ?`,
       [reason, reviewerId, nowDatetime(), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** User::approveDocuments() - also activates the account. */
@@ -150,7 +151,7 @@ export class DocumentService {
        WHERE id = ?`,
       [adminId, nowDatetime(), userId],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** User::rejectDocuments() */
@@ -165,7 +166,7 @@ export class DocumentService {
        WHERE id = ?`,
       [reason, adminId, nowDatetime(), userId],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** Model::update() on fc_users. */
@@ -176,6 +177,6 @@ export class DocumentService {
       `UPDATE fc_users SET ${setClause} WHERE id = ?`,
       [...cols.map((c) => data[c]), userId],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 }

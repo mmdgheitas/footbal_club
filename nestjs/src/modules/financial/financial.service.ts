@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { ITEMS_PER_PAGE } from '../../config/constants';
+import { insertedId } from '../../database/sql.helpers';
 
 /**
  * Port of app/Models/Payment.php::{recordPayment,logTransaction}() and the
@@ -64,7 +65,7 @@ export class FinancialService {
          VALUES (${cols.map(() => '?').join(', ')})`,
         cols.map((c) => row[c]),
       );
-      const paymentId = result?.insertId;
+      const paymentId = insertedId(result);
 
       if (!paymentId) {
         await queryRunner.rollbackTransaction();

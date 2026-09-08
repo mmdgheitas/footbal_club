@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId } from '../../database/sql.helpers';
 
 /**
  * Port of app/Models/Medical.php and the Injury/Player reads the medical
@@ -44,7 +45,7 @@ export class MedicalService {
       cols.map((c) => withUuid[c]),
     );
     // mysql2 returns an OkPacket with insertId.
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** Injury::getByPlayerId() */

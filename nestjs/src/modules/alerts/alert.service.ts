@@ -3,6 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { AGE_CATEGORIES } from '../../config/constants';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /** PHP date('Y-m-d H:i:s') in the server's local timezone. */
 function nowDatetime(): string {
@@ -87,7 +88,7 @@ export class AlertService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** Alert::softDelete() */
@@ -96,7 +97,7 @@ export class AlertService {
       'UPDATE fc_alerts SET deleted_at = ? WHERE id = ?',
       [nowDatetime(), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   async getAllClassrooms(): Promise<any[]> {

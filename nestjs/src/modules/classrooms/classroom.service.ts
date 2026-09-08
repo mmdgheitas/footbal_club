@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /**
  * Port of app/Models/Classroom.php and the Model base methods the classroom
@@ -77,7 +78,7 @@ export class ClassroomService {
        VALUES (${cols.map(() => '?').join(', ')})`,
       cols.map((c) => row[c]),
     );
-    return result?.insertId ?? false;
+    return insertedId(result) ?? false;
   }
 
   /** Model::update() */
@@ -91,13 +92,13 @@ export class ClassroomService {
       `UPDATE fc_classrooms SET ${setClause} WHERE id = ?`,
       [...cols.map((c) => data[c]), id],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   /** Model::delete() - hard delete. */
   async deleteClassroom(id: number): Promise<boolean> {
     const affected = await this.db.query('DELETE FROM fc_classrooms WHERE id = ?', [id]);
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 
   async findPlayer(playerId: number): Promise<any | null> {
@@ -116,6 +117,6 @@ export class ClassroomService {
       `UPDATE fc_players SET ${setClause} WHERE id = ?`,
       [...cols.map((c) => data[c]), playerId],
     );
-    return (affected?.affectedRows ?? 0) > 0;
+    return wasWritten(affected);
   }
 }
