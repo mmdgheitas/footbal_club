@@ -174,7 +174,7 @@ tbody tr.reveal-row.is-visible {
         left: 0;
         right: 0;
         z-index: 1000;
-        background: rgba(10, 22, 40, 0.95);
+        background: rgba(11, 11, 13, 0.95);
         backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
         border-top: 2px solid var(--grass);
@@ -214,7 +214,7 @@ tbody tr.reveal-row.is-visible {
 
     .bottom-nav-item.active {
         color: var(--grass-bright);
-        background: rgba(0, 200, 83, 0.15);
+        background: rgba(227, 6, 19, 0.10);
     }
 
     .bottom-nav-item.active .nav-emoji {
@@ -333,7 +333,7 @@ tbody tr.reveal-row.is-visible {
     }
 
     .mobile-menu a:active {
-        background: rgba(0, 200, 83, 0.2);
+        background: rgba(227, 6, 19, 0.12);
     }
 
     /* Tables → cards */
@@ -448,8 +448,8 @@ tbody tr.reveal-row.is-visible {
 }
 
 .bar-fill-revenue {
-    background: linear-gradient(90deg, #ffeb3b, #ff6d00) !important;
-    box-shadow: 0 0 12px rgba(255, 235, 59, 0.35);
+    background: linear-gradient(90deg, #F59E0B, #FF1E2D) !important;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
 }
 
 /* Auth page animations */

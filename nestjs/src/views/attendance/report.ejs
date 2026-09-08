@@ -22,12 +22,12 @@ const dt = (v) => {
 
     <div class="stats-overview" style="margin-bottom: 30px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
         <div class="stat-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #4caf50;">
-            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px;">درصد حضور</h4>
-            <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: #333;"><%- locals.percentage %>%</p>
+            <h4 style="margin: 0 0 10px 0; color: var(--text-secondary); font-size: 14px;">درصد حضور</h4>
+            <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: var(--text-primary);"><%- locals.percentage %>%</p>
         </div>
         <div class="stat-card" style="background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #2196f3;">
-            <h4 style="margin: 0 0 10px 0; color: #666; font-size: 14px;">تعداد جلسات</h4>
-            <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: #333;"><%- __count(locals.attendance) %></p>
+            <h4 style="margin: 0 0 10px 0; color: var(--text-secondary); font-size: 14px;">تعداد جلسات</h4>
+            <p class="stat-value" style="font-size: 32px; font-weight: bold; margin: 0; color: var(--text-primary);"><%- __count(locals.attendance) %></p>
         </div>
     </div>
 

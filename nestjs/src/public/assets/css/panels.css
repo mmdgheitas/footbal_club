@@ -8,7 +8,7 @@
  *   • کارت بازی به سبک FIFA (فقط HTML/CSS)
  *   • پنل ولی، پنل مربی، اعلان‌ها، نشان‌ها، گزارش‌ها
  *
- * Theme: قرمز #C8102E + مشکی + سفید, big energetic icons.
+ * Theme: قرمز var(--brand-primary) + مشکی + سفید, big energetic icons.
  */
 
 /* ==========================================================================
@@ -56,9 +56,9 @@
     font-size: 0.85rem;
 }
 
-.tile.is-danger { border-color: rgba(255, 59, 87, 0.55); }
+.tile.is-danger { border-color: rgba(255, 30, 45, 0.55); }
 .tile.is-danger .tile-value { color: var(--club-red-bright); }
-.tile.is-gold { border-color: rgba(255, 209, 102, 0.5); }
+.tile.is-gold { border-color: rgba(245, 158, 11, 0.5); }
 .tile.is-gold .tile-value { color: var(--accent); }
 
 .panel-card {
@@ -96,9 +96,9 @@
     color: var(--text);
 }
 
-.chip.ok      { background: rgba(46, 204, 113, 0.16); border-color: rgba(46, 204, 113, 0.5); color: #7ce7a2; }
-.chip.warn    { background: rgba(255, 209, 102, 0.16); border-color: rgba(255, 209, 102, 0.5); color: var(--accent); }
-.chip.danger  { background: rgba(200, 16, 46, 0.22); border-color: rgba(255, 59, 87, 0.6); color: #ff8195; }
+.chip.ok      { background: rgba(34, 197, 94, 0.16); border-color: rgba(34, 197, 94, 0.5); color: #4ADE80; }
+.chip.warn    { background: rgba(245, 158, 11, 0.16); border-color: rgba(245, 158, 11, 0.5); color: var(--accent); }
+.chip.danger  { background: rgba(227, 6, 19, 0.22); border-color: rgba(255, 30, 45, 0.6); color: #FF6B75; }
 .chip.neutral { color: var(--text-muted); }
 
 .empty-state {
@@ -138,15 +138,15 @@
     background: linear-gradient(90deg, var(--club-red), var(--club-red-bright));
 }
 
-.bar-fill.gold { background: linear-gradient(90deg, #b8860b, var(--accent)); }
-.bar-fill.green { background: linear-gradient(90deg, #128c4b, #2ecc71); }
+.bar-fill.gold { background: linear-gradient(90deg, #B45309, var(--warning)); }
+.bar-fill.green { background: linear-gradient(90deg, #15803D, var(--success)); }
 
 /* ==========================================================================
    2. اپ بازیکن — نوار پایین ۴ دکمه‌ای
    ========================================================================== */
 
 body.player-app {
-    background: radial-gradient(ellipse 90% 40% at 50% 0%, rgba(200, 16, 46, 0.28), transparent 70%),
+    background: radial-gradient(ellipse 90% 40% at 50% 0%, rgba(227, 6, 19, 0.28), transparent 70%),
                 var(--pitch-dark);
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
 }
@@ -160,7 +160,7 @@ body.player-app {
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px calc(14px + 6px);
-    background: linear-gradient(180deg, rgba(200, 16, 46, 0.95), rgba(11, 12, 16, 0.96));
+    background: linear-gradient(180deg, rgba(227, 6, 19, 0.95), rgba(11, 12, 16, 0.96));
     border-bottom: 2px solid var(--club-red);
     backdrop-filter: blur(10px);
 }
@@ -224,8 +224,8 @@ body.player-app {
     height: 20px;
     padding: 0 5px;
     border-radius: 999px;
-    background: var(--accent);
-    color: #241a00;
+    background: var(--warning);
+    color: #1A1206;
     font-size: 0.7rem;
     font-weight: 800;
     display: grid;
@@ -243,7 +243,7 @@ body.player-app {
     grid-template-columns: repeat(4, 1fr);
     gap: 6px;
     padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
-    background: linear-gradient(0deg, #000 0%, rgba(15, 16, 21, 0.97) 100%);
+    background: linear-gradient(0deg, var(--bg-main) 0%, rgba(17, 17, 20, 0.97) 100%);
     border-top: 3px solid var(--club-red);
     box-shadow: 0 -12px 30px rgba(0, 0, 0, 0.6);
 }
@@ -275,7 +275,7 @@ body.player-app {
 .app-tabbar a.active {
     color: var(--white);
     background: linear-gradient(160deg, var(--club-red), var(--club-red-deep));
-    box-shadow: 0 8px 22px rgba(200, 16, 46, 0.45);
+    box-shadow: 0 8px 22px rgba(227, 6, 19, 0.45);
 }
 
 .app-tabbar a.active .tab-emoji {
@@ -295,7 +295,7 @@ body.player-app {
     border-radius: 22px;
     color: #1a1206;
     background:
-        radial-gradient(circle at 50% 0%, #ffe9a8 0%, #f5c451 42%, #d99b28 72%, #a86f17 100%);
+        radial-gradient(circle at 50% 0%, #FDE9B5 0%, #F5C451 42%, #D99B28 72%, #8A5A12 100%);
     box-shadow: 0 18px 44px rgba(0, 0, 0, 0.6);
     border: 2px solid rgba(255, 255, 255, 0.5);
     position: relative;
@@ -313,7 +313,7 @@ body.player-app {
 .fifa-card.red-edition {
     color: #fff;
     background:
-        radial-gradient(circle at 50% 0%, #ff5f77 0%, var(--club-red) 45%, #7d0a1c 100%);
+        radial-gradient(circle at 50% 0%, #FF5F6E 0%, var(--brand-primary) 45%, var(--brand-primary-dark) 100%);
     border-color: rgba(255, 255, 255, 0.35);
 }
 
@@ -402,7 +402,7 @@ body.player-app {
     background: #ffffff;
     color: #111;
     border-radius: 0.32cm;
-    border: 0.06cm solid var(--club-red, #C8102E);
+    border: 0.06cm solid var(--club-red, var(--brand-primary));
     display: flex;
     flex-direction: column;
     font-family: 'Vazirmatn', sans-serif;
@@ -415,7 +415,7 @@ body.player-app {
     display: flex;
     align-items: center;
     gap: 0.2cm;
-    border-bottom: 0.05cm solid #C8102E;
+    border-bottom: 0.05cm solid var(--brand-primary);
     padding-bottom: 0.18cm;
 }
 
@@ -423,7 +423,7 @@ body.player-app {
     width: 1.15cm;
     height: 1.15cm;
     border-radius: 50%;
-    background: #C8102E;
+    background: var(--brand-primary);
     color: #fff;
     display: grid;
     place-items: center;
@@ -434,7 +434,7 @@ body.player-app {
 
 .membership-card .mc-logo img { width: 100%; height: 100%; object-fit: contain; }
 
-.membership-card .mc-title { font-size: 0.32cm; font-weight: 800; color: #C8102E; }
+.membership-card .mc-title { font-size: 0.32cm; font-weight: 800; color: var(--brand-primary); }
 .membership-card .mc-subtitle { font-size: 0.2cm; color: #555; }
 
 .membership-card .mc-body {
@@ -447,7 +447,7 @@ body.player-app {
 .membership-card .mc-photo {
     width: 3cm;      /* عکس ۳×۴ */
     height: 4cm;
-    border: 0.04cm solid #C8102E;
+    border: 0.04cm solid var(--brand-primary);
     border-radius: 0.12cm;
     background: #f2f2f4;
     display: grid;
@@ -477,7 +477,7 @@ body.player-app {
 
 .membership-card .mc-number {
     font-weight: 800;
-    color: #C8102E;
+    color: var(--brand-primary);
     letter-spacing: 0.02cm;
     direction: ltr;
 }
@@ -488,7 +488,7 @@ body.player-app {
     bottom: 0;
     width: 100%;
     height: 0.18cm;
-    background: linear-gradient(90deg, #C8102E, #111);
+    background: linear-gradient(90deg, var(--brand-primary), #111);
 }
 
 .print-toolbar {
@@ -536,7 +536,7 @@ body.player-app {
     gap: 12px;
     padding: 14px 16px;
     margin-bottom: 18px;
-    background: linear-gradient(120deg, rgba(200, 16, 46, 0.9), rgba(11, 12, 16, 0.9));
+    background: linear-gradient(120deg, rgba(227, 6, 19, 0.9), rgba(11, 12, 16, 0.9));
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
 }
@@ -606,7 +606,7 @@ body.player-app {
     width: 52px;
     height: 52px;
     border-radius: 16px;
-    background: linear-gradient(160deg, var(--club-red), #000);
+    background: linear-gradient(160deg, var(--brand-primary), var(--bg-main));
     display: grid;
     place-items: center;
     font-size: 1.6rem;
@@ -645,7 +645,7 @@ body.player-app {
 
 .notif.unread {
     border-inline-start-color: var(--club-red);
-    background: rgba(200, 16, 46, 0.1);
+    background: rgba(227, 6, 19, 0.1);
 }
 
 .notif .notif-icon { font-size: 1.8rem; line-height: 1; }
@@ -663,8 +663,8 @@ body.player-app {
     text-align: center;
     padding: 14px 8px;
     border-radius: 16px;
-    background: radial-gradient(circle at 50% 0%, rgba(255, 209, 102, 0.22), rgba(255, 255, 255, 0.03));
-    border: 1px solid rgba(255, 209, 102, 0.4);
+    background: radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.22), rgba(255, 255, 255, 0.03));
+    border: 1px solid rgba(245, 158, 11, 0.4);
 }
 
 .badge-item .em { font-size: 2.4rem; display: block; }
@@ -699,8 +699,8 @@ body.player-app {
 }
 
 .login-hint {
-    background: rgba(255, 209, 102, 0.12);
-    border: 1px dashed rgba(255, 209, 102, 0.55);
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px dashed rgba(245, 158, 11, 0.55);
     color: var(--accent);
     border-radius: 12px;
     padding: 10px 12px;
