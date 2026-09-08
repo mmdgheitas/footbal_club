@@ -114,7 +114,7 @@ document.getElementById('recordForm')?.addEventListener('submit', function(e) {
     const form = this;
     const btn = form.querySelector('[type="submit"]');
     btn.classList.add('loading');
-    fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+    fetch(form.action, { method: 'POST', body: new URLSearchParams(new FormData(form)), headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(r => r.json())
         .then(data => {
             if (data.success) {

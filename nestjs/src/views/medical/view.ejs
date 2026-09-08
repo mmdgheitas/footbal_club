@@ -115,7 +115,9 @@ const ucfirst = (s) => { const t = String(s); return t.charAt(0).toUpperCase() +
 document.getElementById('medicalForm')?.addEventListener('submit', async function(e) {
     e.preventDefault();
     const form = e.target;
-    const formData = new FormData(form);
+    // Sent as application/x-www-form-urlencoded: multipart bodies need a
+    // multipart parser on the route, and this form carries no files.
+    const formData = new URLSearchParams(new FormData(form));
     const headers = { 'X-Requested-With': 'XMLHttpRequest' };
     if (window.defaultCsrfToken) headers['X-CSRF-Token'] = window.defaultCsrfToken;
     try {

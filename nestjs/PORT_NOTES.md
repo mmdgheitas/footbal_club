@@ -664,3 +664,40 @@ last three are covered by `test/classroom-access.spec.ts`.
    definition, and previously fell into `pending`, disappearing from rosters,
    cards and this very list. `/player/update/:id` deliberately does *not* touch
    `registration_status`; approving stays an explicit action.
+
+## 14. `multipart/form-data` — the bodies nothing was reading
+
+Express (and so NestJS) installs parsers for `application/json` and
+`application/x-www-form-urlencoded`. **Nothing parsed `multipart/form-data`**,
+which is exactly what the browser sends for
+
+```js
+fetch(form.action, { method: 'POST', body: new FormData(form) })
+```
+
+Ten screens did that: classroom «افزودن بازیکن», classroom create/edit, club
+settings, payment record, SMS send, medical update, document approve/reject,
+achievements, case notes and homework review. On all of them `req.body` was
+empty, so:
+
+* `_csrf_token` was missing → **«Invalid CSRF token» (403)** — the "super admin
+  has no access" report;
+* with the CSRF check removed, `player_id` was missing too → **«Player not
+  found»** — the second error seen while debugging.
+
+Fixed on both sides:
+
+* `src/common/http/multipart.middleware.ts` parses multipart **fields** for
+  every POST, and `AppModule.configure()` excludes `FILE_UPLOAD_ROUTES` — the
+  four routes that install their own `FileInterceptor`/`AnyFilesInterceptor`,
+  because parsing the stream twice would swallow the upload. A file posted to
+  any other route gets a clean 400 instead of a silent empty body.
+* the ten field-only screens now send
+  `new URLSearchParams(new FormData(form))`, i.e. urlencoded, which needs no
+  multipart parsing at all. The three genuine upload screens keep `FormData`.
+
+`test/multipart-forms.spec.ts` pins all of it: the middleware fills `req.body`,
+json/urlencoded keep working, a stray file is refused, the exclusion list equals
+the set of routes with a file interceptor (checked in both directions), the
+middleware is wired into AppModule, and no view posts `FormData` without a file
+input.

@@ -132,7 +132,7 @@ document.getElementById('addPlayerForm')?.addEventListener('submit', async funct
     try {
         const response = await fetch(form.action, {
             method: 'POST',
-            body: new FormData(form),
+            body: new URLSearchParams(new FormData(form)),
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
 

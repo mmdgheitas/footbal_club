@@ -79,7 +79,7 @@ document.getElementById('smsForm')?.addEventListener('submit', function(e) {
     const headers = { 'X-Requested-With': 'XMLHttpRequest' };
     if (window.defaultCsrfToken) headers['X-CSRF-Token'] = window.defaultCsrfToken;
 
-    fetch(form.action, { method: 'POST', body: new FormData(form), headers })
+    fetch(form.action, { method: 'POST', body: new URLSearchParams(new FormData(form)), headers })
         .then(r => r.json())
         .then(data => {
             if (data.success) {

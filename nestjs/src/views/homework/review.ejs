@@ -138,7 +138,9 @@ document.getElementById('reviewForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
     var form = e.target;
-    var formData = new FormData(form);
+    // Sent as application/x-www-form-urlencoded: multipart bodies need a
+    // multipart parser on the route, and this form carries no files.
+    var formData = new URLSearchParams(new FormData(form));
 
     var submitBtn = form.querySelector('button[type="submit"]');
     var originalText = submitBtn.innerHTML;

@@ -9,6 +9,7 @@ import { getSessionUserRole } from './common/session/session.types';
 import { RbacService } from './common/rbac/rbac.service';
 import { applyAppTimezone } from './common/helpers/time.helper';
 import { viewBasePath } from './common/views/base-path';
+import { multipartFields } from './common/http/multipart.middleware';
 
 /**
  * Shared application configuration, used by both bootstrap() and the e2e tests
@@ -38,6 +39,12 @@ export function configureApp(app: NestExpressApplication): void {
 
   // --- Static assets -------------------------------------------------------
   app.useStaticAssets(path.join(__dirname, 'public'));
+
+  // --- Request bodies ------------------------------------------------------
+  // json + urlencoded come with Nest; multipart/form-data does not, and every
+  // screen that posts `new FormData(form)` sends exactly that. Without this the
+  // body — CSRF token included — never arrives. See common/http/multipart.middleware.ts.
+  app.use(multipartFields());
 
   // --- Sessions (replaces PHP native sessions) -----------------------------
   const secure = (process.env.SESSION_SECURE ?? 'false') === 'true';
