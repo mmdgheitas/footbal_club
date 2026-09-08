@@ -7,6 +7,7 @@ import { SecurityHelper } from '../../common/helpers/security.helper';
 import { JalaliHelper } from '../../common/helpers/jalali.helper';
 import { PLAYER_POSITIONS } from '../../config/constants';
 import { PlayersService } from './players.service';
+import { appPath } from '../../common/views/base-path';
 
 /** Port of app/Controllers/PlayerController.php. */
 @Controller()
@@ -156,6 +157,13 @@ export class PlayerController extends BaseController {
       email: SecurityHelper.sanitizeString(String(this.post(req, 'email') ?? '')),
       notes: SecurityHelper.sanitizeString(String(this.post(req, 'notes') ?? '')),
       medical_clearance: medicalClearance ? 1 : 0,
+      // A player entered here comes from the office, not from self-service
+      // registration: they are active and approved straight away. Without this
+      // the column default ('pending') applied, and the new player silently
+      // disappeared from coach rosters, membership cards and the classroom
+      // «available players» list until someone approved them again.
+      status: 1,
+      registration_status: 'approved',
     };
 
     const errors = this.validatePlayerData(data);
@@ -178,7 +186,7 @@ export class PlayerController extends BaseController {
     this.json(res, {
       success: true,
       player_id: playerId,
-      redirect: `${process.env.APP_URL ?? ''}/player/view/${playerId}`,
+      redirect: appPath(`/player/view/${playerId}`),
     });
   }
 
@@ -260,6 +268,9 @@ export class PlayerController extends BaseController {
       email: SecurityHelper.sanitizeString(String(this.post(req, 'email') ?? '')),
       notes: SecurityHelper.sanitizeString(String(this.post(req, 'notes') ?? '')),
       medical_clearance: medicalClearance ? 1 : 0,
+      // NOTE: registration_status is deliberately NOT set here. Editing a
+      // player must never approve a pending registration behind the admin's
+      // back — that is what /admin/registrations is for.
     };
 
     const errors = this.validatePlayerData(data);
@@ -282,7 +293,7 @@ export class PlayerController extends BaseController {
 
     this.json(res, {
       success: true,
-      redirect: `${process.env.APP_URL ?? ''}/player/view/${playerId}`,
+      redirect: appPath(`/player/view/${playerId}`),
     });
   }
 
@@ -312,7 +323,13 @@ export class PlayerController extends BaseController {
     @Res() res: Response,
   ): Promise<void> {
     if (!this.validateCsrf(req)) {
-      this.json(res, { error: 'Invalid CSRF token' }, 403);
+      this.respond(req, res, {
+        ok: false,
+        message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
+        redirect: '/players',
+        json: { error: 'Invalid CSRF token' },
+        status: 403,
+      });
       return;
     }
 

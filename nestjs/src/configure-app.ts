@@ -8,6 +8,7 @@ import { APP_DEBUG } from './config/constants';
 import { getSessionUserRole } from './common/session/session.types';
 import { RbacService } from './common/rbac/rbac.service';
 import { applyAppTimezone } from './common/helpers/time.helper';
+import { viewBasePath } from './common/views/base-path';
 
 /**
  * Shared application configuration, used by both bootstrap() and the e2e tests
@@ -26,7 +27,9 @@ export function configureApp(app: NestExpressApplication): void {
     app.setGlobalPrefix(basePath.replace(/^\/|\/$/g, ''));
   }
 
-  const appUrl = process.env.APP_URL ?? '';
+  // Relative, so every link works on whatever host/port/scheme the app is
+  // actually reached on — see common/views/base-path.ts.
+  const appUrl = viewBasePath();
   const assetVer = String(process.env.ASSET_VER ?? Date.now());
 
   // --- Views (EJS) ---------------------------------------------------------

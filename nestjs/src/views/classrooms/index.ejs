@@ -1,9 +1,13 @@
 <% locals.classrooms = locals.classrooms ?? [];
-const csrfToken = locals.csrf_token ?? ''; %>
+const csrfToken = locals.csrf_token ?? '';
+/** Only «مدیریت کلاس‌ها» may create or delete a classroom. */
+const canManage = locals.can_manage !== false; %>
 
 <div class="classrooms-section panel">
     <div class="section-header">
+        <% if (canManage) { %>
         <a href="<%- APP_URL %>/classroom/create" class="btn btn-primary">➕ کلاس جدید</a>
+        <% } %>
         <div style="color:var(--text-muted);font-size:0.9rem;">
             مدیریت کلاس‌ها و تیم‌های ورزشی باشگاه
         </div>
@@ -34,11 +38,13 @@ const csrfToken = locals.csrf_token ?? ''; %>
                         </td>
                         <td>
                             <a href="<%- APP_URL %>/classroom/view/<%- classroom['id'] %>" class="btn btn-secondary btn-sm">مدیریت لیست</a>
+                            <% if (canManage) { %>
                             <a href="<%- APP_URL %>/classroom/edit/<%- classroom['id'] %>" class="btn btn-secondary btn-sm">ویرایش</a>
                             <form method="POST" action="<%- APP_URL %>/classroom/delete/<%- classroom['id'] %>" style="display:inline;" data-confirm="آیا از حذف این کلاس مطمئن هستید؟ بازیکنان کلاس حذف نخواهند شد.">
                                 <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
                                 <button type="submit" class="btn btn-danger btn-sm">حذف</button>
                             </form>
+                            <% } %>
                         </td>
                     </tr>
                     <% } %>

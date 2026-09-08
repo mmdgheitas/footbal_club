@@ -2,20 +2,29 @@ import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { BaseController } from '../../common/views/base.controller';
 import { SecurityHelper } from '../../common/helpers/security.helper';
+import { RbacService } from '../../common/rbac/rbac.service';
 import { ClassroomService } from './classroom.service';
+import { viewBasePath } from '../../common/views/base-path';
 
-const APP_URL = process.env.APP_URL ?? '';
+/** Relative prefix; see common/views/base-path.ts. */
+const APP_URL = viewBasePath();
 
 /**
  * Port of app/Controllers/ClassroomController.php (9 routes).
  *
- * Two role gates, both inline in the legacy code rather than via RBAC
- * permissions, so they stay inline here:
+ * Access is decided by the RBAC matrix (common/rbac/rbac.service.ts) rather
+ * than by comparing role strings inline, which is how the legacy controller did
+ * it. The old `role === 'super_admin'` check meant a single mismatch between
+ * the stored role and that literal locked the club's own administrator out of
+ * roster management while every other screen kept working. `hasPermission()`
+ * short-circuits for super_admin, so that can no longer happen:
  *
- *  - checkAuth() override: every route is limited to super_admin, coach and
- *    secretary; anyone else is redirected to /403.
- *  - canManageClassrooms(): the mutating actions are super_admin only. GET
- *    actions redirect to /403, POST actions return JSON 403.
+ *   view    → manage_classrooms | view_classrooms | view_players
+ *             (super_admin, secretary, coach, accountant…)
+ *   manage  → manage_classrooms   (super_admin, and anything granted it later)
+ *
+ * The screens follow the same rule: a viewer who cannot manage never sees the
+ * add/remove controls, instead of discovering it from a 403 after clicking.
  */
 @Controller()
 export class ClassroomController extends BaseController {
@@ -23,15 +32,32 @@ export class ClassroomController extends BaseController {
     super();
   }
 
-  /** ClassroomController::checkAuth() */
+  /** May this user open the classroom screens at all? */
   private hasClassroomAccess(req: Request): boolean {
-    const role = this.getUserRole(req);
-    return role === 'super_admin' || role === 'coach' || role === 'secretary';
+    return RbacService.hasAnyPermission(
+      ['manage_classrooms', 'view_classrooms', 'view_players'],
+      this.getUserRole(req),
+    );
   }
 
-  /** ClassroomController::canManageClassrooms() */
+  /** May this user create/edit classrooms and move players in and out? */
   private canManageClassrooms(req: Request): boolean {
-    return this.getUserRole(req) === 'super_admin';
+    return RbacService.hasPermission('manage_classrooms', this.getUserRole(req));
+  }
+
+  /**
+   * Refusal for a mutating route: a browser lands on the 403 page (with the
+   * reason), a fetch caller still receives the JSON envelope it expects.
+   */
+  private denyManage(req: Request, res: Response): void {
+    const role = this.getUserRole(req) ?? 'unknown';
+    this.respond(req, res, {
+      ok: false,
+      message: `این عملیات نیاز به دسترسی «مدیریت کلاس‌ها» دارد (نقش فعلی شما: ${role}).`,
+      redirect: `/403?message=${encodeURIComponent('مدیریت کلاس‌ها فقط برای مدیر ارشد فعال است.')}`,
+      json: { error: 'Unauthorized' },
+      status: 403,
+    });
   }
 
   /** GET /classrooms */
@@ -53,6 +79,7 @@ export class ClassroomController extends BaseController {
     return this.render(req, res, 'classrooms/index', {
       title: 'کلاس‌ها (تیم‌ها)',
       classrooms,
+      can_manage: this.canManageClassrooms(req),
       csrf_token: this.generateCsrf(req),
     });
   }
@@ -81,7 +108,7 @@ export class ClassroomController extends BaseController {
       return this.redirect(res, '/403');
     }
     if (!this.canManageClassrooms(req)) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.denyManage(req, res);
     }
 
     if (!this.validateCsrf(req)) {
@@ -153,11 +180,17 @@ export class ClassroomController extends BaseController {
       return this.redirect(res, '/403');
     }
     if (!this.canManageClassrooms(req)) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.denyManage(req, res);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
+        redirect: `/classroom/view/${parseInt(id, 10)}`,
+        json: { error: 'Invalid CSRF token' },
+        status: 403,
+      });
     }
 
     const classroomId = parseInt(id, 10);
@@ -222,11 +255,17 @@ export class ClassroomController extends BaseController {
     const availablePlayers =
       await this.classrooms.getAvailablePlayersForClassroom(classroomId);
 
+    // Shown when the list is empty so «no players to add» is never mistaken
+    // for «you are not allowed to add players».
+    const awaiting = await this.classrooms.playersAwaitingActivation();
+
     return this.render(req, res, 'classrooms/view', {
       title: `کلاس ${classroom.name}`,
       classroom,
       roster,
       available_players: availablePlayers,
+      awaiting_players: awaiting,
+      can_manage: this.canManageClassrooms(req),
       csrf_token: this.generateCsrf(req),
     });
   }
@@ -238,18 +277,30 @@ export class ClassroomController extends BaseController {
       return this.redirect(res, '/403');
     }
     if (!this.canManageClassrooms(req)) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.denyManage(req, res);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
+        redirect: `/classroom/view/${parseInt(id, 10)}`,
+        json: { error: 'Invalid CSRF token' },
+        status: 403,
+      });
     }
 
     const classroomId = parseInt(id, 10);
     const classroom = await this.classrooms.find(classroomId);
 
     if (classroom === null) {
-      return this.json(res, { error: 'Classroom not found' }, 404);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'کلاس یافت نشد.',
+        redirect: '/classrooms',
+        json: { error: 'Classroom not found' },
+        status: 404,
+      });
     }
 
     const playerId = parseInt(String(this.post(req, 'player_id') ?? 0), 10) || 0;
@@ -296,18 +347,30 @@ export class ClassroomController extends BaseController {
       return this.redirect(res, '/403');
     }
     if (!this.canManageClassrooms(req)) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.denyManage(req, res);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
+        redirect: `/classroom/view/${parseInt(id, 10)}`,
+        json: { error: 'Invalid CSRF token' },
+        status: 403,
+      });
     }
 
     const classroomId = parseInt(id, 10);
     const classroom = await this.classrooms.find(classroomId);
 
     if (classroom === null) {
-      return this.json(res, { error: 'Classroom not found' }, 404);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'کلاس یافت نشد.',
+        redirect: '/classrooms',
+        json: { error: 'Classroom not found' },
+        status: 404,
+      });
     }
 
     const playerId = parseInt(String(this.post(req, 'player_id') ?? 0), 10) || 0;
@@ -353,18 +416,30 @@ export class ClassroomController extends BaseController {
       return this.redirect(res, '/403');
     }
     if (!this.canManageClassrooms(req)) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.denyManage(req, res);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
+        redirect: `/classroom/view/${parseInt(id, 10)}`,
+        json: { error: 'Invalid CSRF token' },
+        status: 403,
+      });
     }
 
     const classroomId = parseInt(id, 10);
     const classroom = await this.classrooms.find(classroomId);
 
     if (classroom === null) {
-      return this.json(res, { error: 'Classroom not found' }, 404);
+      return this.respond(req, res, {
+        ok: false,
+        message: 'کلاس یافت نشد.',
+        redirect: '/classrooms',
+        json: { error: 'Classroom not found' },
+        status: 404,
+      });
     }
 
     if (!(await this.classrooms.deleteClassroom(classroomId))) {

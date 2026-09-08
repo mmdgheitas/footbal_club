@@ -627,3 +627,40 @@ browser navigation. `test/form-endpoint-contract.spec.ts` walks every `<form
 method="POST">` in every view, resolves the route and fails when a
 non-intercepted form targets a handler that only answers JSON. The same spec
 also fails on a dead `href` — a link to a GET route that does not exist.
+
+## 13. «I am super admin but I cannot add a player to a class»
+
+Four separate things could produce that sentence. All four are fixed, and the
+last three are covered by `test/classroom-access.spec.ts`.
+
+1. **Every link pointed at the wrong host.** The views print `APP_URL` in front
+   of every href and form action, and the shipped `.env` says
+   `APP_URL=http://localhost`. Behind a domain, a different port, a proxy or
+   HTTPS, the «افزودن بازیکن» button therefore submitted to another origin —
+   no session there, nothing happens. `common/views/base-path.ts` now derives a
+   **relative** prefix (`APP_BASE_PATH`, else the *path* of `APP_URL`, else
+   empty), so links always work on whatever host the app is actually reached on.
+   Sub-directory installs (`https://example.com/club`) keep working.
+
+2. **Access was decided by a role string.** `role === 'super_admin'` in
+   `ClassroomController` meant one mismatch between the stored role and that
+   literal locked the administrator out of roster management while every other
+   page still worked. It now asks the RBAC matrix
+   (`manage_classrooms`), and `RbacService.hasPermission()` short-circuits for
+   `super_admin`, so the club owner can never be locked out.
+
+3. **The screen showed controls the viewer could not use.** A coach saw the
+   add/remove buttons and only learned otherwise from a raw `403` JSON body.
+   The roster view now receives `can_manage` and hides them, and a refusal
+   (permission, expired CSRF, missing classroom) redirects to a real page with
+   a Persian reason — JSON is still returned to `fetch()` callers.
+
+4. **«All active players are already assigned» hid the real reason.** Players
+   with `status <> 1` or `registration_status <> 'approved'` are not offered, so
+   an admin whose players were all awaiting approval saw an empty panel. The
+   panel now lists who is waiting and links to `/admin/registrations`. Related:
+   `/player/store` (the office form) now writes `status = 1` and
+   `registration_status = 'approved'` — a player entered by staff is vetted by
+   definition, and previously fell into `pending`, disappearing from rosters,
+   cards and this very list. `/player/update/:id` deliberately does *not* touch
+   `registration_status`; approving stays an explicit action.

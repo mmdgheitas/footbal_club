@@ -5,8 +5,10 @@ import { Permissions } from '../../common/decorators/permissions.decorator';
 import { SecurityHelper } from '../../common/helpers/security.helper';
 import { RbacService } from '../../common/rbac/rbac.service';
 import { AchievementService } from './achievement.service';
+import { viewBasePath } from '../../common/views/base-path';
 
-const APP_URL = process.env.APP_URL ?? '';
+/** Relative prefix; see common/views/base-path.ts. */
+const APP_URL = viewBasePath();
 
 /** Duplicated verbatim in the legacy create() and edit(). */
 const ACHIEVEMENT_TYPES = {

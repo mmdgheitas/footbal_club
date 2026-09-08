@@ -4,6 +4,9 @@
 const classroom = locals.classroom ?? {};
 locals.roster = locals.roster ?? [];
 const availablePlayers = locals.available_players ?? [];
+const awaitingPlayers = locals.awaiting_players ?? [];
+/** Only a user with «مدیریت کلاس‌ها» sees the add/remove controls. */
+const canManage = locals.can_manage !== false;
 const csrfToken = locals.csrf_token ?? '';
 %>
 
@@ -32,7 +35,7 @@ const csrfToken = locals.csrf_token ?? '';
                             <th>پست</th>
                             <th>رده سنی</th>
                             <th>کد ملی</th>
-                            <th>عملیات</th>
+                            <% if (canManage) { %><th>عملیات</th><% } %>
                         </tr>
                     </thead>
                     <tbody>
@@ -42,6 +45,7 @@ const csrfToken = locals.csrf_token ?? '';
                             <td><%- esc(constants.PLAYER_POSITIONS[player['position']] ?? player['position']) %></td>
                             <td><%- esc((constants.AGE_CATEGORIES[player['age_category']] || {})['label'] ?? '') %></td>
                             <td><code><%- esc(player['national_id']) %></code></td>
+                            <% if (canManage) { %>
                             <td>
                                 <form method="POST" action="<%- APP_URL %>/classroom/remove-player/<%- parseInt(classroom['id'], 10) %>" style="display:inline;" data-confirm="آیا از حذف این بازیکن از کلاس مطمئن هستید؟">
                                     <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
@@ -49,6 +53,7 @@ const csrfToken = locals.csrf_token ?? '';
                                     <button type="submit" class="btn btn-danger btn-sm">❌ حذف از کلاس</button>
                                 </form>
                             </td>
+                            <% } %>
                         </tr>
                         <% } %>
                     </tbody>
@@ -58,6 +63,16 @@ const csrfToken = locals.csrf_token ?? '';
     </div>
 
     <!-- Add Player Panel -->
+    <% if (!canManage) { %>
+    <div class="add-player-panel panel" style="margin:0;align-self:start;">
+        <div class="section-header">
+            <h3 style="margin:0;color:var(--white);">👀 دسترسی مشاهده</h3>
+        </div>
+        <p class="muted" style="text-align:center;padding:16px;">
+            افزودن و حذف بازیکن فقط با دسترسی «مدیریت کلاس‌ها» (مدیر ارشد) امکان‌پذیر است.
+        </p>
+    </div>
+    <% } else { %>
     <div class="add-player-panel panel" style="margin:0;align-self:start;">
         <div class="section-header">
             <h3 style="margin:0;color:var(--white);">➕ افزودن بازیکن جدید</h3>
@@ -65,6 +80,23 @@ const csrfToken = locals.csrf_token ?? '';
 
         <% if (__empty(availablePlayers)) { %>
             <p class="muted" style="text-align:center;padding:16px;">تمام بازیکنان فعال باشگاه در حال حاضر کلاس‌بندی شده‌اند.</p>
+
+            <% if (!__empty(awaitingPlayers)) { %>
+            <div class="alert alert-error" style="margin-top:12px;">
+                <strong><%- toPersian(__count(awaitingPlayers)) %></strong>
+                بازیکن هنوز فعال/تأییدشده نیستند و در این فهرست نمایش داده نمی‌شوند:
+                <ul style="margin:8px 0 0;padding-inline-start:18px;text-align:start;">
+                    <% for (const ap of __iter(awaitingPlayers).slice(0, 5)) { %>
+                    <li>
+                        <%- esc(ap['name']) %>
+                        —
+                        <%- esc(constants.REGISTRATION_STATUSES[ap['registration_status']] ?? ap['registration_status'] ?? '') %>
+                    </li>
+                    <% } %>
+                </ul>
+                <a href="<%- APP_URL %>/admin/registrations" class="btn btn-sm" style="margin-top:8px;">بررسی ثبت‌نام‌ها</a>
+            </div>
+            <% } %>
         <% } else { %>
             <form id="addPlayerForm" method="POST" action="<%- APP_URL %>/classroom/add-player/<%- parseInt(classroom['id'], 10) %>">
                 <input type="hidden" name="_csrf_token" value="<%- escAttr(csrfToken) %>">
@@ -87,6 +119,7 @@ const csrfToken = locals.csrf_token ?? '';
             </form>
         <% } %>
     </div>
+    <% } %>
 </div>
 
 <script>

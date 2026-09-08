@@ -69,6 +69,21 @@ export class ClassroomService {
     );
   }
 
+  /**
+   * Players the roster screen cannot offer: registered but not active yet
+   * (`status = 0`), or waiting for registration approval. Without this the
+   * «افزودن بازیکن» panel just says "everyone is assigned", which reads like a
+   * missing permission when it is really a pending registration.
+   */
+  async playersAwaitingActivation(): Promise<any[]> {
+    return this.db.query(
+      `SELECT id, name, status, registration_status FROM fc_players
+       WHERE deleted_at IS NULL
+         AND (status <> 1 OR registration_status <> 'approved')
+       ORDER BY name ASC`,
+    );
+  }
+
   /** Classroom::createClassroom() */
   async createClassroom(data: Record<string, any>): Promise<number | false> {
     const row = { uuid: data.uuid ?? uuidv4(), ...data };

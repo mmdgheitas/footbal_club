@@ -4,8 +4,10 @@ import { BaseController } from '../../common/views/base.controller';
 import { Permissions } from '../../common/decorators/permissions.decorator';
 import { SecurityHelper } from '../../common/helpers/security.helper';
 import { CaseNoteService } from './case-note.service';
+import { viewBasePath } from '../../common/views/base-path';
 
-const APP_URL = process.env.APP_URL ?? '';
+/** Relative prefix; see common/views/base-path.ts. */
+const APP_URL = viewBasePath();
 
 /** Duplicated verbatim in the legacy index(), create() and edit(). */
 const NOTE_TYPES = {

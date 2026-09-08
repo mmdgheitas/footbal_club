@@ -19,8 +19,10 @@ import { SecurityHelper } from '../../common/helpers/security.helper';
 import { phpUniqid } from '../../common/upload/uniqid';
 import { PLAYER_UPLOAD_PATH } from '../../config/constants';
 import { HomeworkService } from './homework.service';
+import { viewBasePath } from '../../common/views/base-path';
 
-const APP_URL = process.env.APP_URL ?? '';
+/** Relative prefix; see common/views/base-path.ts. */
+const APP_URL = viewBasePath();
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 const COACH_ROLES = ['coach', 'super_admin'];
 

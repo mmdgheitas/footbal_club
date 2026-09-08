@@ -30,6 +30,8 @@ interface Handler {
    * they never carry the literal and are safe for both kinds of caller.
    */
   jsonSuccess: boolean;
+  /** Any `this.json(...)` at all — including refusals (CSRF, 404, 403). */
+  jsonAnywhere: boolean;
 }
 
 function walk(dir: string, ext: string): string[] {
@@ -78,6 +80,7 @@ function postHandlers(): Handler[] {
         route,
         file: path.relative(MODULES, file),
         jsonSuccess: /this\.json\([\s\S]{0,400}?success:\s*true/.test(body),
+        jsonAnywhere: /this\.json\(/.test(body),
       });
     });
   }
@@ -173,10 +176,19 @@ describe('every POST form can be answered in the browser', () => {
             /querySelectorAll\(\s*['"]form/.test(scripts));
         if (intercepted) continue;
 
-        offenders.push(
-          `${name}: plain form POSTs ${target} but ${handler.file} only answers JSON — ` +
-            'use BaseController.respond()',
-        );
+        // Reached by a browser navigation: every answer — success, CSRF
+        // failure, 404, refusal — has to be a page, not a JSON body.
+        if (handler.jsonSuccess) {
+          offenders.push(
+            `${name}: plain form POSTs ${target} but ${handler.file} answers success as JSON — ` +
+              'use BaseController.respond()',
+          );
+        } else if (handler.jsonAnywhere) {
+          offenders.push(
+            `${name}: plain form POSTs ${target} but ${handler.file} still answers some cases ` +
+              'with raw JSON (CSRF/404/403) — use BaseController.respond()',
+          );
+        }
       }
     }
 
