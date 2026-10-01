@@ -5,12 +5,12 @@
     <input type="hidden" name="_csrf_token" value="<%- escAttr(csrf) %>"><input type="hidden" name="id" id="itemId">
     <div class="form-group"><label for="itemName">نام قلم</label><input id="itemName" name="name" required placeholder="برای نمونه: کیف"></div>
     <div class="form-group"><label for="itemPrice">قیمت (تومان)</label><input id="itemPrice" name="price" class="number-input" inputmode="decimal" required value="0"></div>
-    <div class="form-group"><label for="itemQuantity">تعداد</label><input id="itemQuantity" name="quantity" class="number-input" inputmode="numeric" required value="1"></div>
+    <div class="form-group"><label for="itemQuantity">تعداد موجود</label><input id="itemQuantity" name="quantity" class="number-input" inputmode="numeric" required value="1"></div>
     <label style="padding-bottom:12px"><input type="checkbox" name="is_active" id="itemActive" value="1" checked> فعال</label>
     <button class="btn btn-primary" type="submit">ذخیره</button>
   </form>
   <% if (__empty(items)) { %><p class="empty-message">هنوز قلم مالی تعریف نشده است.</p><% } else { %>
-  <div class="table-wrap"><table class="data-table"><thead><tr><th>نام</th><th>قیمت</th><th>تعداد</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>نام</th><th>قیمت هر عدد</th><th>تعداد موجود</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>
   <% for (const item of __iter(items)) { %><tr><td><%- esc(item.name) %></td><td><%- __num(item.price, 0) %> تومان</td><td><%- __num(item.quantity, 0) %></td><td><%- item.is_active ? 'فعال' : 'غیرفعال' %></td><td>
     <button type="button" class="btn btn-secondary btn-sm edit-item" data-item='<%- JSON.stringify(item).replace(/'/g,"&#39;") %>'>ویرایش</button>
     <form method="post" action="<%- APP_URL %>/admin/financial-items/delete/<%- item.id %>" data-ajax="true" data-confirm="آیا این قلم حذف شود؟ سوابق رسیدهای قبلی تغییر نمی‌کند." style="display:inline"><input type="hidden" name="_csrf_token" value="<%- escAttr(csrf) %>"><button class="btn btn-danger btn-sm">حذف</button></form>

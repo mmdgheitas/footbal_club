@@ -137,7 +137,7 @@ export class FinancialController extends BaseController {
     const quantity = parseInt(String(this.post(req, 'quantity') ?? 1).replace(/,/g, ''), 10);
     if (!name) return this.json(res, { error: 'نام قلم الزامی است.' }, 422);
     if (!Number.isFinite(price) || price < 0) return this.json(res, { error: 'قیمت واردشده معتبر نیست.' }, 422);
-    if (!Number.isInteger(quantity) || quantity < 1) return this.json(res, { error: 'تعداد باید دست‌کم یک باشد.' }, 422);
+    if (!Number.isInteger(quantity) || quantity < 0) return this.json(res, { error: 'تعداد موجود نمی‌تواند منفی باشد.' }, 422);
     try {
       const ok = await this.financial.saveFinancialItem(id, { name, price, quantity, isActive: this.post(req, 'is_active') === '1' });
       return this.respond(req, res, {

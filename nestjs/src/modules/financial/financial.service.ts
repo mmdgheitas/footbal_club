@@ -18,7 +18,7 @@ export class FinancialService {
 
   async listFinancialItems(activeOnly = false): Promise<any[]> {
     return this.db.query(
-      `SELECT * FROM fc_financial_items ${activeOnly ? 'WHERE is_active = 1' : ''} ORDER BY name ASC`,
+      `SELECT * FROM fc_financial_items ${activeOnly ? 'WHERE is_active = 1 AND quantity > 0' : ''} ORDER BY name ASC`,
     );
   }
 
@@ -94,12 +94,13 @@ export class FinancialService {
       let items: any[] = [];
       if (uniqueIds.length) {
         items = await queryRunner.query(
-          `SELECT id, name, price, quantity FROM fc_financial_items WHERE is_active = 1 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+          `SELECT id, name, price, quantity FROM fc_financial_items WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
           uniqueIds,
         );
         if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
       }
-      const itemTotal = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+      // Catalog quantity is inventory information; checking an item sells one unit.
+      const itemTotal = items.reduce((sum, item) => sum + Number(item.price), 0);
       const names = items.map((item) => String(item.name));
       const descriptionParts = [String(data.description ?? '').trim(), names.join('، ')].filter(Boolean);
       const row = {
@@ -122,11 +123,11 @@ export class FinancialService {
       }
 
       for (const item of items) {
-        const lineTotal = Number(item.price) * Number(item.quantity);
+        const lineTotal = Number(item.price);
         await queryRunner.query(
           `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
            VALUES (?, ?, ?, ?, ?, ?)`,
-          [paymentId, item.id, item.name, item.price, item.quantity, lineTotal],
+          [paymentId, item.id, item.name, item.price, 1, lineTotal],
         );
       }
 

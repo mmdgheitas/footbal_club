@@ -77,10 +77,10 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
         <% if (financialItems.length) { %>
         <fieldset class="form-group" style="border:1px solid var(--border-color);border-radius:8px;padding:12px;grid-column:1/-1">
             <legend>اقلام مالی</legend>
-            <% for (const item of financialItems) { const lineTotal = Number(item.price) * Number(item.quantity); %>
+            <% for (const item of financialItems) { const unitPrice = Number(item.price); %>
             <label style="display:flex;justify-content:space-between;gap:12px;margin:8px 0">
-                <span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="invoice-financial-item" data-price="<%- lineTotal %>"> <%- esc(item.name) %><%- Number(item.quantity) > 1 ? ` (تعداد ${toPersian(item.quantity)})` : '' %></span>
-                <strong><%- __num(lineTotal, 0) %> تومان</strong>
+                <span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="invoice-financial-item" data-price="<%- unitPrice %>"> <%- esc(item.name) %> <small class="text-muted">(موجودی: <%- toPersian(item.quantity) %>)</small></span>
+                <strong><%- __num(unitPrice, 0) %> تومان برای یک عدد</strong>
             </label>
             <% } %>
             <p style="margin:12px 0 0">مبلغ نهایی: <strong id="invoiceFinalAmount">۰ تومان</strong></p>

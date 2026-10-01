@@ -530,12 +530,13 @@ export class PaymentService {
         if (uniqueIds.length) {
           items = await manager.query(
             `SELECT id, name, price, quantity FROM fc_financial_items
-             WHERE is_active = 1 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+             WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
             uniqueIds,
           );
           if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
         }
-        const itemTotal = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+        // Quantity is current inventory. Selecting the checkbox adds exactly one unit.
+        const itemTotal = items.reduce((sum, item) => sum + Number(item.price), 0);
         const originalDescription = input.description?.trim() ?? '';
         const itemNames = items.map((item) => item.name).filter((name) => !originalDescription.includes(name));
         const description = [originalDescription, itemNames.join('، ')].filter(Boolean).join(' — ') || 'صورتحساب باشگاه';
@@ -546,11 +547,11 @@ export class PaymentService {
           createdBy: input.createdBy ?? null,
         }));
         for (const item of items) {
-          const lineTotal = Number(item.price) * Number(item.quantity);
+          const lineTotal = Number(item.price);
           await manager.query(
             `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
              VALUES (?, ?, ?, ?, ?, ?)`,
-            [saved.id, item.id, item.name, item.price, item.quantity, lineTotal],
+            [saved.id, item.id, item.name, item.price, 1, lineTotal],
           );
         }
         return saved;

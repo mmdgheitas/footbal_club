@@ -86,7 +86,7 @@ export class PaymentAdminController extends BaseController {
     );
     const financialItems = await this.db.query(
       `SELECT id, name, price, quantity FROM fc_financial_items
-       WHERE is_active = 1 ORDER BY name ASC`,
+       WHERE is_active = 1 AND quantity > 0 ORDER BY name ASC`,
     );
 
     this.render(req, res, 'admin/invoices', {

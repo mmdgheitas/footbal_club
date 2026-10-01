@@ -84,7 +84,7 @@ const ucwords = (s) => String(s).replace(/\b\w/g, (c) => c.toUpperCase());
             </div>
 
             <% if (!__empty(financialItems)) { %><fieldset class="form-group" style="border:1px solid var(--border-color);padding:12px;border-radius:8px"><legend>اقلام مالی</legend>
-              <% for (const item of __iter(financialItems)) { %><label style="display:flex;justify-content:space-between;gap:12px;margin:8px 0"><span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="financial-item" data-price="<%- item.price * item.quantity %>"> <%- esc(item.name) %><%- item.quantity > 1 ? ` (تعداد ${item.quantity})` : '' %></span><strong><%- __num(item.price * item.quantity, 0) %> تومان</strong></label><% } %>
+              <% for (const item of __iter(financialItems)) { %><label style="display:flex;justify-content:space-between;gap:12px;margin:8px 0"><span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="financial-item" data-price="<%- item.price %>"> <%- esc(item.name) %> <small>(موجودی: <%- __num(item.quantity, 0) %>)</small></span><strong><%- __num(item.price, 0) %> تومان برای یک عدد</strong></label><% } %>
             </fieldset><p>مبلغ نهایی: <strong id="finalAmount">۰ تومان</strong></p><% } %>
 
             <div class="form-group">
