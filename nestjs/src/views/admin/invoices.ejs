@@ -172,21 +172,44 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
         const names = selected.map(item => item.dataset.name).filter(Boolean);
         const original = baseDescription.value.trim();
         internalUpdate = true;
-        amount.value = APP.formatNumber(finalAmount);
+        amount.value = baseAmount.value === '' && extras === 0 ? '' : APP.formatNumber(finalAmount);
         description.value = [original, names.join('، ')].filter(Boolean).join(' — ');
         internalUpdate = false;
         if (output) output.textContent = APP.formatNumber(finalAmount) + ' تومان';
     };
+    // هنگام ویرایش، فقط مبلغ پایه نمایش داده می‌شود تا کاربر بتواند آن را
+    // کامل پاک یا آزادانه عوض کند. پس از خروج از فیلد، جمع نهایی برمی‌گردد.
+    amount?.addEventListener('focus', () => {
+        internalUpdate = true;
+        amount.value = baseAmount.value ? APP.formatNumber(baseAmount.value) : '';
+        internalUpdate = false;
+    });
     amount?.addEventListener('input', () => {
-        if (!internalUpdate) baseAmount.value = APP.parseNumber(amount.value);
-        update();
+        if (internalUpdate) return;
+        const raw = amount.value.replace(/[٬,]/g, '').trim();
+        baseAmount.value = raw === '' || raw === '-' ? '' : String(APP.parseNumber(raw));
+        const extras = selectedItems().reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
+        if (output) output.textContent = APP.formatNumber(APP.parseNumber(baseAmount.value) + extras) + ' تومان';
+    });
+    amount?.addEventListener('blur', update);
+
+    description?.addEventListener('focus', () => {
+        internalUpdate = true;
+        description.value = baseDescription.value;
+        internalUpdate = false;
     });
     description?.addEventListener('input', () => {
         if (!internalUpdate) baseDescription.value = description.value;
     });
+    description?.addEventListener('blur', update);
     document.querySelectorAll('.invoice-financial-item').forEach(item => item.addEventListener('change', update));
-    baseAmount.value = APP.parseNumber(amount?.value || 0);
-    baseDescription.value = description?.value || '';
-    update();
+
+    // APP در فایل مشترک پایین صفحه تعریف می‌شود؛ مقداردهی اولیه را پس از
+    // آماده‌شدن DOM انجام می‌دهیم تا خطای «APP تعریف نشده» رخ ندهد.
+    document.addEventListener('DOMContentLoaded', () => {
+        baseAmount.value = amount?.value ? String(APP.parseNumber(amount.value)) : '';
+        baseDescription.value = description?.value || '';
+        update();
+    });
 })();
 </script>

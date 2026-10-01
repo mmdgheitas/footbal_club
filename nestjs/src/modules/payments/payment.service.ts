@@ -521,7 +521,7 @@ export class PaymentService {
     createdBy?: number | null;
     selectedItemIds?: number[];
   }): Promise<Payment | null> {
-    if (!input.playerId || !Number.isFinite(input.amount) || input.amount <= 0) return null;
+    if (!input.playerId || !Number.isFinite(input.amount) || input.amount < 0) return null;
 
     const uniqueIds = [...new Set((input.selectedItemIds ?? []).filter((id) => Number.isInteger(id) && id > 0))];
     let invoice: Payment;
@@ -538,6 +538,7 @@ export class PaymentService {
         }
         // Quantity is current inventory. Selecting the checkbox adds exactly one unit.
         const itemTotal = items.reduce((sum, item) => sum + Number(item.price), 0);
+        if (input.amount + itemTotal <= 0) throw new Error('INVALID_INVOICE_AMOUNT');
         const originalDescription = input.description?.trim() ?? '';
         const itemNames = items.map((item) => item.name).filter((name) => !originalDescription.includes(name));
         const description = [originalDescription, itemNames.join('، ')].filter(Boolean).join(' — ') || 'صورتحساب باشگاه';
