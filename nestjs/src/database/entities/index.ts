@@ -30,6 +30,8 @@ export * from './expense.entity';
 export * from './notification.entity';
 export * from './otp-code.entity';
 export * from './training-session.entity';
+export * from './financial-item.entity';
+export * from './payment-item.entity';
 
 import { Classroom } from './classroom.entity';
 import { Player } from './player.entity';
@@ -62,6 +64,8 @@ import { Expense } from './expense.entity';
 import { Notification } from './notification.entity';
 import { OtpCode } from './otp-code.entity';
 import { TrainingSession } from './training-session.entity';
+import { FinancialItem } from './financial-item.entity';
+import { PaymentItem } from './payment-item.entity';
 
 /**
  * All entities: the original 20 mapped from database/schema.sql, the 10 added
@@ -101,4 +105,6 @@ export const ALL_ENTITIES = [
   Notification,
   OtpCode,
   TrainingSession,
+  FinancialItem,
+  PaymentItem,
 ];

@@ -50,15 +50,17 @@ export class FinancialController extends BaseController {
   async index(@Req() req: Request, @Res() res: Response) {
     const page = parseInt(String(this.query(req, 'page') ?? 1), 10) || 0;
 
-    const [payments, playersList] = await Promise.all([
+    const [payments, playersList, financialItems] = await Promise.all([
       this.financial.listPayments(page),
       this.financial.listSelectablePlayers(),
+      this.financial.listFinancialItems(true),
     ]);
 
     return this.render(req, res, 'financial/index', {
       title: 'مالی',
       payments,
       players_list: playersList,
+      financial_items: financialItems,
       csrf_token: this.generateCsrf(req),
     });
   }
@@ -68,15 +70,15 @@ export class FinancialController extends BaseController {
   @Permissions('record_payment')
   async record(@Req() req: Request, @Res() res: Response) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const playerId = parseInt(String(this.post(req, 'player_id') ?? 0), 10) || 0;
-    const amount = parseFloat(String(this.post(req, 'amount') ?? 0)) || 0;
+    const amount = parseFloat(String(this.post(req, 'amount') ?? 0).replace(/,/g, '')) || 0;
     const description = SecurityHelper.sanitizeString(
       this.post(req, 'description') ?? '',
     );
@@ -85,12 +87,17 @@ export class FinancialController extends BaseController {
     );
 
     if (playerId === 0) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
 
     if (amount <= 0) {
-      return this.json(res, { error: 'Amount must be greater than zero' }, 422);
+      return this.json(res, { error: 'مبلغ باید بیشتر از صفر باشد.' }, 422);
     }
+
+    const rawItemIds = (req.body as any)?.financial_item_ids ?? (req.body as any)?.['financial_item_ids[]'] ?? [];
+    const selectedItemIds = (Array.isArray(rawItemIds) ? rawItemIds : [rawItemIds])
+      .map((value: unknown) => parseInt(String(value), 10))
+      .filter((value: number) => Number.isInteger(value) && value > 0);
 
     const paymentId = await this.financial.recordPayment({
       player_id: playerId,
@@ -101,13 +108,50 @@ export class FinancialController extends BaseController {
       reference_number: `REF-${Math.floor(Date.now() / 1000)}-${Math.floor(
         Math.random() * 9000,
       ) + 1000}`,
-    });
+    }, selectedItemIds);
 
     if (!paymentId) {
-      return this.json(res, { error: 'Failed to record payment' }, 500);
+      return this.json(res, { error: 'ثبت پرداخت انجام نشد.' }, 500);
     }
 
     return this.json(res, { success: true, payment_id: paymentId });
+  }
+
+  @Get('/admin/financial-items')
+  @Permissions('manage_payments')
+  async financialItems(@Req() req: Request, @Res() res: Response) {
+    return this.render(req, res, 'financial/items', {
+      title: 'مدیریت اقلام مالی',
+      items: await this.financial.listFinancialItems(),
+      csrf_token: this.generateCsrf(req),
+    });
+  }
+
+  @Post('/admin/financial-items/save')
+  @Permissions('manage_payments')
+  async saveFinancialItem(@Req() req: Request, @Res() res: Response) {
+    if (!this.validateCsrf(req)) return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
+    const id = parseInt(String(this.post(req, 'id') ?? 0), 10) || null;
+    const name = SecurityHelper.sanitizeString(this.post(req, 'name') ?? '').trim();
+    const price = Number(String(this.post(req, 'price') ?? '0').replace(/,/g, ''));
+    const quantity = parseInt(String(this.post(req, 'quantity') ?? 1).replace(/,/g, ''), 10);
+    if (!name) return this.json(res, { error: 'نام قلم الزامی است.' }, 422);
+    if (!Number.isFinite(price) || price < 0) return this.json(res, { error: 'قیمت واردشده معتبر نیست.' }, 422);
+    if (!Number.isInteger(quantity) || quantity < 1) return this.json(res, { error: 'تعداد باید دست‌کم یک باشد.' }, 422);
+    try {
+      const ok = await this.financial.saveFinancialItem(id, { name, price, quantity, isActive: this.post(req, 'is_active') === '1' });
+      return this.json(res, ok ? { success: true, message: 'قلم مالی با موفقیت ذخیره شد.' } : { error: 'ذخیره قلم مالی انجام نشد.' }, ok ? 200 : 500);
+    } catch {
+      return this.json(res, { error: 'نام قلم تکراری است یا اطلاعات معتبر نیست.' }, 422);
+    }
+  }
+
+  @Post('/admin/financial-items/delete/:id')
+  @Permissions('manage_payments')
+  async deleteFinancialItem(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
+    if (!this.validateCsrf(req)) return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
+    const ok = await this.financial.deleteFinancialItem(parseInt(id, 10));
+    return this.json(res, ok ? { success: true, message: 'قلم مالی حذف شد؛ سوابق رسیدها محفوظ است.' } : { error: 'حذف قلم مالی انجام نشد.' }, ok ? 200 : 404);
   }
 
   /**
@@ -125,7 +169,7 @@ export class FinancialController extends BaseController {
     const payment = await this.financial.findPaymentWithPlayer(paymentId);
 
     if (payment === null) {
-      return this.json(res, { error: 'Payment not found' }, 404);
+      return this.json(res, { error: 'پرداخت یافت نشد.' }, 404);
     }
 
     const userRole = this.getUserRole(req);
@@ -163,12 +207,12 @@ export class FinancialController extends BaseController {
     const reference = SecurityHelper.escape(payment.reference_number);
 
     return `        <!DOCTYPE html>
-        <html>
+        <html lang="fa" dir="rtl">
         <head>
             <meta charset="UTF-8">
-            <title>Receipt #${reference}</title>
+            <title>رسید پرداخت ${reference}</title>
             <style>
-                body { font-family: Arial, sans-serif; margin: 20px; }
+                body { font-family: Vazirmatn, Tahoma, sans-serif; direction: rtl; margin: 20px; }
                 .receipt { max-width: 600px; margin: 0 auto; border: 1px solid #ccc; padding: 20px; }
                 .header { text-align: center; margin-bottom: 20px; }
                 .header h2 { margin: 0; }
@@ -182,33 +226,33 @@ export class FinancialController extends BaseController {
         <body>
             <div class="receipt">
                 <div class="header">
-                    <h2>Payment Receipt</h2>
-                    <p>Reference: ${reference}</p>
+                    <h2>رسید پرداخت</h2>
+                    <p>شماره پیگیری: ${reference}</p>
                 </div>
                 <div class="details">
                     <div class="row">
-                        <label>Player Name:</label>
+                        <label>نام بازیکن:</label>
                         <span>${playerName}</span>
                     </div>
                     <div class="row">
-                        <label>Amount:</label>
+                        <label>مبلغ:</label>
                         <span>${amount}</span>
                     </div>
                     <div class="row">
-                        <label>Description:</label>
+                        <label>توضیحات:</label>
                         <span>${description}</span>
                     </div>
                     <div class="row">
-                        <label>Payment Date:</label>
+                        <label>تاریخ پرداخت:</label>
                         <span>${date}</span>
                     </div>
                     <div class="row">
-                        <label>Status:</label>
-                        <span>Completed</span>
+                        <label>وضعیت:</label>
+                        <span>تکمیل‌شده</span>
                     </div>
                 </div>
                 <div class="footer">
-                    <p>Thank you for your payment!</p>
+                    <p>از پرداخت شما سپاسگزاریم.</p>
                 </div>
             </div>
         </body>
@@ -225,7 +269,7 @@ export class FinancialController extends BaseController {
     const yearlyRevenue = await this.dashboard.getYearlyRevenue(year);
 
     return this.render(req, res, 'financial/report', {
-      title: 'Financial Report',
+      title: 'گزارش مالی',
       year,
       yearly_revenue: yearlyRevenue,
       csrf_token: this.generateCsrf(req),
@@ -239,7 +283,7 @@ export class FinancialController extends BaseController {
     const debts = await this.dashboard.getDebtsReport();
 
     return this.render(req, res, 'financial/debts', {
-      title: 'Outstanding Debts',
+      title: 'بدهی‌های معوق',
       debts,
       total_outstanding: debts.reduce(
         (sum: number, item: any) => sum + Number(item.total_outstanding ?? 0),

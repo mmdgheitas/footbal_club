@@ -1,7 +1,8 @@
 import { Controller, Get, Param, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { BaseController } from '../../common/views/base.controller';
-import { Permissions } from '../../common/decorators/permissions.decorator';
+import { Permissions, Roles } from '../../common/decorators/permissions.decorator';
+import { createPersianPdf } from '../../common/pdf/persian-pdf';
 import { SecurityHelper } from '../../common/helpers/security.helper';
 import { JalaliHelper } from '../../common/helpers/jalali.helper';
 import {
@@ -105,11 +106,11 @@ export class AttendanceController extends BaseController {
   @Permissions('mark_attendance')
   async mark(@Req() req: Request, @Res() res: Response) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const playerId = parseInt(String(this.post(req, 'player_id') ?? 0), 10) || 0;
@@ -119,11 +120,11 @@ export class AttendanceController extends BaseController {
     const status = parseInt(String(this.post(req, 'status') ?? 0), 10) || 0;
 
     if (playerId === 0) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
 
     if (!sessionDate) {
-      return this.json(res, { error: 'Session date is required' }, 422);
+      return this.json(res, { error: 'تاریخ جلسه الزامی است.' }, 422);
     }
 
     // Convert session date if Jalali
@@ -141,7 +142,7 @@ export class AttendanceController extends BaseController {
     // in_array($status, ATTENDANCE_STATUS, true) - valid codes are 1..4
     const validStatuses: number[] = Object.values(ATTENDANCE_STATUS);
     if (!validStatuses.includes(status)) {
-      return this.json(res, { error: 'Invalid attendance status' }, 422);
+      return this.json(res, { error: 'وضعیت حضور و غیاب معتبر نیست.' }, 422);
     }
 
     const userId = this.getUserId(req) ?? 0;
@@ -154,10 +155,46 @@ export class AttendanceController extends BaseController {
     );
 
     if (!result) {
-      return this.json(res, { error: 'Failed to mark attendance' }, 500);
+      return this.json(res, { error: 'ثبت حضور و غیاب انجام نشد.' }, 500);
     }
 
     return this.json(res, { success: true });
+  }
+
+  @Get('/admin/attendance/report.pdf')
+  @Roles('super_admin')
+  async pdfReport(@Req() req: Request, @Res() res: Response) {
+    const classroomId = parseInt(String(this.query(req, 'classroom_id') ?? 0), 10);
+    const period = this.query(req, 'period') === 'quarterly' ? 'quarterly' : 'monthly';
+    const end = /^\d{4}-\d{2}-\d{2}$/.test(String(this.query(req, 'end_date') ?? '')) ? String(this.query(req, 'end_date')) : todayLocal();
+    const endDate = new Date(`${end}T12:00:00`);
+    const startDate = new Date(endDate);
+    startDate.setMonth(startDate.getMonth() - (period === 'quarterly' ? 3 : 1));
+    startDate.setDate(startDate.getDate() + 1);
+    const iso = (date: Date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    const classroom = await this.attendance.findClassroom(classroomId);
+    if (!classroom) return this.json(res, { error: 'کلاس انتخاب‌شده یافت نشد.' }, 404);
+    const records = await this.attendance.getClassroomReport(classroomId, iso(startDate), end);
+    const labels: Record<number, string> = ATTENDANCE_STATUS_LABELS;
+    const grouped = new Map<string, any[]>();
+    records.forEach((record) => grouped.set(record.player_name, [...(grouped.get(record.player_name) ?? []), record]));
+    const rows = [...grouped.entries()].map(([name, entries], index) => {
+      const valid = entries.filter((entry) => entry.session_date);
+      return [
+        (index + 1).toLocaleString('fa-IR'), name,
+        valid.filter((entry) => Number(entry.status) === 1).length.toLocaleString('fa-IR'),
+        valid.filter((entry) => Number(entry.status) === 2).length.toLocaleString('fa-IR'),
+        valid.map((entry) => `${JalaliHelper.toJalaliString(String(entry.session_date).slice(0, 10))}: ${labels[entry.status] ?? 'نامشخص'}`).join('\n') || 'بدون سابقه',
+      ];
+    });
+    const pdf = await createPersianPdf({
+      title: period === 'quarterly' ? 'گزارش سه‌ماهه حضور و غیاب' : 'گزارش یک‌ماهه حضور و غیاب',
+      subtitle: [`کلاس: ${classroom.name}`, `بازه گزارش: ${JalaliHelper.toJalaliString(iso(startDate))} تا ${JalaliHelper.toJalaliString(end)}`, `تاریخ تهیه: ${JalaliHelper.toJalaliString(todayLocal())}`],
+      headers: ['ردیف', 'نام بازیکن', 'حضور', 'غیبت', 'جزئیات جلسات'], rows, widths: [35, 100, 45, 45, '*'],
+    });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(period === 'quarterly' ? 'گزارش-سه-ماهه.pdf' : 'گزارش-یک-ماهه.pdf')}`);
+    return res.send(pdf);
   }
 
   /** GET /attendance/report/:id - RbacMiddleware::requirePermission('view_players') */
@@ -181,7 +218,7 @@ export class AttendanceController extends BaseController {
     ]);
 
     return this.render(req, res, 'attendance/report', {
-      title: `Attendance Report - ${player.name}`,
+      title: `گزارش حضور و غیاب - ${player.name}`,
       player,
       attendance,
       // PHP number_format($percentage, 2)

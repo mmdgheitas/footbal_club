@@ -1,0 +1,23 @@
+<% const items = locals.items ?? []; const csrf = locals.csrf_token ?? ''; %>
+<div class="panel">
+  <div class="section-header"><h3>مدیریت اقلام مالی</h3><button class="btn btn-primary" type="button" id="newItem">افزودن قلم</button></div>
+  <form id="itemForm" method="post" action="<%- APP_URL %>/admin/financial-items/save" data-ajax="true" style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:12px;align-items:end;margin:20px 0;">
+    <input type="hidden" name="_csrf_token" value="<%- escAttr(csrf) %>"><input type="hidden" name="id" id="itemId">
+    <div class="form-group"><label for="itemName">نام قلم</label><input id="itemName" name="name" required placeholder="برای نمونه: کیف"></div>
+    <div class="form-group"><label for="itemPrice">قیمت (تومان)</label><input id="itemPrice" name="price" class="number-input" inputmode="decimal" required value="0"></div>
+    <div class="form-group"><label for="itemQuantity">تعداد</label><input id="itemQuantity" name="quantity" class="number-input" inputmode="numeric" required value="1"></div>
+    <label style="padding-bottom:12px"><input type="checkbox" name="is_active" id="itemActive" value="1" checked> فعال</label>
+    <button class="btn btn-primary" type="submit">ذخیره</button>
+  </form>
+  <% if (__empty(items)) { %><p class="empty-message">هنوز قلم مالی تعریف نشده است.</p><% } else { %>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>نام</th><th>قیمت</th><th>تعداد</th><th>وضعیت</th><th>عملیات</th></tr></thead><tbody>
+  <% for (const item of __iter(items)) { %><tr><td><%- esc(item.name) %></td><td><%- __num(item.price, 0) %> تومان</td><td><%- __num(item.quantity, 0) %></td><td><%- item.is_active ? 'فعال' : 'غیرفعال' %></td><td>
+    <button type="button" class="btn btn-secondary btn-sm edit-item" data-item='<%- JSON.stringify(item).replace(/'/g,"&#39;") %>'>ویرایش</button>
+    <form method="post" action="<%- APP_URL %>/admin/financial-items/delete/<%- item.id %>" data-ajax="true" data-confirm="آیا این قلم حذف شود؟ سوابق رسیدهای قبلی تغییر نمی‌کند." style="display:inline"><input type="hidden" name="_csrf_token" value="<%- escAttr(csrf) %>"><button class="btn btn-danger btn-sm">حذف</button></form>
+  </td></tr><% } %></tbody></table></div><% } %>
+</div>
+<script>
+document.querySelectorAll('.edit-item').forEach(b=>b.addEventListener('click',()=>{const i=JSON.parse(b.dataset.item);itemId.value=i.id;itemName.value=i.name;itemPrice.value=APP.formatNumber(i.price);itemQuantity.value=APP.formatNumber(i.quantity);itemActive.checked=!!i.is_active;itemName.focus()}));
+document.getElementById('newItem').addEventListener('click',()=>{itemForm.reset();itemId.value='';itemPrice.value='0';itemQuantity.value='1';itemActive.checked=true});
+</script>
+<style>@media(max-width:700px){#itemForm{grid-template-columns:1fr!important}}</style>

@@ -3,7 +3,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { ITEMS_PER_PAGE } from '../../config/constants';
-import { insertedId } from '../../database/sql.helpers';
+import { insertedId, wasWritten } from '../../database/sql.helpers';
 
 /**
  * Port of app/Models/Payment.php::{recordPayment,logTransaction}() and the
@@ -15,6 +15,38 @@ import { insertedId } from '../../database/sql.helpers';
 @Injectable()
 export class FinancialService {
   constructor(@InjectDataSource() private readonly db: DataSource) {}
+
+  async listFinancialItems(activeOnly = false): Promise<any[]> {
+    return this.db.query(
+      `SELECT * FROM fc_financial_items ${activeOnly ? 'WHERE is_active = 1' : ''} ORDER BY name ASC`,
+    );
+  }
+
+  async findFinancialItem(id: number): Promise<any | null> {
+    const rows = await this.db.query('SELECT * FROM fc_financial_items WHERE id = ?', [id]);
+    return rows[0] ?? null;
+  }
+
+  async saveFinancialItem(id: number | null, data: { name: string; price: number; quantity: number; isActive: boolean }): Promise<boolean> {
+    if (id) {
+      const result = await this.db.query(
+        'UPDATE fc_financial_items SET name = ?, price = ?, quantity = ?, is_active = ? WHERE id = ?',
+        [data.name, data.price, data.quantity, data.isActive ? 1 : 0, id],
+      );
+      return wasWritten(result);
+    }
+    const result = await this.db.query(
+      'INSERT INTO fc_financial_items (name, price, quantity, is_active) VALUES (?, ?, ?, ?)',
+      [data.name, data.price, data.quantity, data.isActive ? 1 : 0],
+    );
+    return Boolean(insertedId(result));
+  }
+
+  async deleteFinancialItem(id: number): Promise<boolean> {
+    // Historical rows are retained through SET NULL and their snapshots remain intact.
+    const result = await this.db.query('DELETE FROM fc_financial_items WHERE id = ?', [id]);
+    return wasWritten(result);
+  }
 
   /** FinancialController::index() paginated payment list. */
   async listPayments(page: number): Promise<any[]> {
@@ -52,13 +84,30 @@ export class FinancialService {
    * Payment::recordPayment() - inserts the payment and writes the
    * double-entry transaction log inside one transaction.
    */
-  async recordPayment(data: Record<string, any>): Promise<number | false> {
+  async recordPayment(data: Record<string, any>, selectedItemIds: number[] = []): Promise<number | false> {
     const queryRunner = this.db.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const row = { uuid: data.uuid ?? uuidv4(), ...data };
+      const uniqueIds = [...new Set(selectedItemIds.filter((id) => Number.isInteger(id) && id > 0))];
+      let items: any[] = [];
+      if (uniqueIds.length) {
+        items = await queryRunner.query(
+          `SELECT id, name, price, quantity FROM fc_financial_items WHERE is_active = 1 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+          uniqueIds,
+        );
+        if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
+      }
+      const itemTotal = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+      const names = items.map((item) => String(item.name));
+      const descriptionParts = [String(data.description ?? '').trim(), names.join('، ')].filter(Boolean);
+      const row = {
+        uuid: data.uuid ?? uuidv4(),
+        ...data,
+        amount: Number(data.amount) + itemTotal,
+        description: [...new Set(descriptionParts)].join(' — '),
+      };
       const cols = Object.keys(row);
       const result: any = await queryRunner.query(
         `INSERT INTO fc_payments (${cols.join(', ')})
@@ -72,7 +121,16 @@ export class FinancialService {
         return false;
       }
 
-      await this.logTransaction(queryRunner, paymentId, data);
+      for (const item of items) {
+        const lineTotal = Number(item.price) * Number(item.quantity);
+        await queryRunner.query(
+          `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [paymentId, item.id, item.name, item.price, item.quantity, lineTotal],
+        );
+      }
+
+      await this.logTransaction(queryRunner, paymentId, row);
 
       await queryRunner.commitTransaction();
       return paymentId;

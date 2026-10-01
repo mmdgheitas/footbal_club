@@ -12,6 +12,7 @@ const csrfToken = locals.csrf_token ?? '';
 
 <div class="form-toolbar" style="margin-bottom:16px;">
     <a href="<%- APP_URL %>/classrooms" class="btn btn-secondary">← بازگشت به لیست کلاس‌ها</a>
+    <% if (locals.userRole === 'super_admin') { %><a href="<%- APP_URL %>/admin/classroom/<%- classroom.id %>/members.pdf" class="btn btn-primary">دریافت فهرست اعضا</a><% } %>
 </div>
 
 <div class="classroom-view-grid" style="display:grid;grid-template-columns: 2fr 1fr;gap:24px;">

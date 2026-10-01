@@ -5,6 +5,9 @@ import { SecurityHelper } from '../../common/helpers/security.helper';
 import { RbacService } from '../../common/rbac/rbac.service';
 import { ClassroomService } from './classroom.service';
 import { viewBasePath } from '../../common/views/base-path';
+import { Roles } from '../../common/decorators/permissions.decorator';
+import { createPersianPdf } from '../../common/pdf/persian-pdf';
+import { JalaliHelper } from '../../common/helpers/jalali.helper';
 
 /** Relative prefix; see common/views/base-path.ts. */
 const APP_URL = viewBasePath();
@@ -268,6 +271,27 @@ export class ClassroomController extends BaseController {
       can_manage: this.canManageClassrooms(req),
       csrf_token: this.generateCsrf(req),
     });
+  }
+
+  @Get('/admin/classroom/:id/members.pdf')
+  @Roles('super_admin')
+  async membersPdf(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
+    const classroomId = parseInt(id, 10);
+    const classroom = await this.classrooms.find(classroomId);
+    if (!classroom) return this.json(res, { error: 'کلاس یافت نشد.' }, 404);
+    const roster = await this.classrooms.getRoster(classroomId);
+    const now = new Date();
+    const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const pdf = await createPersianPdf({
+      title: 'فهرست اعضای کلاس',
+      subtitle: [`نام کلاس: ${classroom.name}`, `تاریخ تهیه: ${JalaliHelper.toJalaliString(today)}`, `تعداد اعضا: ${roster.length.toLocaleString('fa-IR')}`],
+      headers: ['ردیف', 'نام بازیکن', 'کد ملی', 'پست', 'رده سنی'],
+      rows: roster.map((player, index) => [(index + 1).toLocaleString('fa-IR'), player.name, player.national_id ?? '-', player.position ?? '-', player.age_category ?? '-']),
+      widths: [35, '*', 100, 80, 70],
+    });
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(`اعضای-${classroom.name}.pdf`)}`);
+    return res.send(pdf);
   }
 
   /** POST /classroom/add-player/:id - admin only */

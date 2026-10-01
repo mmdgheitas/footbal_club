@@ -2,6 +2,7 @@ import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm
 import { BaseEntity } from './base.entity';
 import { Player } from './player.entity';
 import { TransactionLog } from './transaction-log.entity';
+import { PaymentItem } from './payment-item.entity';
 
 export enum PaymentStatus {
   PENDING = 'pending',
@@ -61,4 +62,7 @@ export class Payment extends BaseEntity {
 
   @OneToMany(() => TransactionLog, (t) => t.payment)
   transactionLogs: TransactionLog[];
+
+  @OneToMany(() => PaymentItem, (item) => item.payment)
+  items: PaymentItem[];
 }

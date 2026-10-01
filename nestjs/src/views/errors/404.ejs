@@ -68,7 +68,7 @@ const appDebugText = APP_DEBUG ? 'true' : 'false';
     </style>
 </head>
 <body>
-    <div style="background:#ff6b6b;padding:15px;margin:15px 0;border-radius:8px;text-align:left;font-family:monospace;font-size:12px;color:#000;"><strong>DEBUG INFO:</strong><br><strong>Method:</strong> <%- esc(req.method ?? 'N/A') %><br><strong>URI:</strong> <%- esc(req.originalUrl ?? 'N/A') %><br><strong>Script:</strong> <%- esc(req.scriptName ?? 'N/A') %><br><strong>APP_DEBUG:</strong> <%- appDebugText %><br></div>
+
     <div class="error-card">
         <div class="error-code">404</div>
         <h1><%- esc(locals.title) %></h1>

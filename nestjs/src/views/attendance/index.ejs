@@ -41,6 +41,10 @@ const statusClass = { 1: 'status-present', 2: 'status-absent', 3: 'status-excuse
             </div>
 
             <button type="button" class="btn btn-secondary" id="btnChangeDate" style="height:38px;padding:0 16px;">نمایش</button>
+            <% if (locals.userRole === 'super_admin') { %>
+            <a class="btn btn-secondary attendance-pdf" data-period="monthly" href="#">گزارش یک‌ماهه</a>
+            <a class="btn btn-secondary attendance-pdf" data-period="quarterly" href="#">گزارش سه‌ماهه</a>
+            <% } %>
         </div>
     </div>
 
@@ -101,6 +105,11 @@ const reloadGrid = () => {
 
 document.getElementById('btnChangeDate')?.addEventListener('click', reloadGrid);
 document.getElementById('classroomId')?.addEventListener('change', reloadGrid);
+document.querySelectorAll('.attendance-pdf').forEach(link => link.addEventListener('click', event => {
+    event.preventDefault();
+    const params = new URLSearchParams({ classroom_id: document.getElementById('classroomId').value, period: link.dataset.period, end_date: '<%- sessionDate %>' });
+    window.location.href = '<%- APP_URL %>/admin/attendance/report.pdf?' + params;
+}));
 
 document.querySelectorAll('.mark-attendance').forEach(btn => {
     btn.addEventListener('click', async function() {

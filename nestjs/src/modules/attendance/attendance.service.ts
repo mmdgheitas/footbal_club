@@ -20,6 +20,21 @@ export class AttendanceService {
     );
   }
 
+  async getClassroomReport(classroomId: number, startDate: string, endDate: string): Promise<any[]> {
+    return this.db.query(
+      `SELECT p.name AS player_name, a.session_date, a.status
+       FROM fc_players p LEFT JOIN fc_attendance a ON a.player_id = p.id AND a.session_date BETWEEN ? AND ?
+       WHERE p.classroom_id = ? AND p.deleted_at IS NULL
+       ORDER BY p.name ASC, a.session_date ASC`,
+      [startDate, endDate, classroomId],
+    );
+  }
+
+  async findClassroom(classroomId: number): Promise<any | null> {
+    const rows = await this.db.query('SELECT * FROM fc_classrooms WHERE id = ?', [classroomId]);
+    return rows[0] ?? null;
+  }
+
   /** Attendance::getByPlayerId() */
   async getByPlayerId(playerId: number): Promise<any[]> {
     return this.db.query(

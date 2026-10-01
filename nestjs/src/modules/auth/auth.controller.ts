@@ -42,7 +42,7 @@ export class AuthController extends BaseController {
   @Get('/login')
   @GuestOnly()
   login(@Req() req: Request, @Res() res: Response): void {
-    this.render(req, res, 'auth/login', { title: 'Login', csrf_token: this.generateCsrf(req) });
+    this.render(req, res, 'auth/login', { title: 'ورود', csrf_token: this.generateCsrf(req) });
   }
 
   @Post('/login')
@@ -125,7 +125,7 @@ export class AuthController extends BaseController {
   @GuestOnly()
   register(@Req() req: Request, @Res() res: Response): void {
     this.render(req, res, 'auth/register', {
-      title: 'Register',
+      title: 'ثبت‌نام',
       csrf_token: this.generateCsrf(req),
     });
   }

@@ -21,6 +21,36 @@ const APP = {
         this.initMobileTables();
         this.initFloatingDecor();
         this.initJalaliInputs();
+        this.initNumberInputs();
+    },
+
+    parseNumber(value) {
+        const latin = String(value ?? '').replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+        const number = Number(latin);
+        return Number.isFinite(number) ? number : 0;
+    },
+
+    formatNumber(value, maximumFractionDigits = 2) {
+        const number = this.parseNumber(value);
+        return number.toLocaleString('en-US', { maximumFractionDigits });
+    },
+
+    initNumberInputs() {
+        document.querySelectorAll('input.number-input').forEach(input => {
+            const format = () => {
+                const raw = String(input.value).replace(/[٬,]/g, '').replace(/[^\d۰-۹.-]/g, '');
+                if (raw === '' || raw === '-') return;
+                input.value = this.formatNumber(raw);
+            };
+            input.addEventListener('input', format);
+            input.addEventListener('paste', () => setTimeout(format));
+            format();
+        });
+        document.addEventListener('submit', event => {
+            event.target.querySelectorAll?.('input.number-input').forEach(input => {
+                input.value = String(input.value).replace(/[٬,]/g, '').replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+            });
+        }, true);
     },
 
     setupNav() {
