@@ -4,6 +4,8 @@ import { Payment } from './payment.entity';
 
 @Entity('fc_payment_items')
 @Index('idx_payment_financial_item', ['paymentId', 'financialItemId'], { unique: true })
+@Index('idx_payment_items_payment_fk', ['paymentId'])
+@Index('idx_payment_items_financial_item_fk', ['financialItemId'])
 export class PaymentItem {
   @PrimaryGeneratedColumn()
   id: number;
