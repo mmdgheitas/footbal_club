@@ -37,7 +37,7 @@ const APP = {
 
     initNumberInputs() {
         // ورودی‌های عددی مرورگر جداکننده را نمی‌پذیرند؛ در لایه نمایش به متن عددی تبدیل می‌شوند.
-        document.querySelectorAll('input[type="number"]').forEach(input => {
+        document.querySelectorAll('input[type="number"]:not([data-raw-number])').forEach(input => {
             input.type = 'text';
             input.inputMode = input.step && input.step !== '1' ? 'decimal' : 'numeric';
             input.classList.add('number-input');

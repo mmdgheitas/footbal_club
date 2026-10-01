@@ -64,8 +64,8 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
 
         <div class="form-group">
             <label for="amount">مبلغ (تومان)</label>
-            <input type="text" id="amount" name="amount" class="form-control ltr number-input" inputmode="decimal" required>
-            <input type="hidden" id="base_amount" name="base_amount" value="0">
+            <input type="number" id="amount" name="amount" class="form-control ltr" data-raw-number="true" min="0" step="1" required>
+            <input type="hidden" id="base_amount" name="base_amount" value="">
         </div>
 
         <div class="form-group">
@@ -164,34 +164,35 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
     const output = document.getElementById('invoiceFinalAmount');
     let internalUpdate = false;
     const selectedItems = () => [...document.querySelectorAll('.invoice-financial-item:checked')];
+    const extrasTotal = () => selectedItems().reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
+    const formatDisplay = value => Number(value || 0).toLocaleString('en-US');
     const update = () => {
         if (!amount) return;
         const selected = selectedItems();
-        const extras = selected.reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
-        const finalAmount = APP.parseNumber(baseAmount.value) + extras;
+        const extras = extrasTotal();
+        const base = baseAmount.value === '' ? 0 : Number(baseAmount.value);
+        const finalAmount = base + extras;
         const names = selected.map(item => item.dataset.name).filter(Boolean);
         const original = baseDescription.value.trim();
         internalUpdate = true;
-        amount.value = baseAmount.value === '' && extras === 0 ? '' : APP.formatNumber(finalAmount);
+        // type=number عمداً مقدار خام دارد تا حذف و ویرایش در همه مرورگرها پایدار باشد.
+        amount.value = baseAmount.value === '' && extras === 0 ? '' : String(finalAmount);
         description.value = [original, names.join('، ')].filter(Boolean).join(' — ');
         internalUpdate = false;
-        if (output) output.textContent = APP.formatNumber(finalAmount) + ' تومان';
+        if (output) output.textContent = formatDisplay(finalAmount) + ' تومان';
     };
-    // هنگام ویرایش، فقط مبلغ پایه نمایش داده می‌شود تا کاربر بتواند آن را
-    // کامل پاک یا آزادانه عوض کند. پس از خروج از فیلد، جمع نهایی برمی‌گردد.
-    amount?.addEventListener('focus', () => {
-        internalUpdate = true;
-        amount.value = baseAmount.value ? APP.formatNumber(baseAmount.value) : '';
-        internalUpdate = false;
-    });
     amount?.addEventListener('input', () => {
         if (internalUpdate) return;
-        const raw = amount.value.replace(/[٬,]/g, '').trim();
-        baseAmount.value = raw === '' || raw === '-' ? '' : String(APP.parseNumber(raw));
-        const extras = selectedItems().reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
-        if (output) output.textContent = APP.formatNumber(APP.parseNumber(baseAmount.value) + extras) + ' تومان';
+        if (amount.value === '') {
+            baseAmount.value = '';
+            if (output) output.textContent = formatDisplay(extrasTotal()) + ' تومان';
+            return;
+        }
+        // مقدار داخل input مبلغ نهایی است؛ سهم اقلام کم می‌شود تا مبلغ پایه
+        // برای محاسبه امن سمت سرور نگهداری شود.
+        baseAmount.value = String(Number(amount.value) - extrasTotal());
+        if (output) output.textContent = formatDisplay(amount.value) + ' تومان';
     });
-    amount?.addEventListener('blur', update);
 
     description?.addEventListener('focus', () => {
         internalUpdate = true;
@@ -204,10 +205,8 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
     description?.addEventListener('blur', update);
     document.querySelectorAll('.invoice-financial-item').forEach(item => item.addEventListener('change', update));
 
-    // APP در فایل مشترک پایین صفحه تعریف می‌شود؛ مقداردهی اولیه را پس از
-    // آماده‌شدن DOM انجام می‌دهیم تا خطای «APP تعریف نشده» رخ ندهد.
     document.addEventListener('DOMContentLoaded', () => {
-        baseAmount.value = amount?.value ? String(APP.parseNumber(amount.value)) : '';
+        baseAmount.value = amount?.value || '';
         baseDescription.value = description?.value || '';
         update();
     });
