@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 import { ITEMS_PER_PAGE } from '../../config/constants';
 import { insertedId, wasWritten } from '../../database/sql.helpers';
+import { isSqlite } from '../../database/db-options';
 
 /**
  * Port of app/Models/Payment.php::{recordPayment,logTransaction}() and the
@@ -94,7 +95,7 @@ export class FinancialService {
       let items: any[] = [];
       if (uniqueIds.length) {
         items = await queryRunner.query(
-          `SELECT id, name, price, quantity FROM fc_financial_items WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+          `SELECT id, name, price, quantity FROM fc_financial_items WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})${isSqlite() ? '' : ' FOR UPDATE'}`,
           uniqueIds,
         );
         if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
@@ -128,6 +129,10 @@ export class FinancialService {
           `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
            VALUES (?, ?, ?, ?, ?, ?)`,
           [paymentId, item.id, item.name, item.price, 1, lineTotal],
+        );
+        await queryRunner.query(
+          'UPDATE fc_financial_items SET quantity = quantity - 1 WHERE id = ? AND quantity > 0',
+          [item.id],
         );
       }
 

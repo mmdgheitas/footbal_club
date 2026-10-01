@@ -120,12 +120,15 @@ export class PaymentAdminController extends BaseController {
     const selectedItemIds = (Array.isArray(rawItemIds) ? rawItemIds : [rawItemIds])
       .map((value) => Number(value))
       .filter((value) => Number.isInteger(value) && value > 0);
-    const description = Array.isArray(body.description) ? body.description[0] : body.description;
+    const rawDescription = body.base_description ?? body.description;
+    const description = Array.isArray(rawDescription) ? rawDescription[0] : rawDescription;
     const dueDate = Array.isArray(body.due_date) ? body.due_date[0] : body.due_date;
 
     const invoice = await this.payments.createInvoice({
       playerId: Number(body.player_id),
-      amount: Number(String(body.amount ?? '').replace(/[^\d.]/g, '')),
+      // The visible amount includes the live item preview; the backend receives
+      // the separately preserved base and adds trusted database prices itself.
+      amount: Number(String(body.base_amount ?? body.amount ?? '').replace(/[^\d.]/g, '')),
       description: description ?? null,
       dueDate: dueDate || null,
       createdBy: getSessionUserId(req),

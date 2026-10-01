@@ -23,6 +23,7 @@ import {
 } from '../../config/constants';
 import { addSeconds, fromSql, now, toSqlDateTime } from '../../common/helpers/time.helper';
 import { NotificationService } from '../domain/notification.service';
+import { isSqlite } from '../../database/db-options';
 import { GuardianService } from '../domain/guardian.service';
 import { PaymentGatewayFactory } from './gateways/payment-gateway.factory';
 
@@ -530,7 +531,7 @@ export class PaymentService {
         if (uniqueIds.length) {
           items = await manager.query(
             `SELECT id, name, price, quantity FROM fc_financial_items
-             WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+             WHERE is_active = 1 AND quantity > 0 AND id IN (${uniqueIds.map(() => '?').join(',')})${isSqlite() ? '' : ' FOR UPDATE'}`,
             uniqueIds,
           );
           if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
@@ -552,6 +553,12 @@ export class PaymentService {
             `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
              VALUES (?, ?, ?, ?, ?, ?)`,
             [saved.id, item.id, item.name, item.price, 1, lineTotal],
+          );
+          // Issuing an invoice reserves/sells exactly one unit. The row is
+          // locked above, so concurrent invoices cannot oversell inventory.
+          await manager.query(
+            'UPDATE fc_financial_items SET quantity = quantity - 1 WHERE id = ? AND quantity > 0',
+            [item.id],
           );
         }
         return saved;

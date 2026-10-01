@@ -65,6 +65,7 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
         <div class="form-group">
             <label for="amount">مبلغ (تومان)</label>
             <input type="text" id="amount" name="amount" class="form-control ltr number-input" inputmode="decimal" required>
+            <input type="hidden" id="base_amount" name="base_amount" value="0">
         </div>
 
         <div class="form-group">
@@ -72,6 +73,7 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
             <textarea id="description" name="description" class="form-control"
                       placeholder="شهریه فصل زمستان و سایر توضیحات" maxlength="2000" rows="5"
                       style="min-height:120px;resize:vertical"></textarea>
+            <input type="hidden" id="base_description" name="base_description" value="">
         </div>
 
         <% if (financialItems.length) { %>
@@ -79,7 +81,7 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
             <legend>اقلام مالی</legend>
             <% for (const item of financialItems) { const unitPrice = Number(item.price); %>
             <label style="display:flex;justify-content:space-between;gap:12px;margin:8px 0">
-                <span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="invoice-financial-item" data-price="<%- unitPrice %>"> <%- esc(item.name) %> <small class="text-muted">(موجودی: <%- toPersian(item.quantity) %>)</small></span>
+                <span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="invoice-financial-item" data-price="<%- unitPrice %>" data-name="<%- escAttr(item.name) %>"> <%- esc(item.name) %> <small class="text-muted">(موجودی: <%- toPersian(item.quantity) %>)</small></span>
                 <strong><%- __num(unitPrice, 0) %> تومان برای یک عدد</strong>
             </label>
             <% } %>
@@ -156,15 +158,35 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
 <script>
 (() => {
     const amount = document.getElementById('amount');
+    const baseAmount = document.getElementById('base_amount');
+    const description = document.getElementById('description');
+    const baseDescription = document.getElementById('base_description');
     const output = document.getElementById('invoiceFinalAmount');
+    let internalUpdate = false;
+    const selectedItems = () => [...document.querySelectorAll('.invoice-financial-item:checked')];
     const update = () => {
-        if (!output || !amount) return;
-        const extras = [...document.querySelectorAll('.invoice-financial-item:checked')]
-            .reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
-        output.textContent = APP.formatNumber(APP.parseNumber(amount.value) + extras) + ' تومان';
+        if (!amount) return;
+        const selected = selectedItems();
+        const extras = selected.reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
+        const finalAmount = APP.parseNumber(baseAmount.value) + extras;
+        const names = selected.map(item => item.dataset.name).filter(Boolean);
+        const original = baseDescription.value.trim();
+        internalUpdate = true;
+        amount.value = APP.formatNumber(finalAmount);
+        description.value = [original, names.join('، ')].filter(Boolean).join(' — ');
+        internalUpdate = false;
+        if (output) output.textContent = APP.formatNumber(finalAmount) + ' تومان';
     };
-    amount?.addEventListener('input', update);
+    amount?.addEventListener('input', () => {
+        if (!internalUpdate) baseAmount.value = APP.parseNumber(amount.value);
+        update();
+    });
+    description?.addEventListener('input', () => {
+        if (!internalUpdate) baseDescription.value = description.value;
+    });
     document.querySelectorAll('.invoice-financial-item').forEach(item => item.addEventListener('change', update));
+    baseAmount.value = APP.parseNumber(amount?.value || 0);
+    baseDescription.value = description?.value || '';
     update();
 })();
 </script>
