@@ -64,7 +64,7 @@ export class PermissionsGuard implements CanActivate {
       res
         .status(403)
         .type('application/json; charset=utf-8')
-        .send(JSON.stringify({ error: 'Forbidden', message }));
+        .send(JSON.stringify({ error: 'دسترسی غیرمجاز', message }));
       return;
     }
 

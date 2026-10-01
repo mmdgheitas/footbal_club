@@ -147,11 +147,11 @@ export class AlertController extends BaseController {
   @Permissions('manage_alerts')
   async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid security token' }, 403);
+      return this.json(res, { error: 'نشست امنیتی معتبر نیست؛ صفحه را تازه کنید.' }, 403);
     }
 
     const alertId = parseInt(id, 10);
@@ -160,7 +160,7 @@ export class AlertController extends BaseController {
     if (result) {
       return this.json(res, { success: true });
     }
-    return this.json(res, { error: 'Failed to delete alert' }, 500);
+    return this.json(res, { error: 'حذف اعلان انجام نشد.' }, 500);
   }
 
   /** GET /my-alerts - players only. */

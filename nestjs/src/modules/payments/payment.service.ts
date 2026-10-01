@@ -518,20 +518,46 @@ export class PaymentService {
     description?: string | null;
     dueDate?: string | null;
     createdBy?: number | null;
+    selectedItemIds?: number[];
   }): Promise<Payment | null> {
     if (!input.playerId || !Number.isFinite(input.amount) || input.amount <= 0) return null;
 
-    const invoice = await this.payments.save(
-      this.payments.create({
-        uuid: uuidv4(),
-        playerId: input.playerId,
-        amount: String(Math.round(input.amount)),
-        description: input.description?.trim() || 'صورتحساب باشگاه',
-        dueDate: input.dueDate || null,
-        status: PaymentStatus.PENDING,
-        createdBy: input.createdBy ?? null,
-      }),
-    );
+    const uniqueIds = [...new Set((input.selectedItemIds ?? []).filter((id) => Number.isInteger(id) && id > 0))];
+    let invoice: Payment;
+    try {
+      invoice = await this.db.transaction(async (manager) => {
+        let items: Array<{ id: number; name: string; price: string; quantity: number }> = [];
+        if (uniqueIds.length) {
+          items = await manager.query(
+            `SELECT id, name, price, quantity FROM fc_financial_items
+             WHERE is_active = 1 AND id IN (${uniqueIds.map(() => '?').join(',')})`,
+            uniqueIds,
+          );
+          if (items.length !== uniqueIds.length) throw new Error('INVALID_FINANCIAL_ITEM');
+        }
+        const itemTotal = items.reduce((sum, item) => sum + Number(item.price) * Number(item.quantity), 0);
+        const originalDescription = input.description?.trim() ?? '';
+        const itemNames = items.map((item) => item.name).filter((name) => !originalDescription.includes(name));
+        const description = [originalDescription, itemNames.join('، ')].filter(Boolean).join(' — ') || 'صورتحساب باشگاه';
+        const saved = await manager.save(Payment, manager.create(Payment, {
+          uuid: uuidv4(), playerId: input.playerId,
+          amount: String(Math.round(input.amount + itemTotal)), description,
+          dueDate: input.dueDate || null, status: PaymentStatus.PENDING,
+          createdBy: input.createdBy ?? null,
+        }));
+        for (const item of items) {
+          const lineTotal = Number(item.price) * Number(item.quantity);
+          await manager.query(
+            `INSERT INTO fc_payment_items (payment_id, financial_item_id, item_name, unit_price, quantity, line_total)
+             VALUES (?, ?, ?, ?, ?, ?)`,
+            [saved.id, item.id, item.name, item.price, item.quantity, lineTotal],
+          );
+        }
+        return saved;
+      });
+    } catch {
+      return null;
+    }
 
     const amount = Number(invoice.amount).toLocaleString('en-US');
     const message =

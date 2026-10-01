@@ -96,19 +96,19 @@ export class HomeworkController extends BaseController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const userId = this.getUserId(req);
     const user: any = this.getUser(req);
 
     if (user === null || (user.role ?? '') !== 'player') {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.json(res, { error: 'شما اجازه انجام این عملیات را ندارید.' }, 403);
     }
 
     const playerId = user.player_id ?? null;
     if (!playerId) {
-      return this.json(res, { error: 'Player profile not found' }, 403);
+      return this.json(res, { error: 'پروفایل بازیکن یافت نشد.' }, 403);
     }
 
     const title = SecurityHelper.sanitizeString(this.post(req, 'title') ?? '');
@@ -120,12 +120,12 @@ export class HomeworkController extends BaseController {
       : null;
 
     if (!title) {
-      return this.json(res, { error: 'Title is required' }, 422);
+      return this.json(res, { error: 'عنوان الزامی است.' }, 422);
     }
 
     // empty($_FILES['video'])
     if (!file) {
-      return this.json(res, { error: 'No video file uploaded' }, 422);
+      return this.json(res, { error: 'فایل ویدئویی بارگذاری نشده است.' }, 422);
     }
 
     const validation = this.validateVideoFile(file);
@@ -157,12 +157,12 @@ export class HomeworkController extends BaseController {
       if (fs.existsSync(uploadResult.file_path!)) {
         fs.unlinkSync(uploadResult.file_path!);
       }
-      return this.json(res, { error: 'Failed to save video record' }, 500);
+      return this.json(res, { error: 'ذخیره ویدئو انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Video uploaded successfully',
+      message: 'ویدئو با موفقیت بارگذاری شد.',
       video_id: videoId,
       redirect: `${APP_URL}/homework/upload`,
     });
@@ -222,14 +222,14 @@ export class HomeworkController extends BaseController {
     @Param('id') id: string,
   ) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const userId = this.getUserId(req);
     const user: any = this.getUser(req);
 
     if (user === null || !COACH_ROLES.includes(user.role ?? '')) {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.json(res, { error: 'شما اجازه انجام این عملیات را ندارید.' }, 403);
     }
 
     const videoId = parseInt(id, 10);
@@ -239,17 +239,17 @@ export class HomeworkController extends BaseController {
       : null;
 
     if (!feedback) {
-      return this.json(res, { error: 'Feedback is required' }, 422);
+      return this.json(res, { error: 'بازخورد الزامی است.' }, 422);
     }
 
     const result = await this.homework.review(videoId, userId!, feedback, rating);
     if (!result) {
-      return this.json(res, { error: 'Failed to save review' }, 500);
+      return this.json(res, { error: 'ذخیره بررسی انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Review submitted successfully',
+      message: 'بررسی با موفقیت ثبت شد.',
       redirect: `${APP_URL}/homework/review-list`,
     });
   }
@@ -303,7 +303,7 @@ export class HomeworkController extends BaseController {
     try {
       fs.writeFileSync(filePath, file.buffer, { mode: 0o644 });
     } catch {
-      return { success: false, error: 'Failed to move uploaded file' };
+      return { success: false, error: 'ذخیره فایل بارگذاری‌شده انجام نشد.' };
     }
 
     // ffprobe duration probe, exactly as the legacy shell_exec() call. It is

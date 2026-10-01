@@ -140,7 +140,10 @@ export class FinancialController extends BaseController {
     if (!Number.isInteger(quantity) || quantity < 1) return this.json(res, { error: 'تعداد باید دست‌کم یک باشد.' }, 422);
     try {
       const ok = await this.financial.saveFinancialItem(id, { name, price, quantity, isActive: this.post(req, 'is_active') === '1' });
-      return this.json(res, ok ? { success: true, message: 'قلم مالی با موفقیت ذخیره شد.' } : { error: 'ذخیره قلم مالی انجام نشد.' }, ok ? 200 : 500);
+      return this.respond(req, res, {
+        ok, message: ok ? 'قلم مالی با موفقیت ذخیره شد.' : 'ذخیره قلم مالی انجام نشد.',
+        redirect: '/admin/financial-items', status: ok ? 200 : 500,
+      });
     } catch {
       return this.json(res, { error: 'نام قلم تکراری است یا اطلاعات معتبر نیست.' }, 422);
     }
@@ -151,7 +154,10 @@ export class FinancialController extends BaseController {
   async deleteFinancialItem(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     const ok = await this.financial.deleteFinancialItem(parseInt(id, 10));
-    return this.json(res, ok ? { success: true, message: 'قلم مالی حذف شد؛ سوابق رسیدها محفوظ است.' } : { error: 'حذف قلم مالی انجام نشد.' }, ok ? 200 : 404);
+    return this.respond(req, res, {
+      ok, message: ok ? 'قلم مالی حذف شد؛ سوابق رسیدها محفوظ است.' : 'حذف قلم مالی انجام نشد.',
+      redirect: '/admin/financial-items', status: ok ? 200 : 404,
+    });
   }
 
   /**

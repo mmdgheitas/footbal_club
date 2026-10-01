@@ -25,6 +25,6 @@ export class HomeController extends BaseController {
       return;
     }
 
-    this.render(req, res, 'home/index', { title: 'Home' });
+    this.render(req, res, 'home/index', { title: 'خانه' });
   }
 }

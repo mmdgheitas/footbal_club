@@ -25,7 +25,7 @@ export class Payment extends BaseEntity {
   @Column({ name: 'amount', type: 'decimal', precision: 15, scale: 2 })
   amount: string;
 
-  @Column({ name: 'description', type: 'varchar', length: 255, nullable: true })
+  @Column({ name: 'description', type: 'text', nullable: true })
   description: string | null;
 
   /** Invoice due date — drives the debt alerts in the guardian panel. */

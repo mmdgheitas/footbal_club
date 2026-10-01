@@ -132,7 +132,7 @@ export class AchievementController extends BaseController {
   @Permissions('manage_players')
   async store(@Req() req: Request, @Res() res: Response) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const adminId = this.getUserId(req);
@@ -147,16 +147,16 @@ export class AchievementController extends BaseController {
     const isPublished = phpBool(this.post(req, 'is_published'), true);
 
     if (!playerId) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
 
     if (!title) {
-      return this.json(res, { error: 'Title is required' }, 422);
+      return this.json(res, { error: 'عنوان الزامی است.' }, 422);
     }
 
     const player = await this.achievements.findPlayer(playerId);
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
     }
 
     const linkedUser = await this.achievements.findUserByPlayerId(playerId);
@@ -175,12 +175,12 @@ export class AchievementController extends BaseController {
     });
 
     if (!achievementId) {
-      return this.json(res, { error: 'Failed to create achievement' }, 500);
+      return this.json(res, { error: 'ثبت دستاورد انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Achievement created successfully',
+      message: 'دستاورد با موفقیت ثبت شد.',
       redirect: `${APP_URL}/achievements`,
     });
   }
@@ -212,14 +212,14 @@ export class AchievementController extends BaseController {
   @Permissions('manage_players')
   async update(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const achievementId = parseInt(id, 10);
     const achievement = await this.achievements.getAchievement(achievementId);
 
     if (achievement === null) {
-      return this.json(res, { error: 'Achievement not found' }, 404);
+      return this.json(res, { error: 'دستاورد یافت نشد.' }, 404);
     }
 
     const playerId =
@@ -241,16 +241,16 @@ export class AchievementController extends BaseController {
     );
 
     if (!playerId) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
 
     if (!title) {
-      return this.json(res, { error: 'Title is required' }, 422);
+      return this.json(res, { error: 'عنوان الزامی است.' }, 422);
     }
 
     const player = await this.achievements.findPlayer(playerId);
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
     }
 
     const linkedUser = await this.achievements.findUserByPlayerId(playerId);
@@ -268,12 +268,12 @@ export class AchievementController extends BaseController {
     });
 
     if (!ok) {
-      return this.json(res, { error: 'Failed to update achievement' }, 500);
+      return this.json(res, { error: 'ویرایش دستاورد انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Achievement updated successfully',
+      message: 'دستاورد با موفقیت ویرایش شد.',
       redirect: `${APP_URL}/achievements`,
     });
   }
@@ -283,15 +283,15 @@ export class AchievementController extends BaseController {
   @Permissions('manage_players')
   async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const achievementId = parseInt(id, 10);
     if (!(await this.achievements.deleteAchievement(achievementId))) {
-      return this.json(res, { error: 'Failed to delete achievement' }, 500);
+      return this.json(res, { error: 'حذف دستاورد انجام نشد.' }, 500);
     }
 
-    return this.json(res, { success: true, message: 'Achievement deleted' });
+    return this.json(res, { success: true, message: 'دستاورد حذف شد.' });
   }
 
   /** POST /achievements/toggle-publish/:id */
@@ -306,12 +306,12 @@ export class AchievementController extends BaseController {
     const achievement = await this.achievements.getAchievement(achievementId);
 
     if (achievement === null) {
-      return this.json(res, { error: 'Achievement not found' }, 404);
+      return this.json(res, { error: 'دستاورد یافت نشد.' }, 404);
     }
 
     const newStatus = !achievement.is_published;
     if (!(await this.achievements.togglePublish(achievementId, newStatus))) {
-      return this.json(res, { error: 'Failed to update publish status' }, 500);
+      return this.json(res, { error: 'تغییر وضعیت انتشار انجام نشد.' }, 500);
     }
 
     return this.json(res, { success: true, is_published: newStatus });

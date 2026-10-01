@@ -8,6 +8,7 @@ import { viewBasePath } from '../../common/views/base-path';
 import { Roles } from '../../common/decorators/permissions.decorator';
 import { createPersianPdf } from '../../common/pdf/persian-pdf';
 import { JalaliHelper } from '../../common/helpers/jalali.helper';
+import { AGE_CATEGORIES, PLAYER_POSITIONS } from '../../config/constants';
 
 /** Relative prefix; see common/views/base-path.ts. */
 const APP_URL = viewBasePath();
@@ -58,7 +59,7 @@ export class ClassroomController extends BaseController {
       ok: false,
       message: `این عملیات نیاز به دسترسی «مدیریت کلاس‌ها» دارد (نقش فعلی شما: ${role}).`,
       redirect: `/403?message=${encodeURIComponent('مدیریت کلاس‌ها فقط برای مدیر ارشد فعال است.')}`,
-      json: { error: 'Unauthorized' },
+      json: { error: 'شما اجازه انجام این عملیات را ندارید.' },
       status: 403,
     });
   }
@@ -115,7 +116,7 @@ export class ClassroomController extends BaseController {
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const name = SecurityHelper.sanitizeString(this.post(req, 'name') ?? '');
@@ -191,7 +192,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
         redirect: `/classroom/view/${parseInt(id, 10)}`,
-        json: { error: 'Invalid CSRF token' },
+        json: { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' },
         status: 403,
       });
     }
@@ -200,7 +201,7 @@ export class ClassroomController extends BaseController {
     const classroom = await this.classrooms.find(classroomId);
 
     if (classroom === null) {
-      return this.json(res, { error: 'Classroom not found' }, 404);
+      return this.json(res, { error: 'کلاس یافت نشد.' }, 404);
     }
 
     const name = SecurityHelper.sanitizeString(this.post(req, 'name') ?? '');
@@ -286,7 +287,11 @@ export class ClassroomController extends BaseController {
       title: 'فهرست اعضای کلاس',
       subtitle: [`نام کلاس: ${classroom.name}`, `تاریخ تهیه: ${JalaliHelper.toJalaliString(today)}`, `تعداد اعضا: ${roster.length.toLocaleString('fa-IR')}`],
       headers: ['ردیف', 'نام بازیکن', 'کد ملی', 'پست', 'رده سنی'],
-      rows: roster.map((player, index) => [(index + 1).toLocaleString('fa-IR'), player.name, player.national_id ?? '-', player.position ?? '-', player.age_category ?? '-']),
+      rows: roster.map((player, index) => [
+        (index + 1).toLocaleString('fa-IR'), player.name, player.national_id ?? '-',
+        PLAYER_POSITIONS[player.position] ?? 'نامشخص',
+        AGE_CATEGORIES[player.age_category]?.label ?? 'نامشخص',
+      ]),
       widths: [35, '*', 100, 80, 70],
     });
     res.setHeader('Content-Type', 'application/pdf');
@@ -309,7 +314,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
         redirect: `/classroom/view/${parseInt(id, 10)}`,
-        json: { error: 'Invalid CSRF token' },
+        json: { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' },
         status: 403,
       });
     }
@@ -322,7 +327,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'کلاس یافت نشد.',
         redirect: '/classrooms',
-        json: { error: 'Classroom not found' },
+        json: { error: 'کلاس یافت نشد.' },
         status: 404,
       });
     }
@@ -335,7 +340,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'بازیکن یافت نشد.',
         redirect: `/classroom/view/${classroomId}`,
-        json: { error: 'Player not found' },
+        json: { error: 'بازیکن یافت نشد.' },
         status: 404,
       });
     }
@@ -379,7 +384,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
         redirect: `/classroom/view/${parseInt(id, 10)}`,
-        json: { error: 'Invalid CSRF token' },
+        json: { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' },
         status: 403,
       });
     }
@@ -392,7 +397,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'کلاس یافت نشد.',
         redirect: '/classrooms',
-        json: { error: 'Classroom not found' },
+        json: { error: 'کلاس یافت نشد.' },
         status: 404,
       });
     }
@@ -405,7 +410,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'بازیکن یافت نشد.',
         redirect: `/classroom/view/${classroomId}`,
-        json: { error: 'Player not found' },
+        json: { error: 'بازیکن یافت نشد.' },
         status: 404,
       });
     }
@@ -448,7 +453,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
         redirect: `/classroom/view/${parseInt(id, 10)}`,
-        json: { error: 'Invalid CSRF token' },
+        json: { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' },
         status: 403,
       });
     }
@@ -461,7 +466,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'کلاس یافت نشد.',
         redirect: '/classrooms',
-        json: { error: 'Classroom not found' },
+        json: { error: 'کلاس یافت نشد.' },
         status: 404,
       });
     }
@@ -471,7 +476,7 @@ export class ClassroomController extends BaseController {
         ok: false,
         message: 'حذف کلاس ناموفق بود.',
         redirect: '/classrooms',
-        json: { error: 'Failed to delete classroom' },
+        json: { error: 'حذف کلاس انجام نشد.' },
         status: 500,
       });
     }

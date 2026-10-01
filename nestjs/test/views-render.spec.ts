@@ -412,7 +412,7 @@ describe('every EJS view renders', () => {
   it('renders every page template without throwing', () => {
     // 85 templates on disk, minus the 5 layouts and the FIFA-card partial,
     // which are composed into pages rather than rendered as pages themselves.
-    expect(views).toHaveLength(79);
+    expect(views).toHaveLength(80);
 
     const failures: string[] = [];
     for (const view of views) {

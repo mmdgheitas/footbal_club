@@ -184,13 +184,15 @@ export class AttendanceController extends BaseController {
         (index + 1).toLocaleString('fa-IR'), name,
         valid.filter((entry) => Number(entry.status) === 1).length.toLocaleString('fa-IR'),
         valid.filter((entry) => Number(entry.status) === 2).length.toLocaleString('fa-IR'),
+        valid.filter((entry) => Number(entry.status) === 3).length.toLocaleString('fa-IR'),
+        valid.filter((entry) => Number(entry.status) === 4).length.toLocaleString('fa-IR'),
         valid.map((entry) => `${JalaliHelper.toJalaliString(String(entry.session_date).slice(0, 10))}: ${labels[entry.status] ?? 'نامشخص'}`).join('\n') || 'بدون سابقه',
       ];
     });
     const pdf = await createPersianPdf({
       title: period === 'quarterly' ? 'گزارش سه‌ماهه حضور و غیاب' : 'گزارش یک‌ماهه حضور و غیاب',
       subtitle: [`کلاس: ${classroom.name}`, `بازه گزارش: ${JalaliHelper.toJalaliString(iso(startDate))} تا ${JalaliHelper.toJalaliString(end)}`, `تاریخ تهیه: ${JalaliHelper.toJalaliString(todayLocal())}`],
-      headers: ['ردیف', 'نام بازیکن', 'حضور', 'غیبت', 'جزئیات جلسات'], rows, widths: [35, 100, 45, 45, '*'],
+      headers: ['ردیف', 'نام بازیکن', 'حضور', 'غیبت', 'موجه', 'تأخیر', 'جزئیات جلسات'], rows, widths: [30, 90, 38, 38, 38, 38, '*'],
     });
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(period === 'quarterly' ? 'گزارش-سه-ماهه.pdf' : 'گزارش-یک-ماهه.pdf')}`);

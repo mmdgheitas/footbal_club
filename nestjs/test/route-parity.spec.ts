@@ -140,6 +140,13 @@ const EXPANSION_ROUTES = [
   'POST /admin/invoices',
   'POST /admin/invoices/:id/cancel',
   'GET /admin/payments',
+
+  // --- Persian reports and reusable financial items -----------------------
+  'GET /admin/attendance/report.pdf',
+  'GET /admin/financial-items',
+  'POST /admin/financial-items/save',
+  'POST /admin/financial-items/delete/:id',
+  'GET /admin/classroom/:id/members.pdf',
 ];
 
 describe('route parity with the legacy PHP application', () => {

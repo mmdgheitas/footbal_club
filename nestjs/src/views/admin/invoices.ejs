@@ -6,6 +6,7 @@
 const rows = locals.rows || [];
 const counts = locals.counts || [];
 const players = locals.players || [];
+const financialItems = locals.financial_items || [];
 const statuses = locals.statuses || {};
 const selected = locals.selected_status || 'pending';
 const statusChip = { pending: 'warn', completed: 'ok', failed: 'danger', refunded: 'neutral' };
@@ -53,14 +54,28 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
 
         <div class="form-group">
             <label for="amount">مبلغ (تومان)</label>
-            <input type="number" id="amount" name="amount" class="form-control ltr" min="1000" step="1000" required>
+            <input type="text" id="amount" name="amount" class="form-control ltr number-input" inputmode="decimal" required>
         </div>
 
         <div class="form-group">
             <label for="description">بابت</label>
-            <input type="text" id="description" name="description" class="form-control"
-                   placeholder="شهریه فصل زمستان" maxlength="200">
+            <textarea id="description" name="description" class="form-control"
+                      placeholder="شهریه فصل زمستان و سایر توضیحات" maxlength="2000" rows="5"
+                      style="min-height:120px;resize:vertical"></textarea>
         </div>
+
+        <% if (financialItems.length) { %>
+        <fieldset class="form-group" style="border:1px solid var(--border-color);border-radius:8px;padding:12px;grid-column:1/-1">
+            <legend>اقلام مالی</legend>
+            <% for (const item of financialItems) { const lineTotal = Number(item.price) * Number(item.quantity); %>
+            <label style="display:flex;justify-content:space-between;gap:12px;margin:8px 0">
+                <span><input type="checkbox" name="financial_item_ids" value="<%- item.id %>" class="invoice-financial-item" data-price="<%- lineTotal %>"> <%- esc(item.name) %><%- Number(item.quantity) > 1 ? ` (تعداد ${toPersian(item.quantity)})` : '' %></span>
+                <strong><%- __num(lineTotal, 0) %> تومان</strong>
+            </label>
+            <% } %>
+            <p style="margin:12px 0 0">مبلغ نهایی: <strong id="invoiceFinalAmount">۰ تومان</strong></p>
+        </fieldset>
+        <% } %>
 
         <div class="form-group">
             <label for="due_date">مهلت پرداخت (شمسی)</label>
@@ -128,3 +143,18 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
     </table>
     <% } %>
 </div>
+<script>
+(() => {
+    const amount = document.getElementById('amount');
+    const output = document.getElementById('invoiceFinalAmount');
+    const update = () => {
+        if (!output || !amount) return;
+        const extras = [...document.querySelectorAll('.invoice-financial-item:checked')]
+            .reduce((sum, item) => sum + Number(item.dataset.price || 0), 0);
+        output.textContent = APP.formatNumber(APP.parseNumber(amount.value) + extras) + ' تومان';
+    };
+    amount?.addEventListener('input', update);
+    document.querySelectorAll('.invoice-financial-item').forEach(item => item.addEventListener('change', update));
+    update();
+})();
+</script>

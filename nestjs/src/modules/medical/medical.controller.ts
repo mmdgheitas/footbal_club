@@ -58,17 +58,17 @@ export class MedicalController extends BaseController {
   @Permissions('view_medical')
   async update(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const playerId = parseInt(id, 10);
 
     if ((await this.medical.findPlayer(playerId)) === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
     }
 
     // Jalali -> Gregorian normalisation, only when the year looks Jalali.
@@ -103,7 +103,7 @@ export class MedicalController extends BaseController {
     };
 
     if (!(await this.medical.createOrUpdate(data))) {
-      return this.json(res, { error: 'Failed to update medical record' }, 500);
+      return this.json(res, { error: 'ویرایش پرونده پزشکی انجام نشد.' }, 500);
     }
 
     return this.json(res, { success: true });

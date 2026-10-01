@@ -95,7 +95,7 @@ export class CaseNoteController extends BaseController {
   @Permissions('manage_players')
   async store(@Req() req: Request, @Res() res: Response) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const adminId = this.getUserId(req);
@@ -108,18 +108,18 @@ export class CaseNoteController extends BaseController {
     const isVisible = phpBool(this.post(req, 'is_visible_to_player'), false);
 
     if (!playerId) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
     if (!title) {
-      return this.json(res, { error: 'Title is required' }, 422);
+      return this.json(res, { error: 'عنوان الزامی است.' }, 422);
     }
     if (!content) {
-      return this.json(res, { error: 'Content is required' }, 422);
+      return this.json(res, { error: 'متن الزامی است.' }, 422);
     }
 
     const player = await this.caseNotes.findPlayer(playerId);
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
     }
 
     const linkedUser = await this.caseNotes.findUserByPlayerId(playerId);
@@ -137,12 +137,12 @@ export class CaseNoteController extends BaseController {
     });
 
     if (!caseNoteId) {
-      return this.json(res, { error: 'Failed to create case note' }, 500);
+      return this.json(res, { error: 'ثبت یادداشت انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Case note created successfully',
+      message: 'یادداشت با موفقیت ثبت شد.',
       redirect: `${APP_URL}/case-notes?player_id=${playerId}`,
     });
   }
@@ -175,14 +175,14 @@ export class CaseNoteController extends BaseController {
   @Permissions('manage_players')
   async update(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const caseNoteId = parseInt(id, 10);
     const caseNote = await this.caseNotes.getCaseNote(caseNoteId);
 
     if (caseNote === null) {
-      return this.json(res, { error: 'Case note not found' }, 404);
+      return this.json(res, { error: 'یادداشت یافت نشد.' }, 404);
     }
 
     const playerId =
@@ -197,18 +197,18 @@ export class CaseNoteController extends BaseController {
     );
 
     if (!playerId) {
-      return this.json(res, { error: 'Player is required' }, 422);
+      return this.json(res, { error: 'انتخاب بازیکن الزامی است.' }, 422);
     }
     if (!title) {
-      return this.json(res, { error: 'Title is required' }, 422);
+      return this.json(res, { error: 'عنوان الزامی است.' }, 422);
     }
     if (!content) {
-      return this.json(res, { error: 'Content is required' }, 422);
+      return this.json(res, { error: 'متن الزامی است.' }, 422);
     }
 
     const player = await this.caseNotes.findPlayer(playerId);
     if (player === null) {
-      return this.json(res, { error: 'Player not found' }, 404);
+      return this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
     }
 
     const linkedUser = await this.caseNotes.findUserByPlayerId(playerId);
@@ -225,12 +225,12 @@ export class CaseNoteController extends BaseController {
     });
 
     if (!ok) {
-      return this.json(res, { error: 'Failed to update case note' }, 500);
+      return this.json(res, { error: 'ویرایش یادداشت انجام نشد.' }, 500);
     }
 
     return this.json(res, {
       success: true,
-      message: 'Case note updated successfully',
+      message: 'یادداشت با موفقیت ویرایش شد.',
       redirect: `${APP_URL}/case-notes?player_id=${playerId}`,
     });
   }
@@ -240,15 +240,15 @@ export class CaseNoteController extends BaseController {
   @Permissions('manage_players')
   async delete(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const caseNoteId = parseInt(id, 10);
     if (!(await this.caseNotes.deleteCaseNote(caseNoteId))) {
-      return this.json(res, { error: 'Failed to delete case note' }, 500);
+      return this.json(res, { error: 'حذف یادداشت انجام نشد.' }, 500);
     }
 
-    return this.json(res, { success: true, message: 'Case note deleted' });
+    return this.json(res, { success: true, message: 'یادداشت حذف شد.' });
   }
 
   /** POST /case-notes/toggle-visibility/:id */
@@ -263,12 +263,12 @@ export class CaseNoteController extends BaseController {
     const caseNote = await this.caseNotes.getCaseNote(caseNoteId);
 
     if (caseNote === null) {
-      return this.json(res, { error: 'Case note not found' }, 404);
+      return this.json(res, { error: 'یادداشت یافت نشد.' }, 404);
     }
 
     const newVisibility = !caseNote.is_visible_to_player;
     if (!(await this.caseNotes.updateVisibility(caseNoteId, newVisibility))) {
-      return this.json(res, { error: 'Failed to update visibility' }, 500);
+      return this.json(res, { error: 'تغییر وضعیت نمایش انجام نشد.' }, 500);
     }
 
     return this.json(res, {

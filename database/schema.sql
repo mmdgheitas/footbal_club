@@ -722,3 +722,5 @@ CREATE TABLE IF NOT EXISTS fc_payment_items (
     CONSTRAINT fk_payment_items_payment FOREIGN KEY (payment_id) REFERENCES fc_payments(id) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_payment_items_financial_item FOREIGN KEY (financial_item_id) REFERENCES fc_financial_items(id) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+-- افزایش ظرفیت توضیحات صورتحساب بدون حذف یا تغییر داده‌های موجود
+ALTER TABLE fc_payments MODIFY COLUMN description TEXT NULL;

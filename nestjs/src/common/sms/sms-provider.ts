@@ -50,7 +50,7 @@ export class TwilioSmsProvider extends SmsProvider {
 
   async send(toNumber: string, message: string): Promise<SmsResult> {
     if (!this.validatePhoneNumber(toNumber)) {
-      return { success: false, message_id: null, error: 'Invalid phone number format' };
+      return { success: false, message_id: null, error: 'قالب شماره تلفن معتبر نیست.' };
     }
 
     const formatted = this.formatPhoneNumber(toNumber);
@@ -115,7 +115,7 @@ export class NexmoSmsProvider extends SmsProvider {
 
   async send(toNumber: string, message: string): Promise<SmsResult> {
     if (!this.validatePhoneNumber(toNumber)) {
-      return { success: false, message_id: null, error: 'Invalid phone number format' };
+      return { success: false, message_id: null, error: 'قالب شماره تلفن معتبر نیست.' };
     }
 
     const formatted = this.formatPhoneNumber(toNumber);

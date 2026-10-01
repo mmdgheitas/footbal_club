@@ -38,11 +38,11 @@ export class SmsController extends BaseController {
   @Permissions('send_sms')
   async send(@Req() req: Request, @Res() res: Response) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     let recipients: any = this.post(req, 'recipients') ?? [];
@@ -56,17 +56,17 @@ export class SmsController extends BaseController {
     );
 
     if (recipients.length === 0) {
-      return this.json(res, { error: 'Please select at least one recipient' }, 422);
+      return this.json(res, { error: 'دست‌کم یک گیرنده انتخاب کنید.' }, 422);
     }
 
     if (!message) {
-      return this.json(res, { error: 'Message cannot be empty' }, 422);
+      return this.json(res, { error: 'متن پیام نمی‌تواند خالی باشد.' }, 422);
     }
 
     // PHP strlen() counts BYTES, so Persian text hits this limit much sooner
     // than 160 characters would. Preserved deliberately.
     if (Buffer.byteLength(message, 'utf8') > 160) {
-      return this.json(res, { error: 'Message exceeds 160 characters' }, 422);
+      return this.json(res, { error: 'متن پیام نباید بیشتر از ۱۶۰ نویسه باشد.' }, 422);
     }
 
     const provider = await this.sms.getProvider();

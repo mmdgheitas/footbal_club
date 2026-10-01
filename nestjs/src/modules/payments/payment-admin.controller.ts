@@ -84,12 +84,17 @@ export class PaymentAdminController extends BaseController {
        WHERE deleted_at IS NULL AND registration_status = 'approved'
        ORDER BY name ASC`,
     );
+    const financialItems = await this.db.query(
+      `SELECT id, name, price, quantity FROM fc_financial_items
+       WHERE is_active = 1 ORDER BY name ASC`,
+    );
 
     this.render(req, res, 'admin/invoices', {
       title: 'صورتحساب‌ها',
       rows,
       counts,
       players,
+      financial_items: financialItems,
       statuses: PAYMENT_STATUSES,
       selected_status: selected,
       csrf_token: this.generateCsrf(req),
@@ -101,7 +106,7 @@ export class PaymentAdminController extends BaseController {
   @Post('/invoices')
   @Roles('super_admin', 'accountant')
   async createInvoice(
-    @Body() body: Record<string, string>,
+    @Body() body: Record<string, string | string[]>,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
@@ -111,12 +116,20 @@ export class PaymentAdminController extends BaseController {
       return;
     }
 
+    const rawItemIds = body.financial_item_ids ?? body['financial_item_ids[]'] ?? [];
+    const selectedItemIds = (Array.isArray(rawItemIds) ? rawItemIds : [rawItemIds])
+      .map((value) => Number(value))
+      .filter((value) => Number.isInteger(value) && value > 0);
+    const description = Array.isArray(body.description) ? body.description[0] : body.description;
+    const dueDate = Array.isArray(body.due_date) ? body.due_date[0] : body.due_date;
+
     const invoice = await this.payments.createInvoice({
       playerId: Number(body.player_id),
       amount: Number(String(body.amount ?? '').replace(/[^\d.]/g, '')),
-      description: body.description ?? null,
-      dueDate: body.due_date || null,
+      description: description ?? null,
+      dueDate: dueDate || null,
       createdBy: getSessionUserId(req),
+      selectedItemIds,
     });
 
     if (!invoice) {

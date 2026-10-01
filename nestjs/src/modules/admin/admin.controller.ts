@@ -31,7 +31,7 @@ export class AdminController extends BaseController {
     const users = await this.admin.listUsers(page, role);
 
     return this.render(req, res, 'admin/users', {
-      title: 'Users',
+      title: 'کاربران',
       users,
       roles: ROLES,
       selected_role: role,
@@ -56,11 +56,11 @@ export class AdminController extends BaseController {
   @Roles('super_admin')
   async updateSettings(@Req() req: Request, @Res() res: Response) {
     if (req.method !== 'POST') {
-      return this.json(res, { error: 'Method not allowed' }, 405);
+      return this.json(res, { error: 'روش درخواست مجاز نیست.' }, 405);
     }
 
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const allowedKeys = [
@@ -98,13 +98,13 @@ export class AdminController extends BaseController {
     }
 
     if (Object.keys(toSave).length === 0) {
-      return this.json(res, { error: 'No settings to save' }, 422);
+      return this.json(res, { error: 'تنظیمی برای ذخیره وجود ندارد.' }, 422);
     }
 
     try {
       await this.admin.setMany(toSave);
     } catch {
-      return this.json(res, { error: 'Failed to save settings' }, 500);
+      return this.json(res, { error: 'ذخیره تنظیمات انجام نشد.' }, 500);
     }
 
     return this.json(res, {

@@ -161,6 +161,7 @@ const EXPANSION_VIEWS = new Set([
   'auth/choose_panel',
   'admin/invoices',
   'admin/payments',
+  'financial/items',
   'payments/mock',
   'payments/result',
   'auth/otp',
@@ -214,7 +215,7 @@ describe('view wiring', () => {
     // 45 ported/legacy templates + 36 from the feature expansion + 4 from the
     // online payment gateway.
     expect(views.filter((v) => !EXPANSION_VIEWS.has(v))).toHaveLength(45);
-    expect(views).toHaveLength(85);
+    expect(views).toHaveLength(86);
   });
 
   it('has a controller or layout reference for every template (no orphans)', () => {

@@ -36,11 +36,26 @@ const APP = {
     },
 
     initNumberInputs() {
+        // ورودی‌های عددی مرورگر جداکننده را نمی‌پذیرند؛ در لایه نمایش به متن عددی تبدیل می‌شوند.
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.type = 'text';
+            input.inputMode = input.step && input.step !== '1' ? 'decimal' : 'numeric';
+            input.classList.add('number-input');
+        });
         document.querySelectorAll('input.number-input').forEach(input => {
             const format = () => {
-                const raw = String(input.value).replace(/[٬,]/g, '').replace(/[^\d۰-۹.-]/g, '');
-                if (raw === '' || raw === '-') return;
-                input.value = this.formatNumber(raw);
+                let raw = String(input.value).replace(/[٬,]/g, '')
+                    .replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d))
+                    .replace(/[^\d.-]/g, '');
+                const negative = raw.startsWith('-');
+                raw = raw.replace(/-/g, '');
+                const decimalAt = raw.indexOf('.');
+                let integer = decimalAt >= 0 ? raw.slice(0, decimalAt) : raw;
+                const decimal = decimalAt >= 0 ? raw.slice(decimalAt + 1).replace(/\./g, '') : null;
+                if (!integer && decimal === null) { input.value = negative ? '-' : ''; return; }
+                integer = (integer || '0').replace(/^0+(?=\d)/, '');
+                const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                input.value = `${negative ? '-' : ''}${grouped}${decimal !== null ? `.${decimal}` : ''}`;
             };
             input.addEventListener('input', format);
             input.addEventListener('paste', () => setTimeout(format));

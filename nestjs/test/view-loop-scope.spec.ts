@@ -83,7 +83,7 @@ describe('no view reads locals.X where X is a loop variable', () => {
 
   it('finds every template', () => {
     // 45 ported/legacy + 36 feature expansion + 4 payment gateway templates.
-    expect(views).toHaveLength(85);
+    expect(views).toHaveLength(86);
   });
 
   it('has no shadowed loop variables', () => {

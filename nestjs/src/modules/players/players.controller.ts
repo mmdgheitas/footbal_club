@@ -114,7 +114,7 @@ export class PlayerController extends BaseController {
   @UseInterceptors(AnyFilesInterceptor())
   async store(@Req() req: Request, @Res() res: Response): Promise<void> {
     if (!this.validateCsrf(req)) {
-      this.json(res, { error: 'Invalid CSRF token' }, 403);
+      this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
       return;
     }
 
@@ -173,13 +173,13 @@ export class PlayerController extends BaseController {
     }
 
     if ((await this.players.findByNationalId(data.national_id)) !== null) {
-      this.json(res, { error: 'National ID already exists' }, 422);
+      this.json(res, { error: 'این کد ملی قبلاً ثبت شده است.' }, 422);
       return;
     }
 
     const playerId = await this.players.createPlayer(data);
     if (!playerId) {
-      this.json(res, { error: 'Failed to create player' }, 500);
+      this.json(res, { error: 'ثبت بازیکن انجام نشد.' }, 500);
       return;
     }
 
@@ -228,7 +228,7 @@ export class PlayerController extends BaseController {
     @Res() res: Response,
   ): Promise<void> {
     if (!this.validateCsrf(req)) {
-      this.json(res, { error: 'Invalid CSRF token' }, 403);
+      this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
       return;
     }
 
@@ -236,7 +236,7 @@ export class PlayerController extends BaseController {
     const player = await this.players.find(playerId);
 
     if (player === null) {
-      this.json(res, { error: 'Player not found' }, 404);
+      this.json(res, { error: 'بازیکن یافت نشد.' }, 404);
       return;
     }
 
@@ -281,13 +281,13 @@ export class PlayerController extends BaseController {
 
     if (player.national_id !== data.national_id) {
       if ((await this.players.findByNationalId(data.national_id)) !== null) {
-        this.json(res, { error: 'National ID already exists' }, 422);
+        this.json(res, { error: 'این کد ملی قبلاً ثبت شده است.' }, 422);
         return;
       }
     }
 
     if (!(await this.players.update(playerId, data))) {
-      this.json(res, { error: 'Failed to update player' }, 500);
+      this.json(res, { error: 'ویرایش بازیکن انجام نشد.' }, 500);
       return;
     }
 
@@ -327,7 +327,7 @@ export class PlayerController extends BaseController {
         ok: false,
         message: 'درخواست نامعتبر است (نشست شما منقضی شده). صفحه را تازه کنید و دوباره تلاش کنید.',
         redirect: '/players',
-        json: { error: 'Invalid CSRF token' },
+        json: { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' },
         status: 403,
       });
       return;
@@ -341,7 +341,7 @@ export class PlayerController extends BaseController {
         ok: false,
         message: 'بازیکن یافت نشد.',
         redirect: '/players',
-        json: { error: 'Player not found' },
+        json: { error: 'بازیکن یافت نشد.' },
         status: 404,
       });
       return;
@@ -352,7 +352,7 @@ export class PlayerController extends BaseController {
         ok: false,
         message: 'حذف بازیکن ناموفق بود.',
         redirect: '/players',
-        json: { error: 'Failed to delete player' },
+        json: { error: 'حذف بازیکن انجام نشد.' },
         status: 500,
       });
       return;

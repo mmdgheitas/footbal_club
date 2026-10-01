@@ -86,24 +86,24 @@ export class DocumentController extends BaseController {
     @UploadedFile() file?: Express.Multer.File,
   ) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const userId = this.getUserId(req)!;
     const user: any = this.getUser(req);
 
     if (user === null || user.role !== 'player') {
-      return this.json(res, { error: 'Unauthorized' }, 403);
+      return this.json(res, { error: 'شما اجازه انجام این عملیات را ندارید.' }, 403);
     }
 
     const documentType = this.post(req, 'document_type') ?? '';
     if (!ALLOWED_TYPES.includes(documentType)) {
-      return this.json(res, { error: 'Invalid document type' }, 422);
+      return this.json(res, { error: 'نوع سند معتبر نیست.' }, 422);
     }
 
     // empty($_FILES['document'])
     if (!file) {
-      return this.json(res, { error: 'No file uploaded' }, 422);
+      return this.json(res, { error: 'فایلی بارگذاری نشده است.' }, 422);
     }
 
     const validation = this.validateDocumentFile(file);
@@ -134,7 +134,7 @@ export class DocumentController extends BaseController {
       if (fs.existsSync(uploadResult.file_path!)) {
         fs.unlinkSync(uploadResult.file_path!);
       }
-      return this.json(res, { error: 'Failed to save document record' }, 500);
+      return this.json(res, { error: 'ذخیره سند انجام نشد.' }, 500);
     }
 
     if (await this.documents.hasAllDocumentsSubmitted(userId)) {
@@ -143,7 +143,7 @@ export class DocumentController extends BaseController {
 
     return this.json(res, {
       success: true,
-      message: 'Document uploaded successfully',
+      message: 'سند با موفقیت بارگذاری شد.',
       document_id: documentId,
     });
   }
@@ -166,7 +166,7 @@ export class DocumentController extends BaseController {
   @Permissions('manage_documents')
   async approve(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const documentId = parseInt(id, 10);
@@ -174,18 +174,18 @@ export class DocumentController extends BaseController {
     const document = await this.documents.getDocument(documentId);
 
     if (document === null) {
-      return this.json(res, { error: 'Document not found' }, 404);
+      return this.json(res, { error: 'سند یافت نشد.' }, 404);
     }
 
     if (!(await this.documents.approve(documentId, adminId))) {
-      return this.json(res, { error: 'Failed to approve document' }, 500);
+      return this.json(res, { error: 'تأیید سند انجام نشد.' }, 500);
     }
 
     if (await this.documents.hasAllDocumentsApproved(document.user_id)) {
       await this.documents.approveUserDocuments(document.user_id, adminId);
     }
 
-    return this.json(res, { success: true, message: 'Document approved' });
+    return this.json(res, { success: true, message: 'سند تأیید شد.' });
   }
 
   /** POST /admin/documents/reject/:id */
@@ -193,7 +193,7 @@ export class DocumentController extends BaseController {
   @Permissions('manage_documents')
   async reject(@Req() req: Request, @Res() res: Response, @Param('id') id: string) {
     if (!this.validateCsrf(req)) {
-      return this.json(res, { error: 'Invalid CSRF token' }, 403);
+      return this.json(res, { error: 'نشست شما منقضی شده است؛ صفحه را تازه کنید.' }, 403);
     }
 
     const documentId = parseInt(id, 10);
@@ -201,16 +201,16 @@ export class DocumentController extends BaseController {
     const reason = this.post(req, 'rejection_reason') ?? '';
 
     if (!reason) {
-      return this.json(res, { error: 'Rejection reason is required' }, 422);
+      return this.json(res, { error: 'دلیل رد سند الزامی است.' }, 422);
     }
 
     const document = await this.documents.getDocument(documentId);
     if (document === null) {
-      return this.json(res, { error: 'Document not found' }, 404);
+      return this.json(res, { error: 'سند یافت نشد.' }, 404);
     }
 
     if (!(await this.documents.reject(documentId, adminId, String(reason)))) {
-      return this.json(res, { error: 'Failed to reject document' }, 500);
+      return this.json(res, { error: 'رد سند انجام نشد.' }, 500);
     }
 
     await this.documents.rejectUserDocuments(
@@ -219,7 +219,7 @@ export class DocumentController extends BaseController {
       String(reason),
     );
 
-    return this.json(res, { success: true, message: 'Document rejected' });
+    return this.json(res, { success: true, message: 'سند رد شد.' });
   }
 
   /** DocumentController::validateDocumentFile() */
@@ -266,7 +266,7 @@ export class DocumentController extends BaseController {
     try {
       fs.writeFileSync(filePath, file.buffer, { mode: 0o644 });
     } catch {
-      return { success: false, error: 'Failed to move uploaded file' };
+      return { success: false, error: 'ذخیره فایل بارگذاری‌شده انجام نشد.' };
     }
 
     return {
