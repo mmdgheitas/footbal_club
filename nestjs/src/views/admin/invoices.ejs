@@ -38,7 +38,17 @@ const countOf = (key) => (counts.find((c) => c.status === key) || { count: 0, to
 </div>
 
 <div class="panel-card">
-    <h3><span class="em">➕</span> صدور صورتحساب جدید</h3>
+    <div class="flex-between mb-2">
+        <h3 style="margin:0"><span class="em">➕</span> صدور صورتحساب جدید</h3>
+        <% if (locals.userRole === 'super_admin') { %>
+        <a href="<%- APP_URL %>/admin/financial-items" class="btn btn-secondary">⚙️ مدیریت اقلام مالی</a>
+        <% } %>
+    </div>
+    <% if (locals.userRole === 'super_admin' && financialItems.length === 0) { %>
+    <div class="alert alert-warning">
+        هنوز قلم مالی تعریف نشده است. برای نمایش کیف، کفش، جوراب و سایر اقلام در این فرم، ابتدا از بخش «مدیریت اقلام مالی» آن‌ها را ثبت کنید.
+    </div>
+    <% } %>
     <form method="POST" action="<%- APP_URL %>/admin/invoices" class="grid-2">
         <input type="hidden" name="_csrf_token" value="<%- locals.csrf_token %>">
 

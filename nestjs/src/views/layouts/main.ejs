@@ -109,6 +109,11 @@ if (locals.userRole === 'player') {
                     <% } %>
                     <% if (locals.userRole === 'super_admin') { %>
                     <li>
+                        <a href="<%- APP_URL %>/admin/financial-items" class="<%- currentPath.startsWith('/admin/financial-items') ? 'active' : '' %>">
+                            <span aria-hidden="true">🧾</span> مدیریت اقلام مالی
+                        </a>
+                    </li>
+                    <li>
                         <a href="<%- APP_URL %>/admin/users" class="<%- currentPath.startsWith('/admin/users') ? 'active' : '' %>">
                             <span aria-hidden="true">👥</span> کاربران
                         </a>
@@ -176,6 +181,7 @@ if (locals.userRole === 'player') {
         </a>
         <% } %>
         <% if (locals.userRole === 'super_admin') { %>
+        <a href="<%- APP_URL %>/admin/financial-items" role="menuitem"><span>🧾</span> مدیریت اقلام مالی</a>
         <a href="<%- APP_URL %>/admin/users" role="menuitem"><span>👥</span> کاربران</a>
         <a href="<%- APP_URL %>/admin/settings" role="menuitem"><span>⚙️</span> تنظیمات</a>
         <% } %>
